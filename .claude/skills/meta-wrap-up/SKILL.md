@@ -21,6 +21,7 @@ End-of-session checklist. Four steps: review what was done, collect feedback, ap
 - Promoted important insights to `context/MEMORY.md` if business-level
 - Updated `context/USER.md` if new preferences were observed
 - Direct fixes applied to any skills that need them
+- CLAUDE.md Skill Registry, Context Matrix, and README.md synced with any new or removed skills/MCPs
 - Clean git commit of all session work
 - Session summary presented in consistent format
 
@@ -113,6 +114,20 @@ Not every session produces long-term memories. Most won't. Only promote what wou
 
 If you noticed new patterns about how the user works — communication style, preferred formats, feedback cadence, working hours — update `context/USER.md`. Don't ask permission for small additions to the Notes section; do ask before changing core preferences.
 
+### 3f: Skill & MCP Sync
+
+Run the reconciliation described in CLAUDE.md's **Skill & MCP Reconciliation** section. This catches anything that changed during the session:
+
+1. **Skills** — compare `.claude/skills/` folders against CLAUDE.md's Skill Registry and Context Matrix:
+   - New skill folder not yet registered → add to CLAUDE.md Skill Registry, Context Matrix, README.md skill tables, and `context/learnings.md`
+   - Registered skill whose folder was deleted → ask user: "Remove `{skill-name}` from CLAUDE.md Skill Registry, Context Matrix, README.md, and context/learnings.md?"
+
+2. **MCPs** — compare `.claude/settings.json` MCP entries against README.md:
+   - New MCP not documented → add to README.md Connected Tools section
+   - Documented MCP removed from settings → ask user: "Remove `{mcp-name}` from README.md?"
+
+Log any sync actions in the session summary under a **Registry sync** line.
+
 ---
 
 ## Step 4: Commit & Push
@@ -141,6 +156,10 @@ Learnings logged:
 Skills modified:
 - {skill-name}: {what was changed and why}
   (or "None" if no skills were modified)
+
+Registry sync:
+- {what was added/removed from CLAUDE.md, README.md, context/learnings.md}
+  (or "No drift detected")
 
 Memory:
 - Daily log: context/memory/{YYYY-MM-DD}.md

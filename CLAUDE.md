@@ -13,6 +13,28 @@ Before doing anything else in any session:
 4. Read `context/memory/{today}.md` + `context/memory/{yesterday}.md` — recent session context
 5. Scan `brand_context/` — what exists? Flag anything older than 30 days: "Your [file] is from [date]. Want to refresh, or keep going?"
 6. Scan `.claude/skills/` — know what skills are installed and available
+7. **Sync check** — run the skill & MCP reconciliation (see below)
+
+### Skill & MCP Reconciliation
+
+Compare what's on disk against what's registered in this file. Fix any drift silently for additions; confirm with the user for removals.
+
+**Skills — compare `.claude/skills/` folders vs the Skill Registry and Context Matrix tables above:**
+
+1. **New skill on disk, not in CLAUDE.md?** → Read its YAML frontmatter, then:
+   - Add a row to the **Skill Registry** table (under the correct category heading)
+   - Add a row to the **Context Matrix** table (read `## Context Needs` from its SKILL.md)
+   - Add a `## {folder-name}` section to `context/learnings.md` under `# Individual Skills`
+   - Add the skill to the **README.md** skill tables and file structure diagram
+   - Tell the user: "Registered `{skill-name}` — added to CLAUDE.md Skill Registry, Context Matrix, README.md, and context/learnings.md."
+
+2. **Skill in CLAUDE.md but folder missing from disk?** → Ask the user: "`{skill-name}` is in the CLAUDE.md Skill Registry but the folder is gone. Remove it from CLAUDE.md Skill Registry, Context Matrix, README.md, and context/learnings.md?"
+
+**MCPs — compare `.claude/settings.json` MCP server entries vs a tracked list:**
+
+3. **New MCP server in settings.json, not documented?** → Add it to the README.md under a Connected Tools section (create the section if it doesn't exist). Tell the user what was added.
+
+4. **Documented MCP removed from settings.json?** → Ask the user: "`{mcp-name}` is documented but no longer in settings.json. Remove from README.md?"
 
 ### Task Routing
 
