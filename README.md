@@ -156,6 +156,9 @@ agentic-os/
 │   ├── learnings.md                   <- Skill performance feedback
 │   └── memory/                        <- Daily session logs (YYYY-MM-DD.md)
 │
+├── ccnotify/                          <- Desktop notifications (bundled)
+│   └── ccnotify.py
+│
 ├── .env                               <- API keys (gitignored)
 │
 ├── .claude/
@@ -221,9 +224,9 @@ repeatable data contracts are useful for downstream automation.
 
 ## Notifications
 
-Agentic OS includes [CCNotify](https://github.com/dazuiba/CCNotify) for
-desktop notifications. You get alerted when Claude finishes a task or
-needs your input — no need to watch the terminal.
+Agentic OS bundles CCNotify for desktop notifications. You get alerted
+when Claude finishes a task or needs your input — no need to watch the
+terminal.
 
 **What it does:**
 - Desktop notification when a task completes
@@ -233,26 +236,18 @@ needs your input — no need to watch the terminal.
 
 **Setup:**
 
-CCNotify is pre-configured in this project. To install on a fresh machine:
+The script is bundled at `ccnotify/ccnotify.py` and hooks are
+pre-configured in `.claude/settings.json`. The only external dependency
+is `terminal-notifier`:
 
 ```bash
-# 1. Install the notification dependency
 brew install terminal-notifier
-
-# 2. Set up the notify script
-mkdir -p ~/.claude/ccnotify
-cp ccnotify.py ~/.claude/ccnotify/ccnotify.py
-chmod a+x ~/.claude/ccnotify/ccnotify.py
-
-# 3. Verify it works
-~/.claude/ccnotify/ccnotify.py   # Should output: ok
 ```
 
-The hooks in `~/.claude/settings.json` handle the rest automatically.
-Notifications fire on `UserPromptSubmit`, `Stop`, and `Notification`
-events.
+That's it. Hooks fire automatically on `UserPromptSubmit`, `Stop`, and
+`Notification` events.
 
-**Logs:** `~/.claude/ccnotify/ccnotify.log`
+**Logs:** `ccnotify/ccnotify.log` (created on first run)
 
 ---
 
