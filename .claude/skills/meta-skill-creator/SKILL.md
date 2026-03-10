@@ -69,6 +69,20 @@ Proactively ask questions about edge cases, input/output formats, example files,
 
 Check available MCPs - if useful for research (searching docs, finding similar skills, looking up best practices), research in parallel via subagents if available, otherwise inline. Come prepared with context to reduce burden on the user.
 
+### Process Step Design
+
+For each step in the skill's methodology, explicitly decide these four things with the user:
+
+1. **Human-in-the-loop?** — Does this step need user approval before proceeding, or can the skill run autonomously? Default to autonomous for data gathering and analysis. Default to HITL for creative decisions, tone choices, and anything that commits to a direction (e.g., "pick an angle", "approve the voice profile", "confirm the ICP").
+
+2. **Reference files needed?** — Does this step require deeper knowledge than fits in SKILL.md? If yes, create a reference file in `references/` and point to it explicitly (e.g., "Read `references/angle-frameworks.md` for the full set"). Each reference should be self-contained and focused on one topic.
+
+3. **Output format?** — What does this step produce? Be specific: a markdown file, a JSON block, a list of options presented to the user, an edit to an existing file. Define the format in the SKILL.md or in a reference file if it's complex.
+
+4. **Example outputs?** — Are there examples of what good output looks like for this step? If yes, save them to `assets/` and reference them from the step (e.g., "Match the format shown in `assets/carousel-example.pdf`").
+
+Document these decisions in the SKILL.md — each step should make it clear whether it pauses for input, what it reads, and what it produces.
+
 ### Write the SKILL.md
 
 Based on the user interview, fill in these components:
@@ -92,6 +106,24 @@ When writing or editing a skill, ensure the SKILL.md includes:
 **Final step when creating or editing any skill:** Open `context/learnings.md` and check whether a `## {skill-folder-name}` section exists. If it doesn't, add one under `# Individual Skills` (which always stays after `# General`). This is not optional — every skill must have its own section in the learnings file before the skill is considered complete.
 
 This creates a feedback loop: every skill run benefits from all previous runs, and every piece of feedback makes the next run better.
+
+### Self-Update Rules (Required in every skill)
+
+Every skill MUST include a `## Rules` section and a self-update mechanism. This is how skills get sharper without waiting for wrap-up.
+
+**How it works:** When the user flags something is wrong during a skill run — wrong tone, bad format, missed step, incorrect assumption — the skill edits its own `## Rules` section in SKILL.md immediately. Not at wrap-up. Not in learnings. Right now, in the skill file itself.
+
+When writing or editing a skill, ensure the SKILL.md includes:
+1. A `## Rules` section (can start empty or with known constraints)
+2. An explicit instruction at the end of the methodology: "If the user flags an issue with the output — wrong approach, bad format, missing context, incorrect tone — update the `## Rules` section in this SKILL.md immediately with the correction. Don't just log it to learnings; fix the skill so it doesn't repeat the mistake."
+
+**Rules section format:**
+```
+## Rules
+- {YYYY-MM-DD}: {What was wrong and the rule to prevent it}
+```
+
+This is distinct from learnings (which track feedback patterns over time). Rules are direct corrections to skill behaviour — they're read before every run and treated as hard constraints.
 
 ### Example Outputs & Design Assets (Required for output-producing skills)
 

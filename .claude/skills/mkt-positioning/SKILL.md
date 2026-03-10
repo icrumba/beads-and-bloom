@@ -131,6 +131,18 @@ Log feedback to `context/learnings.md` under `## mkt-positioning` with date and 
 
 ---
 
+## Rules
+
+*Updated automatically when the user flags issues. Read before every run.*
+
+---
+
+## Self-Update
+
+If the user flags an issue with the output — wrong angle, bad framing, missed competitive signal, incorrect assumption — update the `## Rules` section in this SKILL.md immediately with the correction and today's date. Don't just log it to learnings; fix the skill so it doesn't repeat the mistake.
+
+---
+
 ## Troubleshooting
 
 **User can't articulate the transformation:** Ask what their best customers say about the product — the transformation is in their words, not the founder's.

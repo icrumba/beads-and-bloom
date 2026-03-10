@@ -134,6 +134,18 @@ After saving, show the user actual excerpts — not just confirmation of file pa
 
 ---
 
+## Rules
+
+*Updated automatically when the user flags issues. Read before every run.*
+
+---
+
+## Self-Update
+
+If the user flags an issue with the output — wrong tone, bad format, missing context, incorrect assumption — update the `## Rules` section in this SKILL.md immediately with the correction and today's date. Don't just log it to learnings; fix the skill so it doesn't repeat the mistake.
+
+---
+
 ## Troubleshooting
 
 **Not enough samples:** Request more content, or switch to Build mode.

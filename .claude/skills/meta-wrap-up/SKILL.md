@@ -174,6 +174,18 @@ If no deliverables were produced (e.g., session was planning or discussion only)
 
 ---
 
+## Rules
+
+*Updated automatically when the user flags issues. Read before every run.*
+
+---
+
+## Self-Update
+
+If the user flags an issue with the wrap-up process — wrong commit scope, missed files, bad summary format — update the `## Rules` section in this SKILL.md immediately with the correction and today's date. Don't just log it to learnings; fix the skill so it doesn't repeat the mistake.
+
+---
+
 ## Troubleshooting
 
 **User has no feedback:** Log "No feedback — routine session" with date to the relevant skill section. Still do the file placement check and commit.

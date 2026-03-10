@@ -126,6 +126,18 @@ After saving, show the user actual excerpts — the primary pain statement and 3
 
 ---
 
+## Rules
+
+*Updated automatically when the user flags issues. Read before every run.*
+
+---
+
+## Self-Update
+
+If the user flags an issue with the output — wrong audience, bad language, missed segment, incorrect assumption — update the `## Rules` section in this SKILL.md immediately with the correction and today's date. Don't just log it to learnings; fix the skill so it doesn't repeat the mistake.
+
+---
+
 ## Troubleshooting
 
 **Founder describes the customer too broadly:** Push for specifics. "Entrepreneurs" is too broad. "Solo founders making $5-15k/month who do their own marketing" is useful.
