@@ -11,9 +11,34 @@ Before doing anything else in any session:
 2. Read `context/USER.md` — who you're helping and their preferences
 3. Read `context/MEMORY.md` — long-term business knowledge
 4. Read `context/memory/{today}.md` + `context/memory/{yesterday}.md` — recent session context
-5. Scan `brand_context/` — what exists? Flag anything older than 30 days: "Your [file] is from [date]. Want to refresh, or keep going?"
-6. Scan `.claude/skills/` — know what skills are installed and available
-7. **Sync check** — run the skill & MCP reconciliation (see below)
+5. **Create or open today's memory file** — if `context/memory/{YYYY-MM-DD}.md` doesn't exist, create it with a session start timestamp. If it already exists (second session today), append a new session header. See **Daily Memory** below.
+6. Scan `brand_context/` — what exists? Flag anything older than 30 days: "Your [file] is from [date]. Want to refresh, or keep going?"
+7. Scan `.claude/skills/` — know what skills are installed and available
+8. **Sync check** — run the skill & MCP reconciliation (see below)
+
+### Daily Memory
+
+Every session writes to `context/memory/{YYYY-MM-DD}.md`. This is how continuity works across sessions.
+
+**One file per day**, with numbered session blocks (`## Session 1`, `## Session 2`, etc.).
+
+**At session start:** Create the file if it doesn't exist, or append a new session block if it does:
+```
+## Session N
+
+### Goal
+[Filled once the user states their goal]
+```
+
+**During the session:** Update the current session block with key events as they happen:
+- Deliverables produced (with file paths)
+- Decisions made
+- Feedback received
+- Anything the next session should know
+
+**At session end (via /wrap-up):** The wrap-up skill finalises the session block — replacing any placeholder text with real content. Even without `/wrap-up`, the file should have useful context because it was written incrementally.
+
+Keep entries concise — bullet points, not paragraphs. This file is read at the start of every future session.
 
 ### Skill & MCP Reconciliation
 
@@ -89,8 +114,9 @@ Every skill and its output folder uses a category prefix. This keeps skills, out
 |--------|--------|----------|
 | `mkt` | Marketing | `mkt-brand-voice`, `mkt-positioning`, `mkt-icp`, `mkt-email-sequence` |
 | `str` | Strategy | `str-keyword-plan`, `str-competitor-analysis` |
-| `ops` | Operations | `ops-client-onboarding`, `ops-invoice-generator` |
-| `vid` | Video / Visual | `vid-thumbnail-creator`, `vid-ugc-generator` |
+| `ops` | Operations / File Mgmt | `ops-client-onboarding`, `ops-gdrive-sync` |
+| `viz` | Visual / Video | `viz-thumbnail-creator`, `viz-ugc-generator` |
+| `acc` | Accounting | `acc-invoice-generator`, `acc-expense-tracker` |
 | `meta` | System / Meta | `meta-skill-creator`, `meta-wrap-up` |
 
 **Rules:**

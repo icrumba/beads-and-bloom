@@ -271,31 +271,64 @@ class ClaudePromptTracker:
             return "Unknown"
 
     def send_notification(self, title, subtitle, cwd=None):
-        """Send macOS notification using terminal-notifier"""
-        from datetime import datetime
+        """Send native OS notification (macOS via osascript, Windows via PowerShell)"""
+        import platform
 
         current_time = datetime.now().strftime("%B %d, %Y at %H:%M")
+        system = platform.system()
 
         try:
-            cmd = [
-                "terminal-notifier",
-                "-sound",
-                "default",
-                "-title",
-                title,
-                "-subtitle",
-                f"{subtitle}\n{current_time}",
-            ]
+            if system == "Darwin":
+                self._notify_macos(title, subtitle, current_time)
+            elif system == "Windows":
+                self._notify_windows(title, subtitle, current_time)
+            else:
+                logging.warning(f"Notifications not supported on {system}")
+                return
 
-            if cwd:
-                cmd.extend(["-execute", f'/usr/local/bin/code "{cwd}"'])
-
-            subprocess.run(cmd, check=False, capture_output=True)
             logging.info(f"Notification sent: {title} - {subtitle}")
-        except FileNotFoundError:
-            logging.warning("terminal-notifier not found, notification skipped")
         except Exception as e:
             logging.error(f"Error sending notification: {e}")
+
+    def _notify_macos(self, title, subtitle, message):
+        """Send notification via osascript (built into macOS)"""
+        script = (
+            f'display notification "{message}" '
+            f'with title "{title}" '
+            f'subtitle "{subtitle}" '
+            f'sound name "default"'
+        )
+        subprocess.run(
+            ["osascript", "-e", script],
+            check=False, capture_output=True,
+        )
+
+    def _notify_windows(self, title, subtitle, message):
+        """Send toast notification via PowerShell (built into Windows 10+)"""
+        ps_script = f"""
+[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
+[Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom, ContentType = WindowsRuntime] | Out-Null
+$template = @"
+<toast>
+  <visual>
+    <binding template="ToastGeneric">
+      <text>{title}</text>
+      <text>{subtitle}</text>
+      <text>{message}</text>
+    </binding>
+  </visual>
+  <audio src="ms-winsoundevent:Notification.Default"/>
+</toast>
+"@
+$xml = New-Object Windows.Data.Xml.Dom.XmlDocument
+$xml.LoadXml($template)
+$toast = [Windows.UI.Notifications.ToastNotification]::new($xml)
+[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier("Claude Code").Show($toast)
+"""
+        subprocess.run(
+            ["powershell", "-NoProfile", "-Command", ps_script],
+            check=False, capture_output=True,
+        )
 
 
 def validate_input_data(data, expected_event_name):

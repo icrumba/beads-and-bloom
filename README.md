@@ -118,8 +118,9 @@ Every skill uses a category prefix that matches its output folder.
 |--------|--------|----------|
 | `mkt` | Marketing | `mkt-brand-voice`, `mkt-positioning`, `mkt-email-sequence` |
 | `str` | Strategy | `str-keyword-plan`, `str-competitor-analysis` |
-| `ops` | Operations | `ops-client-onboarding`, `ops-invoice-generator` |
-| `vid` | Video / Visual | `vid-thumbnail-creator`, `vid-ugc-generator` |
+| `ops` | Operations / File Mgmt | `ops-client-onboarding`, `ops-gdrive-sync` |
+| `viz` | Visual / Video | `viz-thumbnail-creator`, `viz-ugc-generator` |
+| `acc` | Accounting | `acc-invoice-generator`, `acc-expense-tracker` |
 | `meta` | System / Meta | `meta-skill-creator`, `meta-wrap-up` |
 
 New categories are added when the first skill in a new domain is built.
@@ -157,12 +158,12 @@ agentic-os/
 │   ├── learnings.md                   <- Skill performance feedback
 │   └── memory/                        <- Daily session logs (YYYY-MM-DD.md)
 │
-│   ├── hooks_info/                    <- Hook scripts (bundled)
-│   │   └── ccnotify.py                <- Desktop notifications
-│
 ├── .env                               <- API keys (gitignored)
 │
 ├── .claude/
+│   ├── hooks_info/                    <- Hook scripts (bundled)
+│   │   └── ccnotify.py                <- Native OS desktop notifications
+│   │
 │   ├── settings.json                  <- Permissions, hooks, MCP servers
 │   ├── commands/
 │   │   └── start-here.md              <- The one command you need
@@ -240,14 +241,11 @@ terminal.
 **Setup:**
 
 The script is bundled at `.claude/hooks_info/ccnotify.py` and hooks are
-pre-configured in `.claude/settings.json`. The only external dependency
-is `terminal-notifier`:
+pre-configured in `.claude/settings.json`. No external dependencies —
+it uses native OS notifications (`osascript` on macOS, PowerShell toast
+notifications on Windows 10+).
 
-```bash
-brew install terminal-notifier
-```
-
-That's it. Hooks fire automatically on `UserPromptSubmit`, `Stop`, and
+Hooks fire automatically on `UserPromptSubmit`, `Stop`, and
 `Notification` events.
 
 **Logs:** `.claude/hooks_info/ccnotify.log` (created on first run)
@@ -273,7 +271,7 @@ anything.
 **Can I build skills for non-marketing work?**
 Yes. The architecture is domain-agnostic. Use `meta-skill-creator` to build
 skills for operations, sales, client onboarding, or anything else. The
-category prefix system (`ops-`, `str-`, `vid-`) is already in place.
+category prefix system (`ops-`, `str-`, `viz-`, `acc-`) is already in place.
 
 **What happens when I add a skill manually?**
 Drop the folder into `.claude/skills/` and start a new session. The
@@ -290,7 +288,7 @@ picks it up and documents it in README.md.
 
 **Required:**
 - Claude Code (Claude's official CLI)
-- macOS (for CCNotify desktop notifications)
+- macOS or Windows 10+ (for desktop notifications)
 
 **Optional:**
 - API keys for connected tools added to `.env`

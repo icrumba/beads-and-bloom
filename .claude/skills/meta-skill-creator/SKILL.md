@@ -87,7 +87,7 @@ Document these decisions in the SKILL.md — each step should make it clear whet
 
 Based on the user interview, fill in these components:
 
-- **name**: Skill identifier — must be `{category}-{skill-name}` in kebab-case. Read the **Skill Categories** table in CLAUDE.md for valid category prefixes (`mkt`, `str`, `ops`, `vid`, `meta`). The folder name must match the `name` field exactly.
+- **name**: Skill identifier — must be `{category}-{skill-name}` in kebab-case. Read the **Skill Categories** table in CLAUDE.md for valid category prefixes (`mkt`, `str`, `ops`, `viz`, `acc`, `meta`). The folder name must match the `name` field exactly.
 - **description**: When to trigger, what it does. This is the primary triggering mechanism - include both what the skill does AND specific contexts for when to use it. All "when to use" info goes here, not in the body. Note: currently Claude has a tendency to "undertrigger" skills -- to not use them when they'd be useful. To combat this, please make the skill descriptions a little bit "pushy". So for instance, instead of "How to build a simple fast dashboard to display internal Anthropic data.", you might write "How to build a simple fast dashboard to display internal Anthropic data. Make sure to use this skill whenever the user mentions dashboards, data visualization, internal metrics, or wants to display any kind of company data, even if they don't explicitly ask for a 'dashboard.'"
 - **compatibility**: Required tools, dependencies (optional, rarely needed)
 - **the rest of the skill :)**

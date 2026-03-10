@@ -8,29 +8,51 @@ Check whether `brand_context/` exists and contains populated files.
 - No brand_context/ files → First-run mode
 - Files exist → Returning mode
 
+## Always (both modes)
+
+Create today's memory file per CLAUDE.md's **Daily Memory** section:
+- If `context/memory/{YYYY-MM-DD}.md` doesn't exist → create it with a `## Session — {HH:MM}` header
+- If it already exists → append a new `## Session — {HH:MM}` block
+- Fill in `### Goal` once the user states what they're working on
+
 ---
 
 ## First-Run Mode
 
-### Step 1: Project Scan
+### Step 1: Project Scan + Intro
 
 Check what exists:
 - `brand_context/` files (which ones, which are missing)
 - `context/USER.md` (populated or template?)
 - `.claude/skills/` (which skills are installed)
 
-Show the user a brief honest state: "Starting fresh — I don't have any brand context yet."
+Read README.md and give the user a brief, genuine explanation of what they've set up:
+- What Agentic OS does (business OS that learns their brand, gets sharper each session)
+- How it works in practice (answer a few questions → brand foundation → every skill uses it)
+- The learnings loop (feedback improves future output)
+- That skills can be built for any domain as needs grow
+- What skills are currently installed (scan `.claude/skills/` dynamically)
 
-### Step 2: Core Questions
+Keep it conversational — 4-6 sentences max, not a feature dump. End with the first question.
 
-Ask these four questions. No more than four before doing work.
+### Step 2: Core Questions (ONE AT A TIME)
 
-1. "What does your business do? One sentence."
-2. "Who's your ideal customer — who do you help?"
-3. "What makes you different from the alternatives?"
-4. "How do you want to come across? (e.g. direct, warm, authoritative, playful)"
+Ask these four questions sequentially. Wait for each answer before asking the next.
+Do NOT present all four at once.
 
-Capture answers. You'll use them to build brand_context/.
+**Question 1:** "What does your business do? Give me the one-sentence version."
+→ Wait for answer.
+
+**Question 2:** "Who's your ideal customer — who do you help?"
+→ Wait for answer.
+
+**Question 3:** "What makes you different from the alternatives?"
+→ Wait for answer.
+
+**Question 4:** "How do you want to come across? (e.g. direct, warm, authoritative, playful)"
+→ Wait for answer.
+
+Capture all answers. You'll use them to build brand_context/.
 
 ### Step 3: Collect Brand Assets + URL Extraction
 
@@ -118,25 +140,58 @@ Do NOT present a menu and ask them to pick. Recommend.
 
 Check freshness, gaps, available skills per CLAUDE.md Session Start protocol.
 
-### Step 2: Brief Status
+### Step 2: Session recap + capabilities + goal question
 
-Show what you know: "I know your brand. [1-sentence summary of their positioning]."
+Read the most recent `context/memory/*.md` file(s) to understand what happened last session. Scan `.claude/skills/` to know what's installed.
 
-Mention any stale files or gaps if present (once, with opportunity framing).
+Open with three things:
+
+**1. Last session recap (1-2 sentences)**
+Pull from the most recent memory file. What did they work on? What was produced?
+Example: "Last time we built out your email sequence for the course launch — three emails, all in your voice."
+
+If no memory files exist, skip the recap.
+
+**2. High-level capabilities (grouped by business goal, not skill names)**
+Scan installed skills and translate them into what the user can actually *do*. Group by outcome, not by skill folder name. Keep it to 2-4 lines max.
+
+Example:
+```
+Right now I can help you with:
+- **Brand & messaging** — refine your voice, positioning, or audience profile
+- **Content creation** — emails, landing pages, blog posts in your voice
+- **Strategy** — keyword planning, competitor analysis
+- **System** — build new skills, wrap up sessions
+```
+
+Only show categories where at least one skill is installed. Use plain language, not skill names. If there's only one category (e.g. just foundation + meta), keep it to one line.
+
+**3. Goal question**
+End with: "What are you working on today?" or a contextual variant based on the recap (e.g. "Want to keep going on the launch sequence, or something different?").
 
 ### Step 3: Route or Recommend
 
-If user has a clear task → execute it using the relevant skill.
-If user is open → recommend the highest-leverage next action based on what's missing or what learnings suggest.
+If user states a clear task → execute it using the relevant skill.
+
+If user says they're unsure → recommend the highest-leverage next action based on what's missing, what learnings suggest, or what naturally follows from the last session.
+
+Mention stale files or gaps only if directly relevant to their stated goal (once, with opportunity framing).
+
+Do NOT:
+- Summarise their brand back to them unprompted
+- Default to recommending brand/foundation tasks
+- Assume they want to create or refine brand context
+- List individual skill names unless the user asks for specifics
 
 ---
 
 ## Anti-Patterns
 
 1. Never ask more than 4 questions before doing work
-2. Never present a skill menu — recommend, don't ask
-3. Never rebuild brand_context/ without explicitly asking first
-4. Never give generic recommendations — tie them to the specific business
-5. Never silently produce generic output when context is missing — note the gap
-6. Never use a hardcoded skill list — always scan `.claude/skills/` dynamically
-7. Frame gaps as opportunities, not failures
+2. Never present all questions at once — ask one, wait, then ask the next
+3. Never present a skill menu — recommend, don't ask
+4. Never rebuild brand_context/ without explicitly asking first
+5. Never give generic recommendations — tie them to the specific business
+6. Never silently produce generic output when context is missing — note the gap
+7. Never use a hardcoded skill list — always scan `.claude/skills/` dynamically
+8. Frame gaps as opportunities, not failures

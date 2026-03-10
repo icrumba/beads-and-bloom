@@ -96,13 +96,15 @@ After applying fixes, log what was changed in the skill's learnings section so t
 
 ### 3c: Write Daily Memory
 
-Create or update `context/memory/{YYYY-MM-DD}.md` for today's date. Include:
-- Tasks completed and deliverables produced
-- Decisions made during the session
-- Feedback received
-- Any context the next session should know
+One file per day: `context/memory/{YYYY-MM-DD}.md`. Multiple sessions in one day append new session blocks to the same file.
 
-If the file already exists (multiple sessions in one day), append to it.
+**If the file already exists**, append a new `## Session N` block (increment the session number). **If it doesn't exist**, create it.
+
+Each session block must include:
+- `### Goal` — what the user set out to do
+- `### What happened` — bullet points covering tasks completed, deliverables produced, decisions made, feedback received, and anything the next session should know
+
+**Never leave placeholder text** like `[Waiting for user goal]`. Replace placeholders with actual content from the session. If the heartbeat created the file with placeholders, overwrite them now.
 
 ### 3d: Promote to Long-Term Memory
 
@@ -174,9 +176,17 @@ If no deliverables were produced (e.g., session was planning or discussion only)
 
 ---
 
+## Step 5: Show Usage
+
+After the session summary, run the `/usage` command so the user can see their current plan usage, limits, and remaining capacity.
+
+---
+
 ## Rules
 
 *Updated automatically when the user flags issues. Read before every run.*
+
+- 2026-03-10: Daily memory file must contain real content, never placeholders. One file per day with `## Session N` blocks. Always fill in the goal and what happened — don't leave heartbeat scaffolding as-is.
 
 ---
 

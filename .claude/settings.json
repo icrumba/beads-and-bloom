@@ -8,7 +8,10 @@
       "Bash(git commit:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
-      "Edit(/src/**)"
+      "Bash(git log:*)",
+      "Read(*)",
+      "Edit(*)",
+      "Write(*)"
     ],
     "deny": [
       "Bash(npm install *)",
@@ -36,7 +39,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$PROJECT_DIR/.claude/hooks_info/ccnotify.py\" UserPromptSubmit"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks_info/ccnotify.py\" UserPromptSubmit"
           }
         ]
       }
@@ -46,7 +49,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$PROJECT_DIR/.claude/hooks_info/ccnotify.py\" Stop"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks_info/ccnotify.py\" Stop"
           }
         ]
       }
@@ -56,7 +59,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$PROJECT_DIR/.claude/hooks_info/ccnotify.py\" Notification"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks_info/ccnotify.py\" Notification"
           }
         ]
       }
