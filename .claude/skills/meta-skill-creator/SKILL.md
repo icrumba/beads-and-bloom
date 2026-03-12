@@ -92,7 +92,59 @@ Based on the user interview, fill in these components:
 - **description**: When to trigger, what it does. This is the primary triggering mechanism - include both what the skill does AND specific contexts for when to use it. All "when to use" info goes here, not in the body. Note: currently Claude has a tendency to "undertrigger" skills -- to not use them when they'd be useful. To combat this, please make the skill descriptions a little bit "pushy". So for instance, instead of "How to build a simple fast dashboard to display internal Anthropic data.", you might write "How to build a simple fast dashboard to display internal Anthropic data. Make sure to use this skill whenever the user mentions dashboards, data visualization, internal metrics, or wants to display any kind of company data, even if they don't explicitly ask for a 'dashboard.'"
 - **compatibility**: Required tools, dependencies (optional, rarely needed)
 - **output path (mandatory for all output-producing skills)**: Every skill that produces files — content, transcripts, research briefs, images, diagrams, anything — must save output to `projects/{skill-folder-name}/` with date-stamped filenames: `{descriptive-name}_{YYYY-MM-DD}.md`. The SKILL.md must include an explicit "Save Output" step that: (1) creates the folder if it doesn't exist, (2) uses the exact path format `projects/{skill-folder-name}/{batch-or-name}_{YYYY-MM-DD}/`, (3) states "Always save output to disk. This is not optional." Utility skills (`tool-*`) that extract content (e.g., transcripts, scraped data) also save to `projects/{tool-name}/`. Only foundation skills that exclusively write to `brand_context/` are exempt. If a skill is missing this step, add it before considering the skill complete.
-- **the rest of the skill :)**
+
+### Canonical SKILL.md Section Order (mandatory)
+
+**Every** SKILL.md must follow this exact top-level `##` section order. This is non-negotiable — consistency across all skills means anyone reading them knows exactly where to find what.
+
+```
+---
+name: {category}-{skill-name}
+description: >
+  {trigger phrases, what it does, negative triggers}
+---
+
+# {Skill Title}
+
+{1-2 sentence overview}
+
+## Outcome
+{What it produces, output paths, file formats}
+
+## Context Needs
+{Table: File | Load level | Purpose}
+
+## Dependencies                    ← only if applicable
+{Table: Skill | Required? | What it provides | Without it}
+
+## Skill Relationships             ← only if applicable
+{Upstream, downstream, trigger conflicts}
+
+## Before You Start                ← optional gate/mode selection
+
+## Step N: {Step Title}            ← numbered steps as top-level ## headings
+{Methodology — each step is its own ## heading, NOT nested under a wrapper}
+{Include save, humanizer gate, and feedback collection as explicit steps}
+
+## Rules
+{Hard constraints, dated entries — read before every run}
+
+## Self-Update
+{Instructions for runtime self-modification of Rules}
+
+## Troubleshooting                 ← optional, always LAST
+{Common issues + fixes}
+```
+
+**Enforcement rules:**
+- Steps are ALWAYS top-level `##` headings. Never wrap them under `## Instructions` or `## Methodology` — that creates an unnecessary nesting level.
+- `## Rules` and `## Self-Update` always come after all steps, in that order.
+- `## Troubleshooting` is always the very last section if present.
+- `## Outcome` is always present — even utility skills describe what they return.
+- `## Context Needs` is always present — even if "None" with just a learnings row.
+- Additional skill-specific sections (e.g., `## Pipeline Mode`, `## Schedule Syntax`) go between the last step and `## Rules`.
+
+When editing an existing skill, check its section order against this template and fix any deviations before considering the edit complete.
 
 ### Learnings Integration (Required)
 
@@ -370,6 +422,10 @@ kill $VIEWER_PID 2>/dev/null
 
 This is the heart of the loop. You've run the test cases, the user has reviewed the results, and now you need to make the skill better based on their feedback.
 
+### Verify canonical section order
+
+Before making any changes, check the skill's current `##` headings against the **Canonical SKILL.md Section Order** (defined in the "Write the SKILL.md" section above). If the skill doesn't follow the canonical order, fix that first — before addressing content improvements. This applies to every editing pass, not just the first one.
+
 ### How to think about improvements
 
 1. **Generalize from the feedback.** The big picture thing that's happening here is that we're trying to create skills that can be used a million times (maybe literally, maybe even more who knows) across many different prompts. Here you and the user are iterating on only a few examples over and over again because it helps move faster. The user knows these examples in and out and it's quick for them to assess new outputs. But if the skill you and the user are codeveloping works only for those examples, it's useless. Rather than put in fiddly overfitty changes, or oppressively constrictive MUSTs, if there's some stubborn issue, you might try branching out and using different metaphors, or recommending different patterns of working. It's relatively cheap to try and maybe you'll land on something great.
@@ -513,6 +569,7 @@ In Claude.ai, the core workflow is the same (draft → test → review → impro
 **Packaging**: The `package_skill.py` script works anywhere with Python and a filesystem. On Claude.ai, you can run it and the user can download the resulting `.skill` file.
 
 **Updating an existing skill**: The user might be asking you to update an existing skill, not create a new one. In this case:
+- **Verify canonical section order first.** Before making content changes, check the skill's `##` headings against the **Canonical SKILL.md Section Order** (in "Write the SKILL.md" above). Fix any structural deviations before addressing the requested changes.
 - **Preserve the original name.** Note the skill's directory name and `name` frontmatter field -- use them unchanged. E.g., if the installed skill is `research-helper`, output `research-helper.skill` (not `research-helper-v2`).
 - **Copy to a writeable location before editing.** The installed skill path may be read-only. Copy to `/tmp/skill-name/`, edit there, and package from the copy.
 - **If packaging manually, stage in `/tmp/` first**, then copy to the output directory -- direct writes may fail due to permissions.
@@ -529,7 +586,7 @@ If you're in Cowork, the main things to know are:
 - Feedback works differently: since there's no running server, the viewer's "Submit All Reviews" button will download `feedback.json` as a file. You can then read it from there (you may have to request access first).
 - Packaging works — `package_skill.py` just needs Python and a filesystem.
 - Description optimization (`run_loop.py` / `run_eval.py`) should work in Cowork just fine since it uses `claude -p` via subprocess, not a browser, but please save it until you've fully finished making the skill and the user agrees it's in good shape.
-- **Updating an existing skill**: The user might be asking you to update an existing skill, not create a new one. Follow the update guidance in the claude.ai section above.
+- **Updating an existing skill**: The user might be asking you to update an existing skill, not create a new one. Follow the update guidance in the claude.ai section above — including verifying canonical section order before making content changes.
 
 ---
 

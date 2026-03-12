@@ -39,9 +39,7 @@ Load what exists. Skip what doesn't. This skill works standalone.
 
 ---
 
-## Instructions
-
-### Step 1: Check What We're Working With
+## Step 1: Check What We're Working With
 
 Load brand context per the table above. Tell the user what's available:
 
@@ -54,7 +52,7 @@ Brand context:
 
 If voice profile exists, note the tone in one line. If not, work with a neutral professional voice and mention that `/mkt-brand-voice` would make the output sharper.
 
-### Step 2: Get the Source Content
+## Step 2: Get the Source Content
 
 Take whatever the user gives you — pasted text, a URL, a file path. Valid sources:
 
@@ -69,7 +67,7 @@ Take whatever the user gives you — pasted text, a URL, a file path. Valid sour
 
 If they give a URL, try WebFetch first. If that fails (JS-heavy site, bot protection), fall back to `firecrawl-scraper` (needs `FIRECRAWL_API_KEY` in `.env`). If both fail, ask them to paste the content.
 
-### Step 3: Break It Into Atoms
+## Step 3: Break It Into Atoms
 
 Pull the source apart into the pieces you'll remix across platforms:
 
@@ -83,7 +81,7 @@ Pull the source apart into the pieces you'll remix across platforms:
 
 Show the atoms to the user before generating. "Here's what I pulled out. Anything to add or drop?"
 
-### Step 4: Check for Algorithm Changes
+## Step 4: Check for Algorithm Changes
 
 Before writing anything, do a quick search for each target platform:
 
@@ -93,19 +91,19 @@ Before writing anything, do a quick search for each target platform:
 
 Compare what you find against the platform references. If something meaningful changed, flag it. If search isn't available, use the reference data and note it.
 
-### Step 5: Pick the Platforms
+## Step 5: Pick the Platforms
 
 Ask: "All 8 platforms, or specific ones?"
 
 Default to all unless they narrow it. If you have ICP data, recommend the platforms where their audience actually hangs out.
 
-### Step 6: Adapt the Voice
+## Step 6: Adapt the Voice
 
 Read `references/voice-adaptation.md` for the full adaptation framework.
 
 The same insight needs to hit differently on each platform. Take the user's voice profile and adjust the register, pace, length, and vocabulary to match where it's going. Same person, different room.
 
-### Step 7: Write the Content
+## Step 7: Write the Content
 
 For each platform, read the relevant reference:
 
@@ -121,15 +119,15 @@ For each piece, include:
 - Posting time suggestion (if learnings have data)
 - A CTA that fits the platform
 
-### Step 8: Content Calendar (If Asked)
+## Step 8: Content Calendar (If Asked)
 
 If they want a weekly schedule, read `references/voice-adaptation.md` for the 5-3-2 weekly rhythm and map the assets across the week.
 
-### Step 9: Humanizer Gate
+## Step 9: Humanizer Gate
 
 Before saving, run all generated content through `tool-humanizer` in pipeline mode. Use `deep` mode if `brand_context/voice-profile.md` was loaded, `standard` otherwise. Read `tool-humanizer/SKILL.md` and apply its pattern detection + replacement process to each platform's content. Only show the score summary if the delta exceeds 2 points.
 
-### Step 10: Save Everything
+## Step 10: Save Everything
 
 Create: `projects/mkt-content-repurposing/{campaign-name}_{YYYY-MM-DD}/`
 

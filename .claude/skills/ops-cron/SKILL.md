@@ -31,9 +31,7 @@ No brand context needed — this is infrastructure.
 
 ---
 
-## Instructions
-
-### Step 1: Determine the Action
+## Step 1: Determine the Action
 
 | Action | User says | What to do |
 |--------|----------|------------|
@@ -44,7 +42,7 @@ No brand context needed — this is infrastructure.
 | **Logs** | "check cron logs", "did the job run" | Read latest from `cron/logs/` |
 | **Remove one** | "remove the morning briefing job" | Delete the job file, re-run install |
 
-### Step 2: Create a Job File
+## Step 2: Create a Job File
 
 Ask the user (max 3 questions):
 1. **What should it do?** — The task in plain language
@@ -75,7 +73,7 @@ allowed_tools: "Read,Write,Edit,Bash(git:*),WebSearch,WebFetch,Grep,Glob"
 - Include the project directory: the install script handles `cd` automatically
 - Keep prompts focused — one clear task per job
 
-### Step 3: Verify Infrastructure
+## Step 3: Verify Infrastructure
 
 Check that `cron/` directory structure exists:
 
@@ -88,13 +86,13 @@ cron/
 
 If missing, create it. The `install.sh` script and `.gitignore` entry for `cron/logs/` should already exist — if not, create them from `references/job-format.md`.
 
-### Step 4: Install
+## Step 4: Install
 
 After creating or modifying job files, ask: "Want me to install this to your crontab now?"
 
 If yes, run `bash cron/install.sh`. Show the user what was installed.
 
-### Step 5: Verify
+## Step 5: Verify
 
 After installation, show:
 ```
@@ -133,3 +131,12 @@ Always offset minutes from :00 and :30 to spread load.
 ## Self-Update
 
 If the user reports a job failing, a prompt not working headlessly, or a scheduling issue — update the `## Rules` section immediately with the fix and today's date. Also log to `context/learnings.md` under `## ops-cron`.
+
+---
+
+## Troubleshooting
+
+- **Job not running**: Check `crontab -l` to verify registration. Check `cron/logs/` for errors. Ensure the machine was on at the scheduled time.
+- **Prompt fails headlessly**: The prompt is missing context. Headless runs have no conversation history — make prompts fully self-contained with explicit paths.
+- **Permission denied**: Ensure `cron/install.sh` is executable (`chmod +x`). Check that Claude Code has the required tool permissions.
+- **Schedule confusion**: Use `## Schedule Syntax Quick Reference` above. Remember to offset minutes from :00.

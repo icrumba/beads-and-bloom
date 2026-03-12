@@ -23,6 +23,24 @@
 
 - **Speed:** 1.2 (slightly faster, more natural energy)
 - **Pitch:** 0 (neutral)
+- **Emotion:** Friendly (options: Excited, Friendly, Serious, Soothing, Broadcaster)
+
+## ElevenLabs Settings
+
+These fine-tune the cloned voice quality. Lower stability = more expressive, higher = more consistent but robotic.
+
+- **stability:** 0.3 (more expressive — confirmed better than default in testing)
+- **similarity_boost:** 0.75 (high voice match)
+- **style:** 0.7 (more stylistic variation — confirmed better than default in testing)
+
+Include in API request as:
+```json
+"elevenlabs_settings": {
+    "stability": 0.3,
+    "similarity_boost": 0.75,
+    "style": 0.7
+}
+```
 
 ## Video Defaults
 

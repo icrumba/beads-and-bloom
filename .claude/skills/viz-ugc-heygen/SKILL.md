@@ -23,6 +23,10 @@ allowed_tools:
 
 Create talking-head UGC videos using HeyGen's cloned avatars and custom voices.
 
+## Outcome
+
+A generated MP4 video with branded captions, saved to `projects/viz-ugc-heygen/{topic-slug}_{YYYY-MM-DD}.mp4`, alongside a metadata file with the script, settings, and video URL. Always save output to disk. This is not optional.
+
 ## Context Needs
 
 | Context | Usage |
@@ -38,20 +42,19 @@ Create talking-head UGC videos using HeyGen's cloned avatars and custom voices.
 |-------|-----------|-----------------|------------|
 | `tool-humanizer` | Optional | De-AI scripts before video gen | Scripts may sound robotic |
 
-## Methodology
+## Step 0: Auto-Setup & Preflight
 
-### Step 0: Preflight
-
-1. Check `HEYGEN_API_KEY` is available. If missing, tell the user:
+1. Run `bash .claude/skills/viz-ugc-heygen/scripts/setup.sh` to ensure ffmpeg (with libass) is installed. Skip if already verified this session.
+2. Check `HEYGEN_API_KEY` is available. If missing, tell the user:
    - "HeyGen API key needed for video generation"
    - Get it from https://app.heygen.com/settings?nav=API
    - Add to `.env` as `HEYGEN_API_KEY=your-key`
    - Stop here if no key.
-2. Check HeyGen MCP tools are available (`mcp__heygen__*`). If not, fall back to direct API via WebFetch.
-3. Read `context/learnings.md` → `## viz-ugc-heygen` section.
-4. Load brand context per the Context Needs table above.
+3. Check HeyGen MCP tools are available (`mcp__heygen__*`). If not, fall back to direct API via WebFetch.
+4. Read `context/learnings.md` → `## viz-ugc-heygen` section.
+5. Load brand context per the Context Needs table above.
 
-### Step 1: Understand the Brief
+## Step 1: Understand the Brief
 
 Ask (max 2 questions):
 - **What's the video about?** Topic, key message, CTA
@@ -62,7 +65,7 @@ Auto-detect from context:
 - Orientation (portrait for TikTok/Reels/Shorts, landscape for YouTube/LinkedIn)
 - Avatar look (if user has a preferred default, use it)
 
-### Step 2: Select Avatar & Voice
+## Step 2: Select Avatar & Voice
 
 1. **Read config** — load `references/avatar-config.md` for stored avatar looks, voice ID, default look, and rotation rules
 2. **Look rotation** — if config has a look rotation list:
@@ -77,7 +80,7 @@ Auto-detect from context:
 4. **Voice** — use stored voice ID from config, or discover via `mcp__heygen__get_voices`
 5. Confirm avatar look + voice pairing
 
-### Step 3: Write the Script
+## Step 3: Write the Script
 
 Follow `references/scripting-guide.md`:
 - Write conversationally — 150 words/min at 1.0x speed
@@ -91,7 +94,7 @@ Run through `tool-humanizer` (pipeline mode) if available.
 
 Present script to user for approval before generating.
 
-### Step 4: Choose Generation Mode
+## Step 4: Choose Generation Mode
 
 **Video Agent mode** (default for simple videos):
 - Single avatar, straightforward delivery
@@ -103,7 +106,7 @@ Present script to user for approval before generating.
 - Build request body per `references/api-reference.md`
 - Call `POST /v2/video/generate` via WebFetch or MCP
 
-### Step 5: Configure & Generate
+## Step 5: Configure & Generate
 
 Based on platform from Step 1, set dimensions (see `references/platform-formats.md`):
 - YouTube/LinkedIn: 1920x1080 (16:9)
@@ -111,35 +114,60 @@ Based on platform from Step 1, set dimensions (see `references/platform-formats.
 - Instagram Feed: 1080x1080 (1:1)
 
 Required (always set per `references/avatar-config.md`):
-- Captions: always enabled (`"caption": true`)
+- Captions: **disabled** in API (`"caption": false`) — we burn branded captions with ffmpeg in Step 6
 - Voice speed: from config defaults (e.g., 1.2)
 - Voice pitch: from config defaults (e.g., 0)
+- Voice emotion: from config defaults (e.g., "Friendly")
+- ElevenLabs settings: from config defaults (stability, similarity_boost, style)
 
 Optional enhancements:
 - Background (color, image URL, or video URL)
 - Test mode first if user wants to preview without burning credits
 
-### Step 6: Poll & Deliver
+## Step 6: Poll & Deliver
 
 1. Save `video_id` immediately
-2. Poll status every 60-90s via `GET /v1/video_status.get` (use python3 urllib with API key from `.mcp.json`)
+2. Poll status every 30s via `GET /v1/video_status.get` (use python3 urllib with API key from `.mcp.json`). Run polling in background.
 3. On completion:
-   - **Download the non-captioned MP4** (`video_url`) — signed URLs expire
-   - **Download the `.ass` subtitle file** (`caption_url`)
-   - **Restyle captions** — replace the `Style: Default,...` line in the `.ass` file with the branded template from `references/avatar-config.md`
-   - **Burn branded captions** onto the video:
+   - **Download the non-captioned MP4** (`video_url`) to `projects/viz-ugc-heygen/raw.mp4` — signed URLs expire
+   - **Download the `.ass` subtitle file** (`caption_url`) to `projects/viz-ugc-heygen/captions.ass`
+   - **Burn branded captions** onto the video using ffmpeg + libass:
      ```
-     uv run .claude/skills/viz-ugc-heygen/scripts/burn-captions.py raw.mp4 captions.ass output.mp4
+     python3 .claude/skills/viz-ugc-heygen/scripts/burn-captions.py raw.mp4 captions.ass output.mp4 --restyle
      ```
+     The `--restyle` flag auto-applies branded styles (Roboto-Bold, white text, brand blue outline) from `references/avatar-config.md`.
    - Save final MP4 to `projects/viz-ugc-heygen/{topic-slug}_{YYYY-MM-DD}.mp4`
-   - Clean up intermediate files (raw video, .ass)
+   - Clean up intermediate files (raw.mp4, captions.ass)
+   - Auto-open the final MP4: `open projects/viz-ugc-heygen/{topic-slug}_{YYYY-MM-DD}.mp4`
    - Show file path and duration to user
 4. On failure: show error, suggest fixes
 
-### Step 7: Save & Feedback
+## Step 7: Save & Collect Feedback
 
 1. Save video metadata to `projects/viz-ugc-heygen/`:
    - `{topic-slug}_{YYYY-MM-DD}.md` with: script, video URL, thumbnail, settings used, platform
 2. Ask: "How did this land? Any adjustments for next time?"
 3. Log feedback to `context/learnings.md` → `## viz-ugc-heygen`
    - Preferred avatar look, voice settings, script style notes
+
+---
+
+## Rules
+
+*Updated automatically when the user flags issues. Read before every run.*
+
+---
+
+## Self-Update
+
+If the user flags an issue — wrong avatar, bad pacing, script tone off — update the `## Rules` section immediately with the correction and today's date.
+
+---
+
+## Troubleshooting
+
+- **No HeyGen API key**: This skill cannot fall back — video generation requires the API key and HeyGen plan credits.
+- **MCP tools not available**: Fall back to direct API calls via WebFetch with the API key from `.env`.
+- **Video generation fails**: Check credit balance with `mcp__heygen__get_remaining_credits`. Common issues: script too long, invalid avatar ID, dimension mismatch.
+- **Captions look wrong**: Check the `.ass` style line matches `references/avatar-config.md`. Re-run `burn-captions.py` after fixing.
+- **Signed URL expired**: Re-poll the video status to get a fresh download URL.
