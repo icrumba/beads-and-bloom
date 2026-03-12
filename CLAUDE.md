@@ -119,7 +119,7 @@ The full specification lives in `PRD.md`. Read it when building any new componen
 | **Skills Pack** | `.claude/skills/{category}-{skill-name}/` | Capabilities. Grows over time. |
 | **Brand Context** | `brand_context/` | Client brand data. Version controlled. |
 
-`.env` is the **only** gitignored file.
+`.env`, `.mcp.json`, `installed.json`, user data dirs (`context/memory/`, `projects/`, `brand_context/*.md`) are gitignored. See `.gitignore` for full list.
 
 ---
 
@@ -165,36 +165,7 @@ Every skill and its output folder uses a category prefix. This keeps skills, out
 | `mkt-positioning` | "differentiation", "angle", "hooks", "USP" | `positioning.md` |
 | `mkt-icp` | "target audience", "buyer persona", "ideal customer" | `icp.md` |
 
-### Utility Skills (backends used by other skills)
-
-| Skill | Triggers on | Used by |
-|-------|------------|---------|
-| `tool-firecrawl-scraper` | "scrape website", "crawl site", "extract data from URL", "brand assets from URL" | `mkt-brand-voice` (Auto-Scrape fallback + branding extraction) |
-| `tool-humanizer` | "humanize this", "de-AI this", "make this sound human", "remove AI patterns", "clean up this copy" | All execution skills (auto post-processing) |
-| `tool-youtube` | "latest youtube video", "get transcript", "youtube transcript", "what did they post", "fetch from youtube", "channel updates" | `mkt-content-repurposing` (content source). Saves transcripts to `projects/tool-youtube/` |
-
-### Strategy Skills
-
-| Skill | Triggers on | Writes to |
-|-------|------------|-----------|
-| `str-trending-research` | "research", "research X", "what's trending", "what are people saying about", "last 30 days", "look into", "dig into", "what's new with" | `projects/str-trending-research/` |
-
-### Execution Skills
-
-| Skill | Triggers on | Writes to |
-|-------|------------|-----------|
-| `mkt-content-repurposing` | "repurpose this", "turn this into social posts", "atomize", "LinkedIn post from this", "thread from this", "content calendar" | `projects/mkt-content-repurposing/` |
-| `mkt-copywriting` | "write copy for", "landing page copy", "sales page", "help me sell", "punch this up", "make this convert", "score this copy", "ad copy" | `projects/mkt-copywriting/` |
-| `viz-excalidraw-diagram` | "excalidraw diagram", "draw a diagram", "visualize this workflow", "architecture diagram", "system diagram", "diagram this", "excalidraw" | `projects/viz-excalidraw-diagram/` |
-| `viz-nano-banana` | "generate an image", "create an infographic", "nano banana", "notebook sketch", "comic strip", "hand-drawn diagram", "visual for", "make an image of", "sketchnote", "storyboard" | `projects/viz-nano-banana/` |
-| `viz-ugc-heygen` | "create a video", "UGC video", "heygen video", "talking head video", "avatar video", "make a video about", "video script", "generate video" | `projects/viz-ugc-heygen/` |
-| `mkt-ugc-scripts` | "write a script", "UGC script", "video script for", "short form script", "TikTok script", "Reels script", "Shorts script", "script ideas for", "what should I make a video about" | `projects/mkt-ugc-scripts/` |
-
-### Operations Skills
-
-| Skill | Triggers on | Writes to |
-|-------|------------|-----------|
-| `ops-cron` | "schedule a job", "cron job", "run this every morning", "automate daily", "recurring task", "list scheduled jobs", "check cron logs" | `cron/jobs/`, system crontab |
+*Optional skills are auto-registered by the Heartbeat reconciliation when their folders appear on disk. Install optional skills with `bash scripts/add-skill.sh <name>`. See `.claude/skills/_catalog/catalog.json` for the full list.*
 
 *Add new skills to this table when built and registered.*
 
@@ -210,19 +181,8 @@ Which `brand_context/` files each skill reads. Load only what's listed — no sk
 | `mkt-positioning` | — | **writes** | full | — | — | `## mkt-positioning` |
 | `mkt-icp` | — | summary | **writes** | — | — | `## mkt-icp` |
 | `meta-wrap-up` | — | — | — | — | — | `## meta-wrap-up` |
-| `tool-firecrawl-scraper` | — | — | — | — | — | `## tool-firecrawl-scraper` |
-| `str-trending-research` | — | — | language section | — | — | `## str-trending-research` |
-| `mkt-content-repurposing` | full | — | — | yes | — | `## mkt-content-repurposing` |
-| `mkt-copywriting` | full | angle only | full | yes | — | `## mkt-copywriting` |
-| `tool-humanizer` | full | — | — | tone refs | — | `## tool-humanizer` |
-| `tool-youtube` | — | — | — | — | — | `## tool-youtube` |
-| `viz-excalidraw-diagram` | — | — | — | — | — | `## viz-excalidraw-diagram` |
-| `viz-nano-banana` | — | — | — | — | — | `## viz-nano-banana` |
-| `viz-ugc-heygen` | full | — | language section | tone refs | — | `## viz-ugc-heygen` |
-| `mkt-ugc-scripts` | full | angle only | language section | tone refs | — | `## mkt-ugc-scripts` |
-| `ops-cron` | — | — | — | — | — | `## ops-cron` |
 
-*New skills declare their own row when added.*
+*Optional skills auto-add their row here via Heartbeat reconciliation when installed. New skills declare their own row when added.*
 
 **Matrix key:** `writes` = creates file | `full` = entire file | `summary` = 1-2 sentences | `angle only` = chosen angle | `tone only` = tone + vocabulary | `language section` = words-they-use section | `## skill-name` = read only that section from context/learnings.md | `—` = don't load
 
@@ -239,6 +199,7 @@ Which `brand_context/` files each skill reads. Load only what's listed — no sk
 - Folders are created on first use by the skill. No empty pre-scaffolding.
 - Default format: markdown unless user specifies otherwise
 - After major deliverables: ask for feedback, log to `context/learnings.md`
+- **Auto-download binary outputs.** After saving any non-markdown file (PNG, PDF, SVG, video, JSON diagrams, etc.), copy it to `~/Downloads/` using `cp <filepath> ~/Downloads/`. This applies to all skills — the user should never have to manually navigate to a generated file.
 
 ### Humanizer Gate
 
