@@ -284,183 +284,124 @@ echo ""
 printf "  Enter numbers separated by spaces (e.g., \"1 5 6\"), \"all\", or press Enter for core only: "
 read -r USER_INPUT
 
-# Parse selection into an array of indices (0-based)
-declare -a SELECTED_INDICES=()
-
-if [[ "${USER_INPUT,,}" == "all" ]]; then
-    # Select everything
-    for i in "${!SKILL_NAMES[@]}"; do
-        SELECTED_INDICES+=("$i")
-    done
-elif [[ -n "$USER_INPUT" ]]; then
-    # Parse space-separated numbers
-    for num in $USER_INPUT; do
-        # Validate it is a number in range
-        if [[ "$num" =~ ^[0-9]+$ ]] && [[ "$num" -ge 1 ]] && [[ "$num" -le "${#SKILL_NAMES[@]}" ]]; then
-            SELECTED_INDICES+=("$((num - 1))")
-        else
-            warn "Ignoring invalid selection: $num"
-        fi
-    done
-fi
-
 # =============================================================================
-# 9. Resolve dependencies
+# 9-12. Resolve deps, remove skills, write installed.json (via python3)
 # =============================================================================
-# Build the set of selected skill names
-declare -A SELECTED_MAP=()
-for idx in "${SELECTED_INDICES[@]}"; do
-    SELECTED_MAP["${SKILL_NAMES[$idx]}"]=1
-done
-
-# Resolve: if a selected skill has dependencies, add them
-DEPS_ADDED=()
-for idx in "${SELECTED_INDICES[@]}"; do
-    if [[ -n "${SKILL_DEPS[$idx]}" ]]; then
-        IFS=',' read -ra dep_list <<< "${SKILL_DEPS[$idx]}"
-        for dep in "${dep_list[@]}"; do
-            dep=$(echo "$dep" | xargs)  # trim whitespace
-            [[ -z "$dep" ]] && continue
-            if [[ -z "${SELECTED_MAP[$dep]:-}" ]]; then
-                SELECTED_MAP["$dep"]=1
-                DEPS_ADDED+=("$dep (required by ${SKILL_NAMES[$idx]})")
-            fi
-        done
-    fi
-done
+# Delegate all selection logic to python3 for bash 3 compatibility.
+# Python handles: parsing input, resolving deps, computing install/remove lists,
+# removing folders, and writing installed.json.
 
 echo ""
 
-# Report auto-added dependencies
-if [[ ${#DEPS_ADDED[@]} -gt 0 ]]; then
-    info "Auto-resolved dependencies:"
-    for note in "${DEPS_ADDED[@]}"; do
-        printf "    ${GREEN}+${NC} %s\n" "$note"
-    done
-    echo ""
-fi
+python3 << PYEOF
+import json, datetime, os, sys, shutil
 
-# =============================================================================
-# 10. Build final skill lists
-# =============================================================================
-# Installed = core + selected optional
-declare -a INSTALLED_SKILLS=()
-while IFS= read -r skill; do
-    INSTALLED_SKILLS+=("$skill")
-done <<< "$CORE_SKILLS"
+catalog_path = "$CATALOG"
+installed_json = "$INSTALLED_JSON"
+skills_dir = "$SKILLS_DIR"
+user_input = """$USER_INPUT""".strip()
 
-for name in "${!SELECTED_MAP[@]}"; do
-    INSTALLED_SKILLS+=("$name")
-done
+with open(catalog_path) as f:
+    catalog = json.load(f)
 
-# Removed = optional skills NOT selected
-declare -a REMOVED_SKILLS=()
-for i in "${!SKILL_NAMES[@]}"; do
-    if [[ -z "${SELECTED_MAP[${SKILL_NAMES[$i]}]:-}" ]]; then
-        REMOVED_SKILLS+=("${SKILL_NAMES[$i]}")
-    fi
-done
+core = catalog['core_skills']
+optional = catalog['skills']
 
-# =============================================================================
-# 11. Remove unselected skill folders
-# =============================================================================
-if [[ ${#REMOVED_SKILLS[@]} -gt 0 ]]; then
-    info "Removing unselected skills..."
-    for skill in "${REMOVED_SKILLS[@]}"; do
-        skill_path="$SKILLS_DIR/$skill"
-        if [[ -d "$skill_path" ]]; then
-            rm -rf "$skill_path"
-            printf "    ${DIM}removed %s${NC}\n" "$skill"
-        fi
-    done
-    echo ""
-fi
+# Build ordered list of optional skill names (same order as menu)
+order = {'utility': 1, 'strategy': 2, 'execution': 3, 'visual': 4, 'operations': 5}
+skill_list = sorted(optional.keys(), key=lambda n: (order.get(optional[n]['category'], 99), n))
 
-# =============================================================================
-# 12. Write installed.json
-# =============================================================================
-# Ensure the _catalog directory exists
-mkdir -p "$SKILLS_DIR/_catalog"
+# Parse user selection
+selected = set()
+if user_input.lower() == 'all':
+    selected = set(skill_list)
+elif user_input:
+    for token in user_input.split():
+        try:
+            num = int(token)
+            if 1 <= num <= len(skill_list):
+                selected.add(skill_list[num - 1])
+            else:
+                print(f"  \033[1;33m! Ignoring invalid selection: {token}\033[0m")
+        except ValueError:
+            print(f"  \033[1;33m! Ignoring invalid selection: {token}\033[0m")
 
-# Write skill lists to temp files for python to read cleanly
-TMPDIR_INSTALL=$(mktemp -d)
-printf '%s\n' "${INSTALLED_SKILLS[@]}" > "$TMPDIR_INSTALL/installed.txt"
-printf '%s\n' "${REMOVED_SKILLS[@]}" > "$TMPDIR_INSTALL/removed.txt" 2>/dev/null || touch "$TMPDIR_INSTALL/removed.txt"
+# Resolve dependencies
+deps_added = []
+to_check = list(selected)
+while to_check:
+    skill = to_check.pop()
+    for dep in optional.get(skill, {}).get('dependencies', []):
+        if dep not in selected and dep in optional:
+            selected.add(dep)
+            deps_added.append(f"{dep} (required by {skill})")
+            to_check.append(dep)
 
-python3 -c "
-import json, datetime, sys
+if deps_added:
+    print("  \033[0;36mAuto-resolved dependencies:\033[0m")
+    for note in deps_added:
+        print(f"    \033[0;32m+\033[0m {note}")
+    print()
 
-with open('$TMPDIR_INSTALL/installed.txt') as f:
-    installed = sorted([l.strip() for l in f if l.strip()])
-with open('$TMPDIR_INSTALL/removed.txt') as f:
-    removed = sorted([l.strip() for l in f if l.strip()])
+# Build final lists
+installed_skills = sorted(set(core) | selected)
+removed_skills = sorted(set(skill_list) - selected)
 
-with open('$CATALOG') as f:
-    version = json.load(f)['version']
+# Remove unselected skill folders
+if removed_skills:
+    print("  \033[0;36mRemoving unselected skills...\033[0m")
+    for skill in removed_skills:
+        skill_path = os.path.join(skills_dir, skill)
+        if os.path.isdir(skill_path):
+            shutil.rmtree(skill_path)
+            print(f"    \033[2mremoved {skill}\033[0m")
+    print()
 
+# Write installed.json
+os.makedirs(os.path.dirname(installed_json), exist_ok=True)
 data = {
     'installed_at': datetime.date.today().isoformat(),
-    'version': version,
-    'installed_skills': installed,
-    'removed_skills': removed
+    'version': catalog['version'],
+    'installed_skills': installed_skills,
+    'removed_skills': removed_skills
 }
-
-with open('$INSTALLED_JSON', 'w') as f:
+with open(installed_json, 'w') as f:
     json.dump(data, f, indent=2)
     f.write('\n')
-"
-rm -rf "$TMPDIR_INSTALL"
 
-success "Wrote skill manifest to .claude/skills/_catalog/installed.json"
-echo ""
+# Print summary
+print()
+print("\033[0;36m\033[1m═══════════════════════════════════════════════\033[0m")
+print("\033[0;36m\033[1m  Installation Complete\033[0m")
+print("\033[0;36m\033[1m═══════════════════════════════════════════════\033[0m")
+print()
+print(f"  \033[1mInstalled skills ({len(installed_skills)}):\033[0m")
+for s in installed_skills:
+    print(f"    \033[0;32m✓\033[0m {s}")
+print()
 
-# =============================================================================
-# 13. Summary
-# =============================================================================
-printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
-printf "${CYAN}${BOLD}  Installation Complete${NC}\n"
-printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
-echo ""
+if removed_skills:
+    print(f"  \033[1mRemoved ({len(removed_skills)}):\033[0m")
+    for s in removed_skills:
+        print(f"    \033[2m✗ {s}\033[0m")
+    print()
 
-printf "  ${BOLD}Installed skills (%d):${NC}\n" "${#INSTALLED_SKILLS[@]}"
-for skill in $(printf '%s\n' "${INSTALLED_SKILLS[@]}" | sort); do
-    printf "    ${GREEN}✓${NC} %s\n" "$skill"
-done
-echo ""
+# Show needed API keys
+all_services = sorted(set(
+    svc for name in selected
+    for svc in optional.get(name, {}).get('requires_services', [])
+    if svc
+))
+if all_services:
+    print("  \033[1;33m\033[1mAPI keys to add (optional — skills work without them):\033[0m")
+    for svc in all_services:
+        print(f"    \033[1;33m→\033[0m {svc}  \033[2m(add to .env)\033[0m")
+    print()
 
-if [[ ${#REMOVED_SKILLS[@]} -gt 0 ]]; then
-    printf "  ${BOLD}Removed (%d):${NC}\n" "${#REMOVED_SKILLS[@]}"
-    for skill in $(printf '%s\n' "${REMOVED_SKILLS[@]}" | sort); do
-        printf "    ${DIM}✗ %s${NC}\n" "$skill"
-    done
-    echo ""
-fi
-
-# Check if any installed skills need API keys
-MISSING_KEYS=()
-for i in "${!SKILL_NAMES[@]}"; do
-    if [[ -n "${SELECTED_MAP[${SKILL_NAMES[$i]}]:-}" ]] && [[ -n "${SKILL_SERVICES[$i]}" ]]; then
-        IFS=',' read -ra keys <<< "${SKILL_SERVICES[$i]}"
-        for key in "${keys[@]}"; do
-            key=$(echo "$key" | xargs)
-            [[ -z "$key" ]] && continue
-            MISSING_KEYS+=("$key")
-        done
-    fi
-done
-
-if [[ ${#MISSING_KEYS[@]} -gt 0 ]]; then
-    printf "  ${YELLOW}${BOLD}API keys to add (optional — skills work without them):${NC}\n"
-    # Deduplicate
-    printf '%s\n' "${MISSING_KEYS[@]}" | sort -u | while read -r key; do
-        printf "    ${YELLOW}→${NC} %s  ${DIM}(add to .env)${NC}\n" "$key"
-    done
-    echo ""
-fi
-
-printf "${BOLD}  Next steps:${NC}\n"
-echo "    1. Add API keys to .env (if any skills need them)"
-echo "    2. Run ${BOLD}claude${NC} and say ${BOLD}'start here'${NC}"
-echo ""
-printf "  ${DIM}Re-run this installer anytime to change your skill selection.${NC}\n"
-echo ""
+print("  \033[1mNext steps:\033[0m")
+print("    1. Add API keys to .env (if any skills need them)")
+print("    2. Run \033[1mclaude\033[0m and say \033[1m'start here'\033[0m")
+print()
+print("  \033[2mRe-run this installer anytime to change your skill selection.\033[0m")
+print()
+PYEOF
