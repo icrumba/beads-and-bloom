@@ -8,7 +8,6 @@ context/memory/*
 projects/*
 !projects/.gitkeep
 brand_context/*.md
-brand_context/schemas/
 
 # Development artifacts
 PRD.md

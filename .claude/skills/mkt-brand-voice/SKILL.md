@@ -22,7 +22,7 @@ Files saved to `brand_context/`:
 - `samples.md` — 5-10 gold-standard sentences with source and reason noted
 - `assets.md` — (Auto-Scrape only, if Firecrawl available) visual brand assets auto-discovered from URL: logo, colors, fonts, brand traits. Reports what was found and what wasn't.
 
-The voice profile includes a structured JSON data block validated against `brand_context/schemas/voice-profile.schema.json`. This enables downstream skills and automation to read voice data programmatically.
+The voice profile includes a structured JSON data block validated against `references/voice-profile.schema.json`. This enables downstream skills and automation to read voice data programmatically.
 
 Any skill can reference these to write on-brand without asking the user about voice again.
 
@@ -120,7 +120,7 @@ Try sources in this order, using the cheapest tool that works:
 1. **WebFetch first** (free) — try homepage, About page, 2-3 blog posts, LinkedIn
 2. **If WebFetch fails** (JS-heavy site, bot protection, empty content) → fall back to `tool-firecrawl-scraper` skill
    - Check `.env` for `FIRECRAWL_API_KEY` first
-   - If missing, tell the user: "This site needs Firecrawl to scrape properly. Add `FIRECRAWL_API_KEY=fc-your-key` to your `.env` file (free tier at firecrawl.dev)."
+   - If missing → trigger the **Fallback** flow below (offer API key or build assets now). Do NOT stop here.
    - If present, use Firecrawl scrape endpoint with `formats=["markdown"]`
 
 ### Brand Asset Extraction
@@ -152,9 +152,19 @@ If Firecrawl isn't available, skip branding extraction and note: "I couldn't aut
 3. Feed all content into Extract mode (Mode 2)
 4. Follow up with 2-3 gap-filling questions: evolution intent, hated phrases, voice inspiration
 
-### Fallback
+### Fallback — Never Block Brand Asset Creation
 
-If both WebFetch and Firecrawl are unavailable: "I can't access URLs in this environment — want to paste your content or answer a few questions instead?"
+If scraping fails for any reason (missing API key, site blocks requests, JS-heavy page), **always offer to build brand assets anyway**. Never stop the flow because a URL couldn't be scraped.
+
+**When a URL can't be scraped**, ask the user:
+
+> "I couldn't scrape that URL — [reason]. Two options:
+> 1. **Add your API key now** — paste your `FIRECRAWL_API_KEY` and I'll retry immediately
+> 2. **Build your brand assets now** — I'll ask you a few questions instead, and we can scrape the URL later to enrich everything"
+
+If the user picks option 2 (or doesn't have a key), switch to **Build mode (Mode 3)** and complete the full voice profile, samples, and any other brand assets. The URL stays noted in the profile so it can be scraped in a future session to enrich the existing profile.
+
+**Critical rule:** The user should always leave the onboarding flow with complete brand assets — voice-profile.md, samples.md — regardless of whether scraping worked. Scraping enriches the output; it never gates it.
 
 ---
 
@@ -181,7 +191,7 @@ Cap at 3 rounds. If still unresolved, offer to save current version and refine o
 
 **`brand_context/voice-profile.md`**
 Read `references/voice-profile-template.md` for the exact format. All sections required.
-Include a structured JSON data block at the end (inside a `<details>` tag) that conforms to `brand_context/schemas/voice-profile.schema.json`. Read the schema before generating the JSON to ensure all required fields are present.
+Include a structured JSON data block at the end (inside a `<details>` tag) that conforms to `references/voice-profile.schema.json`. Read the schema before generating the JSON to ensure all required fields are present.
 
 **`brand_context/samples.md`**
 5-10 sentences. For each, note: source type, and why it's representative.
