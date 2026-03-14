@@ -17,7 +17,19 @@ user-invocable: true
 
 **API Version**: v2 | **Python SDK**: firecrawl-py 4.13.0+ | **JS SDK**: @mendable/firecrawl-js 4.11.1+
 
-## Prerequisites
+## Outcome
+
+Website content converted into clean markdown, structured JSON, or brand identity data. This skill is both **standalone** (user asks to scrape) and a **backend for other skills** (e.g., `mkt-brand-voice` Auto-Scrape mode).
+
+## Context Needs
+
+| File | Load level | Purpose |
+|------|-----------|---------|
+| `context/learnings.md` | `## tool-firecrawl-scraper` section | Known issues, cost patterns |
+
+No brand_context files needed — this is a utility skill.
+
+## Step 1: Check API Key
 
 Requires `FIRECRAWL_API_KEY` in `.env` (get one at https://www.firecrawl.dev/app).
 
@@ -27,13 +39,7 @@ Requires `FIRECRAWL_API_KEY` in `.env` (get one at https://www.firecrawl.dev/app
 3. Offer the fallback: what can be done without it (WebFetch, manual paste, etc.)
 4. Don't block — proceed with the fallback if they don't add the key
 
-## When to Use This Skill
-
-This skill is both **standalone** and a **backend for other skills**:
-- **Standalone**: User asks to scrape a site, crawl pages, extract structured data, or monitor changes
-- **Backend**: `mkt-brand-voice` Auto-Scrape mode falls back to Firecrawl when default web tools can't fetch content (JS-heavy sites, bot protection, etc.)
-
-## Endpoints
+## Step 2: Choose the Right Endpoint
 
 | Endpoint | Purpose | Credits | When to use |
 |----------|---------|---------|-------------|
@@ -48,33 +54,28 @@ This skill is both **standalone** and a **backend for other skills**:
 
 For detailed API usage, code examples, and parameters, read `references/api-guide.md`.
 
-## Branding Extraction
-
-Key capability for brand-related skills. Returns color schemes, typography, logos, spacing, UI styles, and brand personality traits.
-
-```python
-doc = app.scrape(url="https://example.com", formats=["branding"])
-```
-
-Read `references/api-guide.md` § Branding Extraction for full details.
-
-## Error Handling
-
-Before using Firecrawl, always:
-1. Check `.env` for `FIRECRAWL_API_KEY`
-2. Use auto mode (default) — only charges stealth credits if basic fails
-3. Validate content isn't an error page before processing
-4. Check `success` field in response, not just HTTP status
-
-For the full list of 10 known issues and their solutions, read `references/known-issues.md`.
-
-## Cost Awareness
+## Step 3: Execute the Request
 
 Always prefer the cheapest approach:
 1. Try `WebFetch` first (free) — only fall back to Firecrawl if it fails
 2. Use cache defaults (2-day) for static content; `max_age=0` only for real-time data
 3. Use `map` before `crawl` to scope the job and avoid over-crawling
 4. Batch URLs together with `batch-scrape` instead of individual scrapes
+
+For branding extraction (key capability for brand-related skills):
+```python
+doc = app.scrape(url="https://example.com", formats=["branding"])
+```
+Read `references/api-guide.md` § Branding Extraction for full details.
+
+## Step 4: Validate and Return
+
+Before processing results:
+1. Use auto mode (default) — only charges stealth credits if basic fails
+2. Validate content isn't an error page before processing
+3. Check `success` field in response, not just HTTP status
+
+For the full list of 10 known issues and their solutions, read `references/known-issues.md`.
 
 Read `references/known-issues.md` § Stealth Mode Pricing for credit cost details.
 
@@ -89,3 +90,12 @@ Read `references/known-issues.md` § Stealth Mode Pricing for credit cost detail
 ## Self-Update
 
 If the user flags an issue — wrong endpoint, bad code, cost surprise — update the `## Rules` section immediately with the correction and today's date.
+
+---
+
+## Troubleshooting
+
+- **WebFetch works fine**: Don't use Firecrawl. It's for JS-heavy sites, bot protection, and structured extraction.
+- **Stealth mode surprise**: Auto mode tries basic first, only charges stealth credits if basic fails. Read `references/known-issues.md` for details.
+- **Empty content returned**: The page may be behind authentication or geo-restricted. Check the `success` field and error message.
+- **High credit usage on crawl**: Always run `map` first to see the site structure and scope the crawl.

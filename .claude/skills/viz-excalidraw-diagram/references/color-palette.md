@@ -2,26 +2,44 @@
 
 **This is the single source of truth for all colors and brand-specific styles.** To customize diagrams for your own brand, edit this file — everything else in the skill is universal.
 
+Style: Warm PaperBanana editorial — hand-drawn feel, warm cream background, playful but professional.
+
 ---
 
 ## Shape Colors (Semantic)
 
-Colors encode meaning, not decoration. Each semantic purpose has a fill/stroke pair.
+Colors encode meaning, not decoration. Each semantic purpose has a fill/stroke pair. All shapes use dark charcoal ink outlines for that hand-drawn editorial feel.
 
 | Semantic Purpose | Fill | Stroke |
 |------------------|------|--------|
-| Primary/Neutral | `#3b82f6` | `#1e3a5f` |
-| Secondary | `#60a5fa` | `#1e3a5f` |
-| Tertiary | `#93c5fd` | `#1e3a5f` |
-| Start/Trigger | `#fed7aa` | `#c2410c` |
-| End/Success | `#a7f3d0` | `#047857` |
-| Warning/Reset | `#fee2e2` | `#dc2626` |
-| Decision | `#fef3c7` | `#b45309` |
-| AI/LLM | `#ddd6fe` | `#6d28d9` |
-| Inactive/Disabled | `#dbeafe` | `#1e40af` (use dashed stroke) |
-| Error | `#fecaca` | `#b91c1c` |
+| Primary/Neutral | `#EF6351` | `#2D2D2D` |
+| Secondary | `#4BA3D4` | `#2D2D2D` |
+| Tertiary | `#6BBF6A` | `#2D2D2D` |
+| Start/Trigger | `#F4C542` | `#2D2D2D` |
+| End/Success | `#6BBF6A` | `#2D2D2D` |
+| Warning/Reset | `#EF6351` | `#2D2D2D` |
+| Decision | `#F4C542` | `#2D2D2D` |
+| AI/LLM | `#9B7ED8` | `#2D2D2D` |
+| Inactive/Disabled | `#F2918C` | `#2D2D2D` (use dashed stroke) |
+| Error | `#EF6351` | `#2D2D2D` |
+| Highlight/Accent | `#9B7ED8` | `#2D2D2D` |
+| Soft/Gentle | `#F2918C` | `#2D2D2D` |
 
-**Rule**: Always pair a darker stroke with a lighter fill for contrast.
+**Named palette:**
+
+| Role | Hex | Usage |
+|------|-----|-------|
+| Background | `#FDF6E3` | Warm cream canvas |
+| Ink/outlines | `#2D2D2D` | All strokes, text outlines |
+| Coral red | `#EF6351` | Primary elements, warnings |
+| Sky blue | `#4BA3D4` | Secondary elements, arrows |
+| Soft green | `#6BBF6A` | Success, growth, tertiary |
+| Golden yellow | `#F4C542` | Highlights, triggers, decisions |
+| Lavender | `#9B7ED8` | Special callouts, AI/LLM |
+| Salmon pink | `#F2918C` | Gentle emphasis, inactive |
+| White | `#FFFFFF` | Badge text on colored fills |
+
+**Rule**: All shapes use `#2D2D2D` (dark charcoal) stroke. Use color on fills to differentiate. Roughness: 1 for hand-drawn feel.
 
 ---
 
@@ -31,10 +49,10 @@ Use color on free-floating text to create visual hierarchy without containers.
 
 | Level | Color | Use For |
 |-------|-------|---------|
-| Title | `#1e40af` | Section headings, major labels |
-| Subtitle | `#3b82f6` | Subheadings, secondary labels |
-| Body/Detail | `#64748b` | Descriptions, annotations, metadata |
-| On light fills | `#374151` | Text inside light-colored shapes |
+| Title | `#2D2D2D` | Section headings, major labels |
+| Subtitle | `#EF6351` | Subheadings, secondary labels |
+| Body/Detail | `#2D2D2D` | Descriptions, annotations, metadata |
+| On light fills | `#2D2D2D` | Text inside light-colored shapes |
 | On dark fills | `#ffffff` | Text inside dark-colored shapes |
 
 ---
@@ -45,8 +63,8 @@ Used for code snippets, data examples, and other concrete evidence inside techni
 
 | Artifact | Background | Text Color |
 |----------|-----------|------------|
-| Code snippet | `#1e293b` | Syntax-colored (language-appropriate) |
-| JSON/data example | `#1e293b` | `#22c55e` (green) |
+| Code snippet | `#2D2D2D` | `#F4C542` (golden) |
+| JSON/data example | `#2D2D2D` | `#6BBF6A` (green) |
 
 ---
 
@@ -54,9 +72,9 @@ Used for code snippets, data examples, and other concrete evidence inside techni
 
 | Element | Color |
 |---------|-------|
-| Arrows | Use the stroke color of the source element's semantic purpose |
-| Structural lines (dividers, trees, timelines) | Primary stroke (`#1e3a5f`) or Slate (`#64748b`) |
-| Marker dots (fill + stroke) | Primary fill (`#3b82f6`) |
+| Arrows | `#2D2D2D` (charcoal ink) |
+| Structural lines (dividers, trees, timelines) | `#2D2D2D` |
+| Marker dots (fill + stroke) | Fill: `#EF6351`, Stroke: `#2D2D2D` |
 
 ---
 
@@ -64,4 +82,13 @@ Used for code snippets, data examples, and other concrete evidence inside techni
 
 | Property | Value |
 |----------|-------|
-| Canvas background | `#ffffff` |
+| Canvas background | `#FDF6E3` |
+
+---
+
+## Style Notes
+
+- `roughness: 1` on all shapes for hand-drawn quality
+- `strokeWidth: 2` for bold charcoal outlines
+- `fontFamily: 3` (monospace) for labels — feels like handwritten notes
+- Organic, slightly imperfect feel — this is editorial illustration, not engineering blueprint

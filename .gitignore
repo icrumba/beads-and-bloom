@@ -9,10 +9,6 @@ projects/*
 !projects/.gitkeep
 brand_context/*.md
 
-# Development artifacts
-PRD.md
-state.md
-
 # Installer state
 .claude/skills/_catalog/installed.json
 

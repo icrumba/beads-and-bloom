@@ -90,8 +90,14 @@ POST /v2/video/generate
         "type": "text",
         "input_text": "Script here...",
         "voice_id": "...",
-        "speed": 1.0,    // 0.5–2.0
-        "pitch": 0        // -20 to +20
+        "speed": 1.0,    // 0.5–1.5
+        "pitch": 0,       // -50 to +50
+        "emotion": "Friendly",  // Excited | Friendly | Serious | Soothing | Broadcaster
+        "elevenlabs_settings": {  // optional — for ElevenLabs cloned voices
+          "stability": 0.3,       // 0-1, lower = more expressive
+          "similarity_boost": 0.75, // 0-1, higher = closer to original voice
+          "style": 0.7            // 0-1, higher = more stylistic variation
+        }
       },
       "background": {
         "type": "color",
@@ -144,20 +150,12 @@ Add multiple objects to `video_inputs` array. Each scene can have:
 
 ## Caption Configuration
 
+The API `caption` field is **boolean only** — no styling options:
 ```json
-// Simple
 { "caption": true }
-
-// Styled
-{
-  "caption": {
-    "font_family": "Arial",
-    "font_size": 28,
-    "font_color": "#FFFFFF",
-    "background_color": "#00000080"
-  }
-}
 ```
+
+For branded captions: set `"caption": false`, download the `.ass` subtitle file from `caption_url` in the status response, restyle it, and burn with ffmpeg. See `scripts/burn-captions.py`.
 
 ## Test Mode
 
