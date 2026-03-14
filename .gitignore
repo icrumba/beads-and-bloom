@@ -8,7 +8,6 @@ context/memory/*
 projects/*
 !projects/.gitkeep
 brand_context/*.md
-!brand_context/schemas/
 
 # Installer state
 .claude/skills/_catalog/installed.json
