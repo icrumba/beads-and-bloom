@@ -212,24 +212,15 @@ Which `brand_context/` files each skill reads. Load only what's listed — no sk
 
 When building new skills, include a humanizer step in the methodology if the skill writes content meant for an audience. Reference `tool-humanizer` in pipeline mode.
 
-### Schemas (Two-Tier System)
+### Schemas
 
-Schemas live next to the data they validate. Two tiers:
+Schemas live inside the skill that owns them, under `references/`. This keeps them version-controlled with the skill and out of user data directories.
 
-| Tier | Location | Validates |
-|------|----------|-----------|
-| Brand context schemas | `brand_context/schemas/` | `brand_context/*.md` structured data blocks |
-| Output schemas | `projects/{folder}/00-schemas/` | Output files in that project folder |
+| Schema | Location | Used by |
+|--------|----------|---------|
+| `voice-profile.schema.json` | `.claude/skills/mkt-brand-voice/references/` | `mkt-brand-voice` |
 
-**Current brand context schemas:**
-
-| Schema | Used by | Purpose |
-|--------|---------|---------|
-| `brand_context/schemas/voice-profile.schema.json` | `mkt-brand-voice` | Structured voice data embedded in voice-profile.md |
-
-*Output schemas are added inside each project folder's `00-schemas/` subfolder as execution skills are built. The `00-schemas/` subfolder is only created when a schema is relevant for that output type.*
-
-When a skill produces structured output, it should read the relevant schema before generating data to ensure all required fields are present. Skills consuming structured output from another skill should also reference the schema to understand the data contract.
+When a skill produces structured output, it should read the relevant schema before generating data to ensure all required fields are present.
 
 ---
 
@@ -289,7 +280,7 @@ Skills can depend on other skills. Declare dependencies in a `## Dependencies` s
 - [ ] SKILL.md < 200 lines
 - [ ] References are self-contained
 - [ ] If the skill depends on other skills: add a `## Dependencies` section to SKILL.md
-- [ ] If the skill produces structured/repeatable output: create a schema in `brand_context/schemas/` (for brand context data) or `projects/{folder}/00-schemas/` (for output data) and reference it from SKILL.md
+- [ ] If the skill produces structured/repeatable output: add a schema to the skill's `references/` folder and reference it from SKILL.md
 - [ ] Declare which `projects/` subfolder(s) the skill writes to (must use same category prefix)
 - [ ] **External services**: If the skill uses any external API, ensure the key is in the Service Registry (CLAUDE.md), `.env.example`, and README.md External Services table. The reconciliation does this automatically, but verify it ran.
 - [ ] **Humanizer gate**: If the skill produces publishable text (blog posts, social content, copy, emails), include a step that runs output through `tool-humanizer` in pipeline mode before saving
