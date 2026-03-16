@@ -145,6 +145,15 @@ if [[ -d "$REPO_ROOT/.claude/skills" ]]; then
     done
 fi
 
+# Reset modified skill files to HEAD so git pull won't conflict.
+# User's versions are safe in SKILL_BACKUP_DIR and will be offered
+# back during the per-file review step.
+if [[ ${#MODIFIED_SKILLS[@]} -gt 0 ]]; then
+    for skill_name in "${MODIFIED_SKILLS[@]}"; do
+        git checkout HEAD -- ".claude/skills/$skill_name/" 2>/dev/null || true
+    done
+fi
+
 # =========================================================
 # Step 6: Pull upstream changes
 # =========================================================
@@ -152,9 +161,15 @@ info "Checking for updates..."
 echo ""
 
 PULL_OUTPUT=$(git pull origin main 2>&1) || {
+    # Restore protected files
     if $STASHED; then
         git stash pop --quiet 2>/dev/null || true
     fi
+    # Restore modified skill files from backup
+    for skill_name in "${MODIFIED_SKILLS[@]:-}"; do
+        [[ -z "$skill_name" ]] && continue
+        cp -r "$SKILL_BACKUP_DIR/$skill_name"/* "$REPO_ROOT/.claude/skills/$skill_name/" 2>/dev/null || true
+    done
 
     if echo "$PULL_OUTPUT" | grep -qi "authentication\|403\|could not read\|repository not found\|invalid credentials"; then
         echo ""
