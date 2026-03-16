@@ -924,18 +924,65 @@ if $STASHED; then
 fi
 
 # =========================================================
-# Re-remove skills the user previously removed
+# Gate new skills: remove any that arrived via pull but
+# aren't in installed.json — they'll be offered in Step 3
 # =========================================================
 REMOVED_SKILLS_MSG=""
 
-if $HAVE_INSTALLED_JSON && [[ -f "$INSTALLED" ]]; then
+if $HAVE_INSTALLED_JSON && [[ -f "$INSTALLED" ]] && [[ -f "$CATALOG" ]]; then
+    # Python computes which skill folders should be removed:
+    # 1. Skills in removed_skills (user previously declined)
+    # 2. NEW catalog skills that arrived via pull but aren't in installed_skills
+    #    (user hasn't chosen them yet — offer in Step 3 instead)
+    SKILLS_TO_REMOVE=$($PYTHON_CMD -c "
+import json, sys, os
+try:
+    with open('$INSTALLED') as f:
+        inst = json.load(f)
+    with open('$CATALOG') as f:
+        cat = json.load(f)
+
+    installed = set(inst.get('installed_skills', []))
+    removed = set(inst.get('removed_skills', []))
+    core = set(cat.get('core_skills', []))
+    catalog_skills = set(cat.get('skills', {}).keys())
+    known = installed | removed | core
+
+    # Previously removed — always re-remove
+    for s in sorted(removed):
+        print(f'{s}|removed')
+
+    # New catalog skills not yet in installed.json — remove from disk so
+    # they appear as installable in Step 3 rather than auto-installing
+    for s in sorted(catalog_skills - known):
+        skill_dir = os.path.join('$REPO_ROOT', '.claude', 'skills', s)
+        if os.path.isdir(skill_dir):
+            print(f'{s}|new')
+except Exception:
+    sys.exit(0)
+" 2>/dev/null || true)
+
+    if [[ -n "$SKILLS_TO_REMOVE" ]]; then
+        while IFS='|' read -r skill reason; do
+            [[ -z "$skill" ]] && continue
+            skill_dir="$REPO_ROOT/.claude/skills/$skill"
+            if [[ -d "$skill_dir" ]]; then
+                rm -rf "$skill_dir"
+                if [[ "$reason" == "removed" ]]; then
+                    REMOVED_SKILLS_MSG="${REMOVED_SKILLS_MSG}\n    ${DIM}✗ $skill (re-removed per your preference)${NC}"
+                fi
+                # 'new' skills are silently removed — they'll show in Step 3
+            fi
+        done <<< "$SKILLS_TO_REMOVE"
+    fi
+elif $HAVE_INSTALLED_JSON && [[ -f "$INSTALLED" ]]; then
+    # Fallback: no catalog, just re-remove previously removed skills
     REMOVED_SKILLS=$($PYTHON_CMD -c "
 import json, sys
 try:
     with open('$INSTALLED') as f:
         data = json.load(f)
-    removed = data.get('removed_skills', [])
-    for s in removed:
+    for s in data.get('removed_skills', []):
         print(s)
 except Exception:
     sys.exit(0)
