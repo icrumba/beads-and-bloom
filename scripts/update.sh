@@ -155,6 +155,49 @@ if [[ ${#MODIFIED_SKILLS[@]} -gt 0 ]]; then
 fi
 
 # =========================================================
+# Step 5b: Stash other modified tracked files (not protected, not skills)
+# =========================================================
+OTHER_BACKUP_DIR="$BACKUP_DIR/other-$(date +%s)"
+OTHER_MODIFIED_FILES=()
+
+# Get all modified tracked files
+ALL_MODIFIED=$(git diff --name-only 2>/dev/null || true)
+ALL_STAGED=$(git diff --cached --name-only 2>/dev/null || true)
+ALL_DIRTY=$(printf '%s\n%s' "$ALL_MODIFIED" "$ALL_STAGED" | sort -u | grep -v '^$' || true)
+
+if [[ -n "$ALL_DIRTY" ]]; then
+    while IFS= read -r file; do
+        [[ -z "$file" ]] && continue
+
+        # Skip protected paths
+        is_protected=false
+        for p in "${PROTECTED_PATHS[@]}"; do
+            case "$file" in
+                $p|$p*) is_protected=true; break ;;
+            esac
+        done
+        $is_protected && continue
+
+        # Skip skill files (handled separately above)
+        case "$file" in
+            .claude/skills/*) continue ;;
+        esac
+
+        # This is an "other" modified file — back it up and reset
+        mkdir -p "$OTHER_BACKUP_DIR/$(dirname "$file")"
+        cp "$REPO_ROOT/$file" "$OTHER_BACKUP_DIR/$file" 2>/dev/null || true
+        OTHER_MODIFIED_FILES+=("$file")
+    done <<< "$ALL_DIRTY"
+fi
+
+# Reset other modified files so git pull won't conflict
+if [[ ${#OTHER_MODIFIED_FILES[@]} -gt 0 ]]; then
+    for file in "${OTHER_MODIFIED_FILES[@]}"; do
+        git checkout HEAD -- "$file" 2>/dev/null || true
+    done
+fi
+
+# =========================================================
 # Step 6: Pull upstream changes
 # =========================================================
 info "Checking for updates..."
@@ -169,6 +212,11 @@ PULL_OUTPUT=$(git pull origin main 2>&1) || {
     for skill_name in "${MODIFIED_SKILLS[@]:-}"; do
         [[ -z "$skill_name" ]] && continue
         cp -r "$SKILL_BACKUP_DIR/$skill_name"/* "$REPO_ROOT/.claude/skills/$skill_name/" 2>/dev/null || true
+    done
+    # Restore other modified files from backup
+    for file in "${OTHER_MODIFIED_FILES[@]:-}"; do
+        [[ -z "$file" ]] && continue
+        cp "$OTHER_BACKUP_DIR/$file" "$REPO_ROOT/$file" 2>/dev/null || true
     done
 
     if echo "$PULL_OUTPUT" | grep -qi "authentication\|403\|could not read\|repository not found\|invalid credentials"; then
@@ -618,6 +666,178 @@ if [[ ${#MODIFIED_SKILLS[@]} -gt 0 ]]; then
 fi
 
 # =========================================================
+# Review other modified files (non-skill, non-protected)
+# =========================================================
+OTHER_REVIEW_MSG=""
+
+if [[ ${#OTHER_MODIFIED_FILES[@]} -gt 0 ]] && $HAS_UPSTREAM_CHANGES; then
+    # Check which of these files also changed upstream
+    OTHER_CONFLICT_FILES=()
+    OTHER_NOCONFLICT_FILES=()
+    for file in "${OTHER_MODIFIED_FILES[@]}"; do
+        if echo "$CHANGED_FILES" | grep -qx "$file" 2>/dev/null; then
+            OTHER_CONFLICT_FILES+=("$file")
+        else
+            OTHER_NOCONFLICT_FILES+=("$file")
+        fi
+    done
+
+    # Auto-restore files that didn't change upstream
+    for file in "${OTHER_NOCONFLICT_FILES[@]}"; do
+        cp "$OTHER_BACKUP_DIR/$file" "$REPO_ROOT/$file" 2>/dev/null || true
+    done
+
+    # Review files that changed both locally and upstream
+    if [[ ${#OTHER_CONFLICT_FILES[@]} -gt 0 ]]; then
+        echo ""
+        printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
+        printf "${CYAN}${BOLD}  Your Local File Changes${NC}\n"
+        printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
+        echo ""
+        info "${#OTHER_CONFLICT_FILES[@]} file(s) you edited also changed upstream:"
+        echo ""
+
+        ACCEPT_ALL_OTHER=false
+        KEEP_ALL_OTHER=false
+
+        for file in "${OTHER_CONFLICT_FILES[@]}"; do
+            backup_file="$OTHER_BACKUP_DIR/$file"
+            upstream_file="$REPO_ROOT/$file"
+
+            # Handle bulk decisions
+            if [[ "$ACCEPT_ALL_OTHER" == "true" ]]; then
+                ok "Accepted upstream: $file"
+                OTHER_REVIEW_MSG="${OTHER_REVIEW_MSG}\n    ${GREEN}✓${NC} $file (accepted upstream)"
+                continue
+            fi
+            if [[ "$KEEP_ALL_OTHER" == "true" ]]; then
+                cp "$backup_file" "$upstream_file" 2>/dev/null || true
+                ok "Kept yours: $file"
+                OTHER_REVIEW_MSG="${OTHER_REVIEW_MSG}\n    ${YELLOW}○${NC} $file (kept yours)"
+                continue
+            fi
+
+            # 3-way diff: ancestor (OLD_HEAD) vs upstream (new) vs yours (backup)
+            ANCESTOR_TMP=$(mktemp)
+            git show "${OLD_HEAD}:${file}" > "$ANCESTOR_TMP" 2>/dev/null || echo "" > "$ANCESTOR_TMP"
+
+            upstream_diff=$(diff -u "$ANCESTOR_TMP" "$upstream_file" 2>/dev/null | tail -n +3 || true)
+            your_diff=$(diff -u "$ANCESTOR_TMP" "$backup_file" 2>/dev/null | tail -n +3 || true)
+
+            has_upstream=false; [[ -n "$upstream_diff" ]] && has_upstream=true
+            has_yours=false; [[ -n "$your_diff" ]] && has_yours=true
+
+            echo "  ─────────────────────────────────────────"
+            printf "  ${BOLD}%s${NC}\n" "$file"
+            echo "  ─────────────────────────────────────────"
+
+            if $has_upstream; then
+                printf "\n  ${GREEN}${BOLD}  Upstream changes:${NC}\n"
+                echo "$upstream_diff" | while IFS= read -r line; do
+                    case "$line" in
+                        @@*)  printf "    ${CYAN}%s${NC}\n" "$line" ;;
+                        +*)   printf "    ${GREEN}%s${NC}\n" "$line" ;;
+                        -*)   printf "    ${RED}%s${NC}\n" "$line" ;;
+                        *)    ;;
+                    esac
+                done
+            fi
+
+            if $has_yours; then
+                printf "\n  ${YELLOW}${BOLD}  Your changes:${NC}\n"
+                echo "$your_diff" | while IFS= read -r line; do
+                    case "$line" in
+                        @@*)  printf "    ${CYAN}%s${NC}\n" "$line" ;;
+                        +*)   printf "    ${YELLOW}%s${NC}\n" "$line" ;;
+                        -*)   printf "    ${RED}%s${NC}\n" "$line" ;;
+                        *)    ;;
+                    esac
+                done
+            fi
+
+            # Try 3-way merge
+            can_merge=false
+            MERGED_TMP=$(mktemp)
+            if $has_upstream && $has_yours; then
+                cp "$backup_file" "$MERGED_TMP"
+                if git merge-file -q "$MERGED_TMP" "$ANCESTOR_TMP" "$upstream_file" 2>/dev/null; then
+                    can_merge=true
+                fi
+            fi
+            rm -f "$ANCESTOR_TMP"
+
+            echo ""
+            if $has_upstream && $has_yours && $can_merge; then
+                printf "  ${GREEN}✓ No conflict${NC} — both sets of changes can be merged.\n"
+                echo ""
+                printf "  ${BOLD}What to do?${NC}\n"
+                printf "  ${DIM}m = merge both  u = upstream only  y = yours only  a = all upstream  k = keep all yours${NC}\n"
+            elif $has_upstream && $has_yours; then
+                printf "  ${YELLOW}⚠ Conflict${NC} — both sides changed the same lines.\n"
+                echo ""
+                printf "  ${BOLD}What to do?${NC}\n"
+                printf "  ${DIM}u = upstream only  y = yours only  a = all upstream  k = keep all yours${NC}\n"
+            else
+                printf "  ${DIM}Only upstream changed this file.${NC}\n"
+                echo ""
+                printf "  ${BOLD}Accept upstream change?${NC}\n"
+                printf "  ${DIM}u = accept upstream  y = revert to yours  a = all upstream  k = keep all yours${NC}\n"
+            fi
+
+            printf "  > "
+            while true; do
+                read -r choice < /dev/tty
+                case "$choice" in
+                    [mM])
+                        if $can_merge; then
+                            cp "$MERGED_TMP" "$upstream_file"
+                            ok "Merged both: $file"
+                            OTHER_REVIEW_MSG="${OTHER_REVIEW_MSG}\n    ${GREEN}⊕${NC} $file (merged both)"
+                        else
+                            printf "  Can't merge — changes conflict. Pick u or y: "
+                            continue
+                        fi
+                        break ;;
+                    [uU])
+                        ok "Accepted upstream: $file"
+                        OTHER_REVIEW_MSG="${OTHER_REVIEW_MSG}\n    ${GREEN}✓${NC} $file (accepted upstream)"
+                        break ;;
+                    [yY])
+                        cp "$backup_file" "$upstream_file" 2>/dev/null || true
+                        ok "Kept yours: $file"
+                        OTHER_REVIEW_MSG="${OTHER_REVIEW_MSG}\n    ${YELLOW}○${NC} $file (kept yours)"
+                        break ;;
+                    [aA])
+                        ok "Accepted upstream: $file"
+                        OTHER_REVIEW_MSG="${OTHER_REVIEW_MSG}\n    ${GREEN}✓${NC} $file (accepted upstream)"
+                        ACCEPT_ALL_OTHER=true
+                        break ;;
+                    [kK])
+                        cp "$backup_file" "$upstream_file" 2>/dev/null || true
+                        ok "Kept yours: $file"
+                        OTHER_REVIEW_MSG="${OTHER_REVIEW_MSG}\n    ${YELLOW}○${NC} $file (kept yours)"
+                        KEEP_ALL_OTHER=true
+                        break ;;
+                    *)
+                        if $can_merge; then
+                            printf "  Please enter m, u, y, a, or k: "
+                        else
+                            printf "  Please enter u, y, a, or k: "
+                        fi ;;
+                esac
+            done
+            rm -f "$MERGED_TMP"
+        done
+        echo ""
+    fi
+elif [[ ${#OTHER_MODIFIED_FILES[@]} -gt 0 ]]; then
+    # No upstream changes — just restore all local modifications
+    for file in "${OTHER_MODIFIED_FILES[@]}"; do
+        cp "$OTHER_BACKUP_DIR/$file" "$REPO_ROOT/$file" 2>/dev/null || true
+    done
+fi
+
+# =========================================================
 # Restore stashed protected files
 # =========================================================
 if $STASHED; then
@@ -872,6 +1092,12 @@ if [[ -n "$SKILL_REVIEW_MSG" ]]; then
 elif [[ ${#MODIFIED_SKILLS[@]} -gt 0 ]]; then
     printf "\n"
     ok "Local skill changes: kept as-is (no upstream conflicts)"
+fi
+
+# Other file review results
+if [[ -n "$OTHER_REVIEW_MSG" ]]; then
+    printf "\n  ${BOLD}File review:${NC}"
+    printf "$OTHER_REVIEW_MSG\n"
 fi
 
 # Newly installed skills
