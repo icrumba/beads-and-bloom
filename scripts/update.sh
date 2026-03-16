@@ -12,6 +12,8 @@ set -euo pipefail
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
+BOLD='\033[1m'
+DIM='\033[2m'
 NC='\033[0m'
 
 info()  { printf "${CYAN}  %s${NC}\n" "$1"; }
@@ -121,6 +123,7 @@ fi
 # and approve/deny per skill.
 SKILL_BACKUP_DIR="$BACKUP_DIR/skills-$(date +%s)"
 MODIFIED_SKILLS=()
+USER_CREATED_SKILLS=()
 
 info "Checking for locally-modified skills..."
 
@@ -130,19 +133,39 @@ if [[ -d "$REPO_ROOT/.claude/skills" ]]; then
         skill_name=$(basename "$skill_dir")
         [[ "$skill_name" == "_catalog" ]] && continue
 
+        # Check if this skill is entirely untracked (user-created, not from upstream)
+        tracked_files=$(git ls-files -- ".claude/skills/$skill_name/" 2>/dev/null || true)
+        if [[ -z "$tracked_files" ]]; then
+            USER_CREATED_SKILLS+=("$skill_name")
+            continue
+        fi
+
         # Check if any files in this skill have local modifications
-        if git diff --name-only -- ".claude/skills/$skill_name/" 2>/dev/null | grep -q .; then
+        modified_files=$(git diff --name-only -- ".claude/skills/$skill_name/" 2>/dev/null || true)
+        if [[ -n "$modified_files" ]]; then
             mkdir -p "$SKILL_BACKUP_DIR/$skill_name"
             cp -r "$skill_dir"* "$SKILL_BACKUP_DIR/$skill_name/" 2>/dev/null || true
             MODIFIED_SKILLS+=("$skill_name")
+            # Show which files were modified
+            warn "$skill_name — modified files:"
+            echo "$modified_files" | while IFS= read -r f; do
+                printf "      %s\n" "$(basename "$f")"
+            done
         fi
     done
 fi
 
 if [[ ${#MODIFIED_SKILLS[@]} -gt 0 ]]; then
-    ok "Backed up ${#MODIFIED_SKILLS[@]} locally-modified skill(s)"
+    ok "Backed up ${#MODIFIED_SKILLS[@]} locally-modified skill(s) to $SKILL_BACKUP_DIR"
 else
     info "No locally-modified skills found"
+fi
+
+if [[ ${#USER_CREATED_SKILLS[@]} -gt 0 ]]; then
+    ok "${#USER_CREATED_SKILLS[@]} user-created skill(s) detected (won't be touched by update):"
+    for uc_skill in "${USER_CREATED_SKILLS[@]}"; do
+        printf "      %s\n" "$uc_skill"
+    done
 fi
 
 # =========================================================
@@ -204,10 +227,114 @@ fi
 NEW_HEAD=$(git rev-parse HEAD)
 
 # =========================================================
+# Step 6a: Show what changed in the pull (system files)
+# =========================================================
+# Categorise every changed file so the user sees exactly what arrived.
+CHANGED_FILES=$(git diff --name-only "${OLD_HEAD}..${NEW_HEAD}" 2>/dev/null || true)
+
+if [[ -n "$CHANGED_FILES" ]]; then
+    # Buckets
+    CHANGED_SCRIPTS=""
+    CHANGED_CLAUDE_MD=""
+    CHANGED_CATALOG=""
+    CHANGED_SKILL_FILES=""
+    CHANGED_OTHER=""
+
+    while IFS= read -r file; do
+        case "$file" in
+            scripts/*)
+                CHANGED_SCRIPTS="${CHANGED_SCRIPTS}\n      ${file}"
+                ;;
+            CLAUDE.md|PRD.md|README.md|.gitignore|.gitattributes)
+                CHANGED_CLAUDE_MD="${CHANGED_CLAUDE_MD}\n      ${file}"
+                ;;
+            .claude/skills/_catalog/*)
+                CHANGED_CATALOG="${CHANGED_CATALOG}\n      ${file}"
+                ;;
+            .claude/skills/*)
+                CHANGED_SKILL_FILES="${CHANGED_SKILL_FILES}\n      ${file}"
+                ;;
+            context/*|brand_context/*|projects/*|.env*)
+                # Protected/user files — skip (handled by stash/restore)
+                ;;
+            *)
+                CHANGED_OTHER="${CHANGED_OTHER}\n      ${file}"
+                ;;
+        esac
+    done <<< "$CHANGED_FILES"
+
+    echo ""
+    printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
+    printf "${CYAN}${BOLD}  What Changed${NC}\n"
+    printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
+    echo ""
+
+    if [[ -n "$CHANGED_SCRIPTS" ]]; then
+        printf "  ${BOLD}Scripts:${NC}"
+        printf "$CHANGED_SCRIPTS\n"
+        echo ""
+    fi
+
+    if [[ -n "$CHANGED_CLAUDE_MD" ]]; then
+        printf "  ${BOLD}System files:${NC}"
+        printf "$CHANGED_CLAUDE_MD\n"
+        echo ""
+    fi
+
+    if [[ -n "$CHANGED_CATALOG" ]]; then
+        printf "  ${BOLD}Skill catalog:${NC}"
+        printf "$CHANGED_CATALOG\n"
+        echo ""
+    fi
+
+    if [[ -n "$CHANGED_SKILL_FILES" ]]; then
+        printf "  ${BOLD}Skills:${NC}"
+        printf "$CHANGED_SKILL_FILES\n"
+        echo ""
+    fi
+
+    if [[ -n "$CHANGED_OTHER" ]]; then
+        printf "  ${BOLD}Other:${NC}"
+        printf "$CHANGED_OTHER\n"
+        echo ""
+    fi
+
+    # Offer to show the full diff for non-skill system files
+    SYS_FILES_FOR_DIFF=""
+    [[ -n "$CHANGED_SCRIPTS" ]] && SYS_FILES_FOR_DIFF="${SYS_FILES_FOR_DIFF}${CHANGED_SCRIPTS}"
+    [[ -n "$CHANGED_CLAUDE_MD" ]] && SYS_FILES_FOR_DIFF="${SYS_FILES_FOR_DIFF}${CHANGED_CLAUDE_MD}"
+    [[ -n "$CHANGED_CATALOG" ]] && SYS_FILES_FOR_DIFF="${SYS_FILES_FOR_DIFF}${CHANGED_CATALOG}"
+    [[ -n "$CHANGED_OTHER" ]] && SYS_FILES_FOR_DIFF="${SYS_FILES_FOR_DIFF}${CHANGED_OTHER}"
+
+    if [[ -n "$SYS_FILES_FOR_DIFF" ]]; then
+        printf "  ${BOLD}View full diff of system changes?${NC} [y/n] "
+        read -r show_diff
+        if [[ "$show_diff" =~ ^[yY]$ ]]; then
+            echo ""
+            # Show diff for each non-skill changed file
+            while IFS= read -r file; do
+                file=$(echo "$file" | sed 's/^[[:space:]]*//')
+                [[ -z "$file" ]] && continue
+                printf "\n  ${CYAN}${BOLD}── %s ──${NC}\n" "$file"
+                git diff "${OLD_HEAD}..${NEW_HEAD}" -- "$file" 2>/dev/null | while IFS= read -r line; do
+                    case "$line" in
+                        +*)   printf "${GREEN}%s${NC}\n" "$line" ;;
+                        -*)   printf "${YELLOW}%s${NC}\n" "$line" ;;
+                        @*)   printf "${CYAN}%s${NC}\n" "$line" ;;
+                        *)    echo "$line" ;;
+                    esac
+                done
+            done <<< "$(printf "$SYS_FILES_FOR_DIFF")"
+            echo ""
+        fi
+    fi
+fi
+
+# =========================================================
 # Step 6b: Review upstream skill changes vs local modifications
 # =========================================================
 # For each skill that was locally modified AND changed upstream,
-# show the diff and let the user approve or deny the upstream version.
+# show the diff PER FILE and let the user approve or deny each file.
 SKILL_REVIEW_MSG=""
 
 if [[ ${#MODIFIED_SKILLS[@]} -gt 0 ]]; then
@@ -217,7 +344,7 @@ if [[ ${#MODIFIED_SKILLS[@]} -gt 0 ]]; then
     printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
     echo ""
     info "Some skills you've customised have upstream changes."
-    info "Review each one and choose: accept upstream or keep yours."
+    info "You'll review each changed file individually."
     echo ""
 
     for skill_name in "${MODIFIED_SKILLS[@]}"; do
@@ -235,74 +362,178 @@ if [[ ${#MODIFIED_SKILLS[@]} -gt 0 ]]; then
             continue
         fi
 
-        # Show what changed between the user's version and upstream
         echo "  ─────────────────────────────────────────"
         printf "  ${BOLD}%s${NC}\n" "$skill_name"
         echo "  ─────────────────────────────────────────"
         echo ""
 
-        # Show diff between backup (user's version) and current (upstream)
-        diff_output=$(diff -u "$backup_skill_dir/SKILL.md" "$skill_dir/SKILL.md" 2>/dev/null || true)
+        # Find all files that differ between backup (user's) and current (upstream)
+        changed_files=$(diff -rq "$backup_skill_dir" "$skill_dir" 2>/dev/null | grep "^Files " | sed 's/^Files //;s/ and / → /;s/ differ$//' || true)
+        # Also find files only in upstream (new files added upstream)
+        new_upstream=$(diff -rq "$backup_skill_dir" "$skill_dir" 2>/dev/null | grep "^Only in $skill_dir" | sed "s|^Only in $skill_dir[/]*: ||" || true)
+        # Files only in backup (removed upstream)
+        removed_upstream=$(diff -rq "$backup_skill_dir" "$skill_dir" 2>/dev/null | grep "^Only in $backup_skill_dir" | sed "s|^Only in $backup_skill_dir[/]*: ||" || true)
 
-        if [[ -z "$diff_output" ]]; then
-            info "No upstream changes to SKILL.md — keeping your version."
-            # Restore user's version since only they changed it
+        if [[ -z "$changed_files" ]] && [[ -z "$new_upstream" ]] && [[ -z "$removed_upstream" ]]; then
+            info "No upstream changes — keeping your version."
             cp -r "$backup_skill_dir"/* "$skill_dir/" 2>/dev/null || true
             SKILL_REVIEW_MSG="${SKILL_REVIEW_MSG}\n    $skill_name: kept (no upstream changes)"
             continue
         fi
 
-        # Show the diff (coloured)
-        echo "$diff_output" | while IFS= read -r line; do
-            case "$line" in
-                +*) printf "${GREEN}%s${NC}\n" "$line" ;;
-                -*) printf "${YELLOW}%s${NC}\n" "$line" ;;
-                @*) printf "${CYAN}%s${NC}\n" "$line" ;;
-                *)  echo "$line" ;;
-            esac
-        done
-        echo ""
+        # Track per-file decisions for the summary
+        file_decisions=""
+        accepted_count=0
+        kept_count=0
 
-        printf "  ${BOLD}Accept upstream changes?${NC} [y/n/d] "
-        printf "${DIM}(y=accept upstream, n=keep yours, d=show full diff)${NC} "
-        while true; do
-            read -r choice
-            case "$choice" in
-                [yY])
-                    ok "Accepted upstream version of $skill_name"
-                    SKILL_REVIEW_MSG="${SKILL_REVIEW_MSG}\n    $skill_name: accepted upstream"
-                    break
-                    ;;
-                [nN])
-                    # Restore user's version
-                    cp -r "$backup_skill_dir"/* "$skill_dir/" 2>/dev/null || true
-                    ok "Kept your version of $skill_name"
-                    SKILL_REVIEW_MSG="${SKILL_REVIEW_MSG}\n    $skill_name: kept yours"
-                    break
-                    ;;
-                [dD])
-                    echo ""
-                    # Show full diff of entire skill directory
-                    diff -ru "$backup_skill_dir" "$skill_dir" 2>/dev/null | while IFS= read -r line; do
+        # --- Review changed files (exist in both, content differs) ---
+        if [[ -n "$changed_files" ]]; then
+            while IFS= read -r pair; do
+                # Extract the backup file and upstream file paths
+                backup_file=$(echo "$pair" | sed 's/ → .*//')
+                upstream_file=$(echo "$pair" | sed 's/.* → //')
+                rel_name=$(echo "$upstream_file" | sed "s|$skill_dir/||;s|$skill_dir||")
+                # Handle case where rel_name is the file itself (no subdir)
+                if [[ -z "$rel_name" ]]; then
+                    rel_name=$(basename "$upstream_file")
+                fi
+
+                echo ""
+                printf "  ${BOLD}File: %s${NC}\n" "$rel_name"
+                echo "  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"
+                echo ""
+
+                # Show the diff for this specific file
+                file_diff=$(diff -u "$backup_file" "$upstream_file" 2>/dev/null || true)
+                if [[ -n "$file_diff" ]]; then
+                    echo "$file_diff" | while IFS= read -r line; do
                         case "$line" in
-                            +*) printf "${GREEN}%s${NC}\n" "$line" ;;
-                            -*) printf "${YELLOW}%s${NC}\n" "$line" ;;
-                            @*) printf "${CYAN}%s${NC}\n" "$line" ;;
-                            *)  echo "$line" ;;
+                            ---*) printf "${YELLOW}%s${NC}\n" "$line" ;;
+                            +++*) printf "${GREEN}%s${NC}\n" "$line" ;;
+                            +*)   printf "${GREEN}%s${NC}\n" "$line" ;;
+                            -*)   printf "${YELLOW}%s${NC}\n" "$line" ;;
+                            @*)   printf "${CYAN}%s${NC}\n" "$line" ;;
+                            *)    echo "$line" ;;
                         esac
                     done
-                    echo ""
-                    printf "  ${BOLD}Accept upstream changes?${NC} [y/n] "
-                    ;;
-                *)
-                    printf "  Please enter y, n, or d: "
-                    ;;
-            esac
-        done
+                fi
+                echo ""
+
+                printf "  Accept this change? [y/n/a/k] "
+                printf "(y=accept, n=keep yours, a=accept ALL remaining, k=keep ALL remaining) "
+                while true; do
+                    read -r choice
+                    case "$choice" in
+                        [yY])
+                            ok "Accepted upstream: $rel_name"
+                            file_decisions="${file_decisions}\n      ✓ $rel_name (accepted upstream)"
+                            accepted_count=$((accepted_count + 1))
+                            break
+                            ;;
+                        [nN])
+                            # Restore user's version of this file
+                            cp "$backup_file" "$upstream_file" 2>/dev/null || true
+                            ok "Kept yours: $rel_name"
+                            file_decisions="${file_decisions}\n      ○ $rel_name (kept yours)"
+                            kept_count=$((kept_count + 1))
+                            break
+                            ;;
+                        [aA])
+                            ok "Accepted upstream: $rel_name"
+                            file_decisions="${file_decisions}\n      ✓ $rel_name (accepted upstream)"
+                            accepted_count=$((accepted_count + 1))
+                            # Accept all remaining changed files
+                            ACCEPT_ALL_REMAINING=true
+                            break
+                            ;;
+                        [kK])
+                            cp "$backup_file" "$upstream_file" 2>/dev/null || true
+                            ok "Kept yours: $rel_name"
+                            file_decisions="${file_decisions}\n      ○ $rel_name (kept yours)"
+                            kept_count=$((kept_count + 1))
+                            # Keep all remaining changed files
+                            KEEP_ALL_REMAINING=true
+                            break
+                            ;;
+                        *)
+                            printf "  Please enter y, n, a, or k: "
+                            ;;
+                    esac
+                done
+
+                # Handle bulk accept/keep for remaining files
+                if [[ "${ACCEPT_ALL_REMAINING:-false}" == "true" ]]; then
+                    break
+                fi
+                if [[ "${KEEP_ALL_REMAINING:-false}" == "true" ]]; then
+                    break
+                fi
+            done <<< "$changed_files"
+
+            # Process any remaining files after bulk decision
+            if [[ "${ACCEPT_ALL_REMAINING:-false}" == "true" ]]; then
+                # remaining changed files were already accepted (upstream version stays)
+                remaining_after=$(echo "$changed_files" | tail -n +$((accepted_count + kept_count + 1)))
+                if [[ -n "$remaining_after" ]]; then
+                    while IFS= read -r pair; do
+                        upstream_file=$(echo "$pair" | sed 's/.* → //')
+                        rel_name=$(echo "$upstream_file" | sed "s|$skill_dir/||;s|$skill_dir||")
+                        [[ -z "$rel_name" ]] && rel_name=$(basename "$upstream_file")
+                        ok "Accepted upstream: $rel_name"
+                        file_decisions="${file_decisions}\n      ✓ $rel_name (accepted upstream)"
+                        accepted_count=$((accepted_count + 1))
+                    done <<< "$remaining_after"
+                fi
+            fi
+            if [[ "${KEEP_ALL_REMAINING:-false}" == "true" ]]; then
+                remaining_after=$(echo "$changed_files" | tail -n +$((accepted_count + kept_count + 1)))
+                if [[ -n "$remaining_after" ]]; then
+                    while IFS= read -r pair; do
+                        backup_file=$(echo "$pair" | sed 's/ → .*//')
+                        upstream_file=$(echo "$pair" | sed 's/.* → //')
+                        rel_name=$(echo "$upstream_file" | sed "s|$skill_dir/||;s|$skill_dir||")
+                        [[ -z "$rel_name" ]] && rel_name=$(basename "$upstream_file")
+                        cp "$backup_file" "$upstream_file" 2>/dev/null || true
+                        ok "Kept yours: $rel_name"
+                        file_decisions="${file_decisions}\n      ○ $rel_name (kept yours)"
+                        kept_count=$((kept_count + 1))
+                    done <<< "$remaining_after"
+                fi
+            fi
+            # Reset bulk flags for next skill
+            ACCEPT_ALL_REMAINING=false
+            KEEP_ALL_REMAINING=false
+        fi
+
+        # --- Handle new files added upstream ---
+        if [[ -n "$new_upstream" ]]; then
+            while IFS= read -r new_file; do
+                [[ -z "$new_file" ]] && continue
+                printf "\n  ${GREEN}[NEW]${NC} %s — added upstream\n" "$new_file"
+                file_decisions="${file_decisions}\n      + $new_file (new from upstream)"
+                accepted_count=$((accepted_count + 1))
+            done <<< "$new_upstream"
+        fi
+
+        # --- Handle files removed upstream ---
+        if [[ -n "$removed_upstream" ]]; then
+            while IFS= read -r rm_file; do
+                [[ -z "$rm_file" ]] && continue
+                printf "\n  ${YELLOW}[REMOVED]${NC} %s — removed upstream, restoring your version\n" "$rm_file"
+                # Restore the user's file since upstream removed it
+                cp "$backup_skill_dir/$rm_file" "$skill_dir/$rm_file" 2>/dev/null || true
+                file_decisions="${file_decisions}\n      ○ $rm_file (kept yours, removed upstream)"
+                kept_count=$((kept_count + 1))
+            done <<< "$removed_upstream"
+        fi
+
         echo ""
+        SKILL_REVIEW_MSG="${SKILL_REVIEW_MSG}\n    $skill_name: $accepted_count accepted, $kept_count kept"
+        printf "$file_decisions\n"
     done
 
-    info "Backups saved to .backup/ in case you change your mind."
+    echo ""
+    info "Backups saved to $SKILL_BACKUP_DIR in case you change your mind."
     echo ""
 fi
 
@@ -376,11 +607,13 @@ except Exception:
 fi
 
 # =========================================================
-# Step 9: Detect newly added upstream skills
+# Step 9: Detect & offer newly added upstream skills
 # =========================================================
 NEW_SKILLS_MSG=""
+INSTALLED_NEW_SKILLS_MSG=""
 
 if [[ -f "$CATALOG" ]]; then
+    # Get new skills as: name|category|description|services|dependencies
     NEW_SKILLS=$($PYTHON_CMD -c "
 import json, sys, os
 
@@ -390,9 +623,7 @@ installed_path = '$INSTALLED'
 with open(catalog_path) as f:
     catalog = json.load(f)
 
-catalog_skills = set(catalog.get('skills', {}).keys())
-
-# Also include core skills — they're always installed, not 'new'
+catalog_skills = catalog.get('skills', {})
 core_skills = set(catalog.get('core_skills', []))
 
 if os.path.exists(installed_path):
@@ -402,21 +633,123 @@ if os.path.exists(installed_path):
     removed = set(inst.get('removed_skills', []))
     known = installed | removed | core_skills
 else:
-    # No installed.json — everything is 'known' (don't spam new skills)
-    known = catalog_skills | core_skills
+    known = set(catalog_skills.keys()) | core_skills
 
-new_skills = catalog_skills - known
-for s in sorted(new_skills):
-    desc = catalog['skills'][s].get('description', 'No description')
-    print(f'{s}|{desc}')
+new_skills = set(catalog_skills.keys()) - known
+order = {'utility': 1, 'strategy': 2, 'execution': 3, 'visual': 4, 'operations': 5}
+for s in sorted(new_skills, key=lambda n: (order.get(catalog_skills[n]['category'], 99), n)):
+    info = catalog_skills[s]
+    services = ','.join(info.get('requires_services', []))
+    deps = ','.join(info.get('dependencies', []))
+    print(f'{s}|{info[\"category\"]}|{info[\"description\"]}|{services}|{deps}')
 " 2>/dev/null || true)
 
     if [[ -n "$NEW_SKILLS" ]]; then
-        while IFS='|' read -r skill_name skill_desc; do
-            NEW_SKILLS_MSG="${NEW_SKILLS_MSG}\n  ${YELLOW}[NEW SKILL AVAILABLE]${NC} ${CYAN}${skill_name}${NC}"
-            NEW_SKILLS_MSG="${NEW_SKILLS_MSG}\n    ${skill_desc}"
-            NEW_SKILLS_MSG="${NEW_SKILLS_MSG}\n    Install with: bash scripts/add-skill.sh ${skill_name}\n"
+        echo ""
+        printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
+        printf "${CYAN}${BOLD}  New Skills Available${NC}\n"
+        printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
+        echo ""
+        info "These skills were added since your last update:"
+        echo ""
+
+        # Build numbered menu
+        declare -a NS_NAMES=()
+        declare -a NS_CATEGORIES=()
+        declare -a NS_DESCRIPTIONS=()
+        declare -a NS_SERVICES=()
+        declare -a NS_DEPS=()
+        NUM=0
+        CURRENT_CATEGORY=""
+
+        while IFS='|' read -r name category description services deps; do
+            [[ -z "$name" ]] && continue
+            NS_NAMES+=("$name")
+            NS_CATEGORIES+=("$category")
+            NS_DESCRIPTIONS+=("$description")
+            NS_SERVICES+=("$services")
+            NS_DEPS+=("$deps")
         done <<< "$NEW_SKILLS"
+
+        for i in "${!NS_NAMES[@]}"; do
+            NUM=$((i + 1))
+            cat="${NS_CATEGORIES[$i]}"
+
+            # Print category header when it changes
+            if [[ "$cat" != "$CURRENT_CATEGORY" ]]; then
+                first="$(echo "${cat:0:1}" | tr '[:lower:]' '[:upper:]')"
+                cat_display="${first}${cat:1}"
+                printf "    ${BOLD}%s:${NC}\n" "$cat_display"
+                CURRENT_CATEGORY="$cat"
+            fi
+
+            # Service note
+            svc_note=""
+            if [[ -n "${NS_SERVICES[$i]}" ]]; then
+                svc_note=" ${DIM}(needs ${NS_SERVICES[$i]})${NC}"
+            fi
+
+            # Dependency note
+            dep_note=""
+            if [[ -n "${NS_DEPS[$i]}" ]]; then
+                dep_note=" ${DIM}(auto-adds: ${NS_DEPS[$i]})${NC}"
+            fi
+
+            printf "     ${BOLD}[%2d]${NC} %-26s ${DIM}— %s${NC}%b%b\n" \
+                "$NUM" "${NS_NAMES[$i]}" "${NS_DESCRIPTIONS[$i]}" "$svc_note" "$dep_note"
+        done
+        echo ""
+
+        printf "  Enter numbers to install (e.g. \"1 3\"), \"all\", or press Enter to skip: "
+        read -r NS_INPUT
+
+        if [[ -n "$NS_INPUT" ]]; then
+            # Parse selection
+            SELECTED_NS=()
+            if [[ "${NS_INPUT,,}" == "all" ]]; then
+                SELECTED_NS=("${NS_NAMES[@]}")
+            else
+                for token in $NS_INPUT; do
+                    if [[ "$token" =~ ^[0-9]+$ ]] && [[ "$token" -ge 1 ]] && [[ "$token" -le "${#NS_NAMES[@]}" ]]; then
+                        SELECTED_NS+=("${NS_NAMES[$((token - 1))]}")
+                    else
+                        warn "Ignoring invalid selection: $token"
+                    fi
+                done
+            fi
+
+            if [[ ${#SELECTED_NS[@]} -gt 0 ]]; then
+                echo ""
+                info "Installing selected skills..."
+                echo ""
+                for ns in "${SELECTED_NS[@]}"; do
+                    # Use add-skill.sh which handles dep resolution & installed.json
+                    bash "$REPO_ROOT/scripts/add-skill.sh" "$ns" 2>&1 | sed 's/^/    /'
+                    INSTALLED_NEW_SKILLS_MSG="${INSTALLED_NEW_SKILLS_MSG}\n    ${GREEN}✓${NC} $ns"
+                done
+                echo ""
+            fi
+        else
+            info "Skipped — install later with: bash scripts/add-skill.sh <name>"
+            echo ""
+        fi
+
+        # Any not-installed new skills still get noted in summary
+        for i in "${!NS_NAMES[@]}"; do
+            name="${NS_NAMES[$i]}"
+            # Check if it was just installed
+            was_installed=false
+            for ns in "${SELECTED_NS[@]:-}"; do
+                if [[ "$ns" == "$name" ]]; then
+                    was_installed=true
+                    break
+                fi
+            done
+            if ! $was_installed; then
+                NEW_SKILLS_MSG="${NEW_SKILLS_MSG}\n  ${YELLOW}[AVAILABLE]${NC} ${CYAN}${name}${NC} — ${NS_DESCRIPTIONS[$i]}"
+                NEW_SKILLS_MSG="${NEW_SKILLS_MSG}\n    Install with: bash scripts/add-skill.sh ${name}"
+            fi
+        done
     fi
 fi
 
@@ -468,8 +801,24 @@ if [[ -n "$REMOVED_SKILLS_MSG" ]]; then
     echo ""
 fi
 
+if [[ -n "$INSTALLED_NEW_SKILLS_MSG" ]]; then
+    echo "  Newly installed:"
+    printf "$INSTALLED_NEW_SKILLS_MSG\n"
+    echo ""
+fi
+
+if [[ ${#USER_CREATED_SKILLS[@]} -gt 0 ]]; then
+    echo "  Your custom skills (untouched):"
+    for uc_skill in "${USER_CREATED_SKILLS[@]}"; do
+        printf "    ${GREEN}✓${NC} %s\n" "$uc_skill"
+    done
+    echo ""
+fi
+
 if [[ -n "$NEW_SKILLS_MSG" ]]; then
-    printf "$NEW_SKILLS_MSG"
+    echo "  Still available (not installed):"
+    printf "$NEW_SKILLS_MSG\n"
+    echo ""
 fi
 
 echo "  Your files (untouched):"
