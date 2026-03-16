@@ -184,53 +184,45 @@ PULL_OUTPUT=$(git pull origin main 2>&1) || {
 }
 
 # =========================================================
-# Already up to date — clean exit
+# Determine if anything changed
 # =========================================================
+HAS_UPSTREAM_CHANGES=true
 if echo "$PULL_OUTPUT" | grep -q "Already up to date"; then
+    HAS_UPSTREAM_CHANGES=false
     if $STASHED; then
         git stash pop --quiet 2>/dev/null || true
     fi
-    ok "Already up to date — no changes from the main repo."
-    echo ""
-
-    # Still show local state so the user knows what they have
-    if [[ ${#MODIFIED_SKILLS[@]} -gt 0 ]]; then
-        echo ""
-        info "You have local changes to ${#MODIFIED_SKILLS[@]} skill(s):"
-        for i in "${!MODIFIED_SKILLS[@]}"; do
-            printf "    ${YELLOW}~${NC} ${BOLD}%s${NC}" "${MODIFIED_SKILLS[$i]}"
-            # Show which files
-            IFS='|' read -ra files <<< "${MODIFIED_SKILL_FILES[$i]}"
-            printf " ${DIM}(%s)${NC}\n" "${files[*]}"
-        done
-        echo ""
-    fi
-
-    if [[ ${#USER_CREATED_SKILLS[@]} -gt 0 ]]; then
-        info "Your custom skills:"
-        for uc_skill in "${USER_CREATED_SKILLS[@]}"; do
-            printf "    ${GREEN}✓${NC} %s\n" "$uc_skill"
-        done
-        echo ""
-    fi
-    exit 0
 fi
 
 NEW_HEAD=$(git rev-parse HEAD)
-COMMIT_COUNT=$(git log --oneline "${OLD_HEAD}..${NEW_HEAD}" 2>/dev/null | wc -l | tr -d ' ')
+COMMIT_COUNT=0
+if $HAS_UPSTREAM_CHANGES; then
+    COMMIT_COUNT=$(git log --oneline "${OLD_HEAD}..${NEW_HEAD}" 2>/dev/null | wc -l | tr -d ' ')
+fi
 
 # =========================================================
-# What arrived from the main repo
+# STEP 1 OF 4: Updates from the Main Repo
 # =========================================================
-CHANGED_FILES=$(git diff --name-only "${OLD_HEAD}..${NEW_HEAD}" 2>/dev/null || true)
-
 echo ""
 printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
-printf "${CYAN}${BOLD}  Updates from the Main Repo  ${DIM}(${COMMIT_COUNT} commit(s))${NC}\n"
+printf "${CYAN}${BOLD}  Step 1: Updates from the Main Repo${NC}\n"
 printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
 echo ""
 
-if [[ -n "$CHANGED_FILES" ]]; then
+if ! $HAS_UPSTREAM_CHANGES; then
+    ok "No new updates — you're on the latest version."
+    echo ""
+    info "Scripts:              ${GREEN}no changes${NC}"
+    info "System files:         ${GREEN}no changes${NC}  ${DIM}(CLAUDE.md, README.md, etc.)${NC}"
+    info "Skill catalog:        ${GREEN}no changes${NC}"
+    info "Skills:               ${GREEN}no changes${NC}"
+    echo ""
+else
+    ok "Pulled ${COMMIT_COUNT} new commit(s) from main."
+    echo ""
+
+    CHANGED_FILES=$(git diff --name-only "${OLD_HEAD}..${NEW_HEAD}" 2>/dev/null || true)
+
     # Categorise into buckets
     CHANGED_SCRIPTS=""
     CHANGED_SYSTEM=""
@@ -239,67 +231,72 @@ if [[ -n "$CHANGED_FILES" ]]; then
     CHANGED_OTHER=""
     SCRIPT_COUNT=0; SYSTEM_COUNT=0; CATALOG_COUNT=0; SKILL_COUNT=0; OTHER_COUNT=0
 
-    while IFS= read -r file; do
-        case "$file" in
-            scripts/*)
-                CHANGED_SCRIPTS="${CHANGED_SCRIPTS}${file}\n"
-                SCRIPT_COUNT=$((SCRIPT_COUNT + 1))
-                ;;
-            CLAUDE.md|PRD.md|README.md|.gitignore|.gitattributes)
-                CHANGED_SYSTEM="${CHANGED_SYSTEM}${file}\n"
-                SYSTEM_COUNT=$((SYSTEM_COUNT + 1))
-                ;;
-            .claude/skills/_catalog/*)
-                CHANGED_CATALOG="${CHANGED_CATALOG}${file}\n"
-                CATALOG_COUNT=$((CATALOG_COUNT + 1))
-                ;;
-            .claude/skills/*)
-                CHANGED_SKILL_FILES="${CHANGED_SKILL_FILES}${file}\n"
-                SKILL_COUNT=$((SKILL_COUNT + 1))
-                ;;
-            context/*|brand_context/*|projects/*|.env*)
-                ;; # Protected — skip
-            *)
-                CHANGED_OTHER="${CHANGED_OTHER}${file}\n"
-                OTHER_COUNT=$((OTHER_COUNT + 1))
-                ;;
-        esac
-    done <<< "$CHANGED_FILES"
+    if [[ -n "$CHANGED_FILES" ]]; then
+        while IFS= read -r file; do
+            case "$file" in
+                scripts/*)
+                    CHANGED_SCRIPTS="${CHANGED_SCRIPTS}${file}\n"
+                    SCRIPT_COUNT=$((SCRIPT_COUNT + 1))
+                    ;;
+                CLAUDE.md|PRD.md|README.md|.gitignore|.gitattributes)
+                    CHANGED_SYSTEM="${CHANGED_SYSTEM}${file}\n"
+                    SYSTEM_COUNT=$((SYSTEM_COUNT + 1))
+                    ;;
+                .claude/skills/_catalog/*)
+                    CHANGED_CATALOG="${CHANGED_CATALOG}${file}\n"
+                    CATALOG_COUNT=$((CATALOG_COUNT + 1))
+                    ;;
+                .claude/skills/*)
+                    CHANGED_SKILL_FILES="${CHANGED_SKILL_FILES}${file}\n"
+                    SKILL_COUNT=$((SKILL_COUNT + 1))
+                    ;;
+                context/*|brand_context/*|projects/*|.env*)
+                    ;; # Protected — skip
+                *)
+                    CHANGED_OTHER="${CHANGED_OTHER}${file}\n"
+                    OTHER_COUNT=$((OTHER_COUNT + 1))
+                    ;;
+            esac
+        done <<< "$CHANGED_FILES"
+    fi
 
-    info "The following files were updated:"
+    # Always show every category — with "no changes" when empty
+    if [[ $SCRIPT_COUNT -gt 0 ]]; then
+        printf "  ${BOLD}Scripts${NC} ${DIM}(%d updated)${NC}\n" "$SCRIPT_COUNT"
+        printf "$CHANGED_SCRIPTS" | while IFS= read -r f; do [[ -n "$f" ]] && bullet "$f"; done
+    else
+        info "Scripts:              ${GREEN}no changes${NC}"
+    fi
+
+    if [[ $SYSTEM_COUNT -gt 0 ]]; then
+        printf "  ${BOLD}System files${NC} ${DIM}(%d updated)${NC}\n" "$SYSTEM_COUNT"
+        printf "$CHANGED_SYSTEM" | while IFS= read -r f; do [[ -n "$f" ]] && bullet "$f"; done
+    else
+        info "System files:         ${GREEN}no changes${NC}  ${DIM}(CLAUDE.md, README.md, etc.)${NC}"
+    fi
+
+    if [[ $CATALOG_COUNT -gt 0 ]]; then
+        printf "  ${BOLD}Skill catalog${NC} ${DIM}(%d updated)${NC}\n" "$CATALOG_COUNT"
+        printf "$CHANGED_CATALOG" | while IFS= read -r f; do [[ -n "$f" ]] && bullet "$f"; done
+    else
+        info "Skill catalog:        ${GREEN}no changes${NC}"
+    fi
+
+    if [[ $SKILL_COUNT -gt 0 ]]; then
+        printf "  ${BOLD}Skills${NC} ${DIM}(%d file(s) updated)${NC}\n" "$SKILL_COUNT"
+        printf "$CHANGED_SKILL_FILES" | while IFS= read -r f; do [[ -n "$f" ]] && bullet "$f"; done
+    else
+        info "Skills:               ${GREEN}no changes${NC}"
+    fi
+
+    if [[ $OTHER_COUNT -gt 0 ]]; then
+        printf "  ${BOLD}Other${NC} ${DIM}(%d updated)${NC}\n" "$OTHER_COUNT"
+        printf "$CHANGED_OTHER" | while IFS= read -r f; do [[ -n "$f" ]] && bullet "$f"; done
+    fi
+
     echo ""
 
-    if [[ -n "$CHANGED_SCRIPTS" ]]; then
-        printf "  ${BOLD}Scripts${NC} ${DIM}(%d file%s)${NC}\n" "$SCRIPT_COUNT" "$( [[ $SCRIPT_COUNT -ne 1 ]] && echo s)"
-        printf "$CHANGED_SCRIPTS" | while IFS= read -r f; do [[ -n "$f" ]] && bullet "$f"; done
-        echo ""
-    fi
-
-    if [[ -n "$CHANGED_SYSTEM" ]]; then
-        printf "  ${BOLD}System Configuration${NC} ${DIM}(%d file%s)${NC}\n" "$SYSTEM_COUNT" "$( [[ $SYSTEM_COUNT -ne 1 ]] && echo s)"
-        printf "$CHANGED_SYSTEM" | while IFS= read -r f; do [[ -n "$f" ]] && bullet "$f"; done
-        echo ""
-    fi
-
-    if [[ -n "$CHANGED_CATALOG" ]]; then
-        printf "  ${BOLD}Skill Catalog${NC} ${DIM}(%d file%s)${NC}\n" "$CATALOG_COUNT" "$( [[ $CATALOG_COUNT -ne 1 ]] && echo s)"
-        printf "$CHANGED_CATALOG" | while IFS= read -r f; do [[ -n "$f" ]] && bullet "$f"; done
-        echo ""
-    fi
-
-    if [[ -n "$CHANGED_SKILL_FILES" ]]; then
-        printf "  ${BOLD}Skills${NC} ${DIM}(%d file%s)${NC}\n" "$SKILL_COUNT" "$( [[ $SKILL_COUNT -ne 1 ]] && echo s)"
-        printf "$CHANGED_SKILL_FILES" | while IFS= read -r f; do [[ -n "$f" ]] && bullet "$f"; done
-        echo ""
-    fi
-
-    if [[ -n "$CHANGED_OTHER" ]]; then
-        printf "  ${BOLD}Other${NC} ${DIM}(%d file%s)${NC}\n" "$OTHER_COUNT" "$( [[ $OTHER_COUNT -ne 1 ]] && echo s)"
-        printf "$CHANGED_OTHER" | while IFS= read -r f; do [[ -n "$f" ]] && bullet "$f"; done
-        echo ""
-    fi
-
-    # Collect non-skill files for optional diff viewing
+    # Offer to show full diff for system files
     SYS_FILES_FOR_DIFF=""
     [[ -n "$CHANGED_SCRIPTS" ]] && SYS_FILES_FOR_DIFF="${SYS_FILES_FOR_DIFF}${CHANGED_SCRIPTS}"
     [[ -n "$CHANGED_SYSTEM" ]] && SYS_FILES_FOR_DIFF="${SYS_FILES_FOR_DIFF}${CHANGED_SYSTEM}"
@@ -320,7 +317,7 @@ if [[ -n "$CHANGED_FILES" ]]; then
                         +*)   printf "  ${GREEN}%s${NC}\n" "$line" ;;
                         -*)   printf "  ${YELLOW}%s${NC}\n" "$line" ;;
                         @*)   printf "  ${CYAN}%s${NC}\n" "$line" ;;
-                        diff*|index*|---*|+++*) ;; # skip noise headers
+                        diff*|index*|---*|+++*) ;; # skip noise
                         *)    printf "  %s\n" "$line" ;;
                     esac
                 done
@@ -328,24 +325,52 @@ if [[ -n "$CHANGED_FILES" ]]; then
             echo ""
         fi
     fi
-else
-    info "Pull completed but no file changes detected."
 fi
 
 # =========================================================
-# Review locally-modified skills vs upstream changes
+# STEP 2 OF 4: Your Local Skill Changes
 # =========================================================
+echo ""
+printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
+printf "${CYAN}${BOLD}  Step 2: Your Local Changes${NC}\n"
+printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
+echo ""
+
 SKILL_REVIEW_MSG=""
 
+if [[ ${#MODIFIED_SKILLS[@]} -eq 0 ]] && [[ ${#USER_CREATED_SKILLS[@]} -eq 0 ]]; then
+    ok "No local skill modifications detected."
+    info "All your installed skills match the upstream versions."
+    echo ""
+elif [[ ${#MODIFIED_SKILLS[@]} -eq 0 ]]; then
+    ok "No modifications to upstream skills."
+    echo ""
+fi
+
+if [[ ${#USER_CREATED_SKILLS[@]} -gt 0 ]]; then
+    ok "${#USER_CREATED_SKILLS[@]} custom skill(s) you've created ${DIM}(untouched by updates):${NC}"
+    for uc_skill in "${USER_CREATED_SKILLS[@]}"; do
+        printf "    ${GREEN}✓${NC} %s\n" "$uc_skill"
+    done
+    echo ""
+fi
+
 if [[ ${#MODIFIED_SKILLS[@]} -gt 0 ]]; then
+    info "You've modified ${#MODIFIED_SKILLS[@]} skill(s) locally:"
+    for i in "${!MODIFIED_SKILLS[@]}"; do
+        IFS='|' read -ra files <<< "${MODIFIED_SKILL_FILES[$i]}"
+        printf "    ${YELLOW}~${NC} ${BOLD}%s${NC} ${DIM}(%s)${NC}\n" "${MODIFIED_SKILLS[$i]}" "${files[*]}"
+    done
     echo ""
-    printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
-    printf "${CYAN}${BOLD}  Your Local Skill Changes${NC}\n"
-    printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
-    echo ""
-    info "You've modified ${#MODIFIED_SKILLS[@]} skill(s) that may also have upstream changes."
-    info "We'll walk through each changed file so you can pick what to keep."
-    echo ""
+
+    if $HAS_UPSTREAM_CHANGES; then
+        info "We'll check if any of these also changed upstream and walk you through"
+        info "each file so you can pick what to keep."
+        echo ""
+    else
+        ok "No upstream changes to these skills — your local versions are kept as-is."
+        echo ""
+    fi
 
     for skill_name in "${MODIFIED_SKILLS[@]}"; do
         skill_dir="$REPO_ROOT/.claude/skills/$skill_name"
@@ -567,10 +592,17 @@ except Exception:
 fi
 
 # =========================================================
-# Detect & offer newly added upstream skills
+# STEP 3 OF 4: New Skills
 # =========================================================
+echo ""
+printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
+printf "${CYAN}${BOLD}  Step 3: New Skills${NC}\n"
+printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
+echo ""
+
 NEW_SKILLS_MSG=""
 INSTALLED_NEW_SKILLS_MSG=""
+HAS_NEW_SKILLS=false
 
 if [[ -f "$CATALOG" ]]; then
     NEW_SKILLS=$($PYTHON_CMD -c "
@@ -604,12 +636,8 @@ for s in sorted(new_skills, key=lambda n: (order.get(catalog_skills[n]['category
 " 2>/dev/null || true)
 
     if [[ -n "$NEW_SKILLS" ]]; then
-        echo ""
-        printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
-        printf "${CYAN}${BOLD}  New Skills Available${NC}\n"
-        printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
-        echo ""
-        info "These were added to the main repo since your last update:"
+        HAS_NEW_SKILLS=true
+        info "New skills have been added since your last update:"
         echo ""
 
         declare -a NS_NAMES=()
@@ -692,72 +720,63 @@ for s in sorted(new_skills, key=lambda n: (order.get(catalog_skills[n]['category
     fi
 fi
 
-# =========================================================
-# Summary
-# =========================================================
-echo ""
-printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
-printf "${CYAN}${BOLD}  Summary${NC}\n"
-printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
-echo ""
-
-# Version info
-NEW_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-if [[ -n "$OLD_TAG" ]] && [[ -n "$NEW_TAG" ]] && [[ "$OLD_TAG" != "$NEW_TAG" ]]; then
-    ok "Updated: ${OLD_TAG} → ${NEW_TAG}"
-else
-    ok "Pulled ${COMMIT_COUNT} new commit(s) from main"
-fi
-echo ""
-
-# Commit log
-CHANGES=$(git log --oneline "${OLD_HEAD}..${NEW_HEAD}" 2>/dev/null | sed 's/^/    /')
-if [[ -n "$CHANGES" ]]; then
-    printf "  ${BOLD}Commits:${NC}\n"
-    echo "$CHANGES"
+if ! $HAS_NEW_SKILLS; then
+    ok "No new skills since your last update."
+    info "You can browse available skills anytime with: ${BOLD}bash scripts/list-skills.sh${NC}"
     echo ""
+fi
+
+# =========================================================
+# STEP 4 OF 4: Summary
+# =========================================================
+echo ""
+printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
+printf "${CYAN}${BOLD}  Step 4: Summary${NC}\n"
+printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
+echo ""
+
+# Main repo status
+NEW_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+if $HAS_UPSTREAM_CHANGES; then
+    if [[ -n "$OLD_TAG" ]] && [[ -n "$NEW_TAG" ]] && [[ "$OLD_TAG" != "$NEW_TAG" ]]; then
+        ok "Main repo: updated ${OLD_TAG} → ${NEW_TAG}"
+    else
+        ok "Main repo: pulled ${COMMIT_COUNT} new commit(s)"
+    fi
+
+    # Commit log
+    CHANGES=$(git log --oneline "${OLD_HEAD}..${NEW_HEAD}" 2>/dev/null | sed 's/^/      /')
+    if [[ -n "$CHANGES" ]]; then
+        echo "$CHANGES"
+    fi
+else
+    ok "Main repo: already up to date"
 fi
 
 # Skill review results
 if [[ -n "$SKILL_REVIEW_MSG" ]]; then
-    printf "  ${BOLD}Skill review:${NC}"
+    printf "\n  ${BOLD}Skill review:${NC}"
     printf "$SKILL_REVIEW_MSG\n"
-    echo ""
     info "Backups saved to ${BOLD}.backup/${NC} if you change your mind."
-    echo ""
+elif [[ ${#MODIFIED_SKILLS[@]} -gt 0 ]]; then
+    printf "\n"
+    ok "Local skill changes: kept as-is (no upstream conflicts)"
+fi
+
+# Newly installed skills
+if [[ -n "$INSTALLED_NEW_SKILLS_MSG" ]]; then
+    printf "\n  ${BOLD}Newly installed:${NC}"
+    printf "$INSTALLED_NEW_SKILLS_MSG\n"
 fi
 
 # Re-removed skills
 if [[ -n "$REMOVED_SKILLS_MSG" ]]; then
     printf "$REMOVED_SKILLS_MSG\n"
-    echo ""
 fi
 
-# Newly installed
-if [[ -n "$INSTALLED_NEW_SKILLS_MSG" ]]; then
-    printf "  ${BOLD}Newly installed:${NC}"
-    printf "$INSTALLED_NEW_SKILLS_MSG\n"
-    echo ""
-fi
-
-# Custom skills
-if [[ ${#USER_CREATED_SKILLS[@]} -gt 0 ]]; then
-    printf "  ${BOLD}Your custom skills${NC} ${DIM}(untouched):${NC}\n"
-    for uc_skill in "${USER_CREATED_SKILLS[@]}"; do
-        printf "    ${GREEN}✓${NC} %s\n" "$uc_skill"
-    done
-    echo ""
-fi
-
-# Still available
-if [[ -n "$NEW_SKILLS_MSG" ]]; then
-    printf "  ${BOLD}Still available to install:${NC}"
-    printf "$NEW_SKILLS_MSG\n"
-    echo ""
-fi
-
-# Protected files confirmation
-ok "Your files are untouched:"
+# Protected files
+echo ""
+ok "Your data is safe:"
 printf "    brand_context/  ${GREEN}✓${NC}   .env  ${GREEN}✓${NC}   context/  ${GREEN}✓${NC}   projects/  ${GREEN}✓${NC}\n"
 echo ""
 printf "${CYAN}${BOLD}═══════════════════════════════════════════════${NC}\n"
