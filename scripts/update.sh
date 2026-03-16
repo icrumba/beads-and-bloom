@@ -716,7 +716,7 @@ for s in sorted(available_skills, key=lambda n: (order.get(catalog_skills.get(n,
 
         if [[ -n "$NS_INPUT" ]]; then
             SELECTED_NS=()
-            if [[ "${NS_INPUT,,}" == "all" ]]; then
+            if echo "$NS_INPUT" | grep -qi "^all$"; then
                 SELECTED_NS=("${NS_NAMES[@]}")
             else
                 for token in $NS_INPUT; do
