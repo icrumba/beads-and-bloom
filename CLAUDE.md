@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Pushing this test change to highlight changes in Claude.md. This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ---
 

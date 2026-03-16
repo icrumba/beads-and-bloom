@@ -10,7 +10,7 @@ description: >
   skill researches). Produces
   brand_context/voice-profile.md and brand_context/samples.md.
   Foundation skill — run before any execution skill that reads voice context.
-  Does NOT trigger for positioning, audience research, or keyword work.
+  Does NOT trigger for positioning, audience research, or keyword work.Pushing this test change to highlight changes in a SKILL.md file!
 ---
 
 # Brand Voice
