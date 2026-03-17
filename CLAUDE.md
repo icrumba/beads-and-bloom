@@ -15,6 +15,11 @@ Before doing anything else in any session:
 6. Scan `.claude/skills/` — know what skills are installed and available
 7. **Sync check** — run the skill & MCP reconciliation (see below)
 8. **Scheduled jobs** — check if the watchdog is installed (look for `~/Library/LaunchAgents/com.agentic-os.watchdog.plist` on Mac). If installed, report: *"Watchdog is active — your N enabled jobs run automatically in the background."* If not installed, scan `cron/jobs/` for enabled jobs and mention: *"You have N scheduled jobs. Install the watchdog to run them automatically: `bash scripts/install-watchdog.sh`"*
+9. **Session gate** — after completing the heartbeat, check whether the user should run `/start-here` before doing other work:
+   - **No `brand_context/` files?** → First-time user. Prompt: *"Looks like you haven't set up yet. Run `/start-here` to get your brand foundation built — it takes a few minutes and makes everything better."*
+   - **Brand context exists but no previous `/wrap-up`?** Check the most recent `context/memory/` file — if the last session has no `### Open threads` content or the session block looks incomplete (placeholder text still present), nudge: *"Your last session wasn't wrapped up. Running `/wrap-up` now will save your context, then `/start-here` will pick it up. Or just run `/start-here` to jump into today."*
+   - **Brand context exists and previous sessions are clean?** → Prompt: *"Run `/start-here` to kick off today's session — I'll recap where we left off and we'll go from there."*
+   - **User skips and jumps straight into a task?** → Don't block them, but mention once: *"Tip: starting with `/start-here` gives me your full context so I can do better work. Happy to keep going either way."*
 
 ### Daily Memory
 
