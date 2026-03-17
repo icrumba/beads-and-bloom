@@ -95,13 +95,11 @@ Examples of direct fixes:
 
 After applying fixes, log what was changed in the skill's learnings section so there's a record.
 
-### 3c: Write Daily Memory
+### 3c: Finalise Daily Memory
 
-One file per day: `context/memory/{YYYY-MM-DD}.md`. Multiple sessions in one day append new session blocks to the same file.
+One file per day: `context/memory/{YYYY-MM-DD}.md`. The heartbeat (or `/start-here`) creates the session block at the start. Wrap-up **finalises the existing block** — it does NOT create a new session block.
 
-**If the file already exists**, append a new `## Session N` block (increment the session number). **If it doesn't exist**, create it.
-
-Each session block uses a 4-section format:
+**Find the current session's `## Session N` block** and replace any placeholder text with real content from the session. Fill in all four sections:
 
 ```
 ## Session N
@@ -119,7 +117,11 @@ Each session block uses a 4-section format:
 - [Anything unfinished for the next session]
 ```
 
-**Never leave placeholder text** like `[Waiting for user goal]`. Replace placeholders with actual content from the session. If the heartbeat created the file with placeholders, overwrite them now. Omit sections that don't apply (e.g., no Decisions section if none were made).
+**Rules:**
+- **Never append a new session block** — wrap-up completes the block that was started, it doesn't create a new one
+- **Never leave placeholder text** like `[Waiting for user goal]`. Replace placeholders with actual content from the session
+- Omit sections that don't apply (e.g., no Decisions section if none were made)
+- If no session block exists yet (e.g., heartbeat was skipped), create one — but this is the fallback, not the norm
 
 ### 3d: Evolve SOUL.md (agent-suggested, user-approved)
 

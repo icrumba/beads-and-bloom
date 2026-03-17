@@ -46,7 +46,7 @@ Every session writes to `context/memory/{YYYY-MM-DD}.md`. This is how continuity
 
 **During the session:** Update the current session block incrementally as events happen. Don't wait for wrap-up — if a deliverable is produced or a decision is made, log it immediately.
 
-**At session end (via /wrap-up):** The wrap-up skill finalises the session block — replacing any placeholder text with real content. Even without `/wrap-up`, the file should have useful context because it was written incrementally.
+**At session end (via /wrap-up):** The wrap-up skill finalises the **existing** session block — replacing any placeholder text with real content. It does NOT create a new session block. Wrap-up completes the block that was started, not a separate one. Even without `/wrap-up`, the file should have useful context because it was written incrementally.
 
 Keep entries concise — bullet points, not paragraphs. This file is read at the start of every future session.
 
