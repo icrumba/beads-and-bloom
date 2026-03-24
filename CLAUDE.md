@@ -16,11 +16,7 @@ Before doing anything else in any session:
 7. Scan `.claude/skills/` — know what skills are installed and available
 8. **Sync check** — run the skill & MCP reconciliation (see below)
 9. **Scheduled jobs** — check if the cron dispatcher is installed. On Mac, derive the project slug (`basename` of project dir, lowercased, non-alphanumeric replaced with `-`) and look for `~/Library/LaunchAgents/com.agentic-os.{slug}.plist`. If installed, read `cron/status/` files and report: *"Cron dispatcher is active — N enabled jobs. Last run: {job} at {time} ({result})."* If any jobs failed on their last run, flag them: *"{job} failed on last run — check logs?"* If not installed, silently note it — the dispatcher is installed automatically during `bash scripts/install.sh`. Only mention it if the user asks about cron or scheduling: *"The cron dispatcher isn't set up yet. Run `bash scripts/install-crons.sh` to enable it."*
-10. **Session gate** — after completing the heartbeat, check whether the user should run `/start-here` before doing other work:
-   - **No `brand_context/` files?** → First-time user. **Automatically invoke `/start-here`** — don't prompt the user to type it themselves. Just say *"First time here — let's get you set up."* and run the skill directly.
-   - **Brand context exists but no previous `/wrap-up`?** Check the most recent `context/memory/` file — if the last session has no `### Open threads` content or the session block looks incomplete (placeholder text still present), nudge: *"Your last session wasn't wrapped up. Running `/wrap-up` now will save your context, then `/start-here` will pick it up. Or just run `/start-here` to jump into today."*
-   - **Brand context exists and previous sessions are clean?** → Prompt: *"Run `/start-here` to kick off today's session — I'll recap where we left off and we'll go from there."*
-   - **User skips and jumps straight into a task?** → Don't block them, but mention once: *"Tip: starting with `/start-here` gives me your full context so I can do better work. Happy to keep going either way."*
+10. **Auto start-here** — after completing the heartbeat checks above, automatically run the `/start-here` flow. Do NOT prompt the user to type it — just do it. The `/start-here` command detects state (first-run vs returning) and handles everything: first-time onboarding, session recaps, goal-setting, and work scoping. The user should never need to type `/start-here` manually — the heartbeat runs it for them. (The command still exists for manual re-invocation if needed.)
 
 ### Daily Memory
 
@@ -52,7 +48,9 @@ When Claude reads yesterday's memory and sees a `### Project` reference, it load
 
 **During the session:** Update the current session block incrementally as events happen. Don't wait for wrap-up — if a deliverable is produced or a decision is made, log it immediately.
 
-**At session end (via /wrap-up):** The wrap-up skill finalises the **existing** session block — replacing any placeholder text with real content. It does NOT create a new session block. Wrap-up completes the block that was started, not a separate one. Even without `/wrap-up`, the file should have useful context because it was written incrementally.
+**At session end (automatic):** Wrap-up runs automatically when the user signals they're done — no need to type `/wrap-up`. Detect session-ending signals like: "thanks", "that's it", "done for today", "bye", "I'm done", "all good", "that's all", "cheers", "signing off", or any message that clearly indicates the conversation is ending. When detected, run the full `meta-wrap-up` skill (review deliverables, collect feedback, update learnings, finalise memory, commit). The `/wrap-up` command still exists for manual invocation mid-session or if the auto-detection doesn't trigger.
+
+The wrap-up skill finalises the **existing** session block — replacing any placeholder text with real content. It does NOT create a new session block. Wrap-up completes the block that was started, not a separate one. Even without wrap-up, the file should have useful context because it was written incrementally.
 
 Keep entries concise — bullet points, not paragraphs. This file is read at the start of every future session.
 
@@ -120,7 +118,7 @@ These are system-level commands handled by scripts — not skills. **Check these
 ### Before Major Deliverables
 - Is the relevant brand_context file loaded per the context matrix below?
 - Are there learnings in `context/learnings.md` for this skill's section?
-- If brand_context is missing, offer to run `/start-here` — never block work because context is missing
+- If brand_context is missing, offer to build it (the heartbeat already runs start-here automatically) — never block work because context is missing
 
 ### After Major Deliverables
 - Ask: "How did this land? Any adjustments?"
@@ -131,11 +129,45 @@ These are system-level commands handled by scripts — not skills. **Check these
 
 ## What This Project Is
 
-Agentic OS is a Claude Code project template that turns any client folder into an intelligent business assistant. It is **agent-first**: personality lives in `context/SOUL.md`, user preferences in `context/USER.md`, session continuity in `context/memory/`, accumulated learnings in `context/learnings.md`, brand memory in `brand_context/`, and functionality in `.claude/skills/`.
+Agentic OS is a Claude Code project template that turns Claude into an intelligent business assistant. It is **agent-first**: personality lives in `context/SOUL.md`, user preferences in `context/USER.md`, session continuity in `context/memory/`, accumulated learnings in `context/learnings.md`, brand memory in `brand_context/`, and functionality in `.claude/skills/`.
 
-**One command to start: `/start-here`**. Everything else is a skill that triggers automatically or gets invoked by the orchestrator.
+**Every session starts automatically** — the heartbeat runs `/start-here` without the user needing to type it. Everything else is a skill that triggers automatically or gets invoked by the orchestrator.
 
 The full specification lives in `PRD.md`. Read it when building any new component.
+
+---
+
+## Multi-Client Architecture
+
+Agentic OS supports multiple clients from a single install. The root folder holds shared methodology (CLAUDE.md, SOUL.md, skills, scripts). Each client gets a subfolder under `clients/` with its own brand context, memory, projects, and learnings.
+
+```
+agentic-os/                          ← shared methodology (skills, scripts, CLAUDE.md)
+├── clients/
+│   ├── abc-client/                  ← ABC Client's workspace
+│   │   ├── brand_context/           ← their voice, positioning, ICP
+│   │   ├── context/                 ← their memory, learnings, USER.md
+│   │   ├── projects/                ← their outputs
+│   │   └── .claude/skills/ → symlink to root skills
+│   └── xyz-agency/                  ← another client
+│       ├── brand_context/
+│       ├── context/
+│       └── projects/
+├── brand_context/                   ← solo/default brand context (if not using clients/)
+├── context/                         ← solo/default context
+└── .claude/skills/                  ← shared skills (all clients use these)
+```
+
+**How it works:**
+- `bash scripts/add-client.sh "Client Name"` creates the client workspace with the correct structure
+- Each client inherits CLAUDE.md, SOUL.md, and skills from the root — edit once, all clients benefit
+- Each client has its own brand_context/, context/memory/, context/learnings.md, USER.md, and projects/
+- To work with a client: `cd clients/{slug} && claude`, then run `/start-here` on first use
+- Solo users don't need clients/ at all — just work from the root folder
+
+**When the user says "add a client":** Run the script directly (see Built-in Operations). Don't suggest cloning a new repo, creating a separate workspace, or any other approach. Multi-client is built in.
+
+Full guide: [docs/multi-client-guide.md](docs/multi-client-guide.md)
 
 ---
 
