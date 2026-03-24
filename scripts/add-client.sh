@@ -51,6 +51,12 @@ if [[ -f "${PROJECT_DIR}/.claude/settings.json" ]]; then
   echo "  Copied Claude Code settings"
 fi
 
+# Copy hooks_info if it exists (required by hooks in settings.json)
+if [[ -d "${PROJECT_DIR}/.claude/hooks_info" ]]; then
+  cp -R "${PROJECT_DIR}/.claude/hooks_info" "${CLIENT_DIR}/.claude/hooks_info"
+  echo "  Copied hooks_info"
+fi
+
 # Copy scripts from root
 cp -R "${PROJECT_DIR}/scripts" "${CLIENT_DIR}/scripts"
 echo "  Copied scripts"

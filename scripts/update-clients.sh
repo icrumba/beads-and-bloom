@@ -67,6 +67,13 @@ for CLIENT_DIR in "${CLIENTS_DIR}"/*/; do
     echo "  Settings synced"
   fi
 
+  # Sync hooks_info (required by hooks in settings.json)
+  if [[ -d "${PROJECT_DIR}/.claude/hooks_info" ]]; then
+    rm -rf "${CLIENT_DIR}/.claude/hooks_info"
+    cp -R "${PROJECT_DIR}/.claude/hooks_info" "${CLIENT_DIR}/.claude/hooks_info"
+    echo "  Hooks synced"
+  fi
+
   # Sync scripts
   rm -rf "${CLIENT_DIR}/scripts"
   cp -R "${PROJECT_DIR}/scripts" "${CLIENT_DIR}/scripts"
@@ -89,6 +96,6 @@ if [[ $CLIENT_COUNT -eq 0 ]]; then
 else
   echo "Done. Synced ${SYNCED} client(s)."
   echo ""
-  echo "What was synced: skills, scripts, settings, cron templates."
+  echo "What was synced: skills, scripts, settings, hooks, cron templates."
   echo "What was NOT touched: brand_context, memory, learnings, projects, .env, cron jobs."
 fi

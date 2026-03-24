@@ -26,6 +26,17 @@ Check what exists:
 - `context/USER.md` (populated or template?)
 - `.claude/skills/` (which skills are installed)
 
+**Detect if this is a client workspace:** Check if the current working directory is inside a `clients/` folder (path contains `/clients/`). If so, this is a client workspace — read the client CLAUDE.md to get the client name from the `# Client: {name}` header.
+
+**Client workspace intro (if inside clients/):**
+Explain the multi-client setup and frame this as building brand context for this specific client:
+- You're inside **{client name}**'s workspace — one of several client folders managed by the parent Agentic OS
+- The parent Agentic OS at the root holds all the shared skills, methodology, and scripts — edits there benefit every client
+- Each client folder (list any sibling folders under `clients/` if they exist) gets its own brand context, memory, and outputs — completely separate from each other
+- Right now we're setting up **{client name}**'s brand foundation so everything produced here matches their voice, positioning, and audience
+- We'll answer a few questions, then pick which skills to keep active for this client
+
+**Standard intro (if NOT inside clients/):**
 Read README.md and give the user a brief, genuine explanation of what they've set up:
 - What Agentic OS does (business OS that learns their brand, gets sharper each session)
 - How it works in practice (answer a few questions → brand foundation → then you'll pick which skills to keep)
@@ -41,7 +52,9 @@ Do NOT present all four at once.
 
 **Before each question, check if the user already provided the answer in a previous response.** People often cover multiple topics in one answer (e.g., describing their business AND their ideal customer together). If you already have enough information for a question, skip it and move to the next one. Acknowledge what you picked up so the user knows you were listening.
 
-**Question 1:** "What does your business do? Give me the one-sentence version."
+**Question 1:**
+- Client workspace: "What does **{client name}**'s business do? Give me the one-sentence version."
+- Standard: "What does your business do? Give me the one-sentence version."
 → Wait for answer.
 
 **Question 2:** "Who's your ideal customer — who do you help?"
