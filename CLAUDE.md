@@ -97,21 +97,22 @@ Compare what's on disk against what's registered in this file. Fix any drift sil
 ### Task Routing
 
 When the user asks a question or requests a task:
-1. **Search installed skills first.** Check `.claude/skills/` frontmatter for a matching skill.
-2. **Skill found** → invoke it. Always prefer the dedicated skill over base knowledge.
-3. **No matching skill** → inform the user explicitly and offer the choice:
+1. **Check system operations first.** If the request matches a built-in operation (see table below), execute it directly. These are NOT skills — they're core system functions that always work.
+2. **Search installed skills.** Check `.claude/skills/` frontmatter for a matching skill.
+3. **Skill found** → invoke it. Always prefer the dedicated skill over base knowledge.
+4. **No matching skill** → inform the user explicitly and offer the choice:
    - **(a) Find or build a skill** — search for an existing skill to install, or build one with `meta-skill-creator`, so the system handles this task well every time
    - **(b) Handle it now with base knowledge** — complete the task without a skill, understanding output won't benefit from a tested methodology or the learnings loop
 
 Never silently fall back to base knowledge when a skill exists. Never silently handle a task without telling the user a skill gap was found.
 
-### Common Operations
+### Built-in Operations
 
-Some requests map directly to system scripts. Handle these automatically — don't tell the user to run a command themselves.
+These are system-level commands handled by scripts — not skills. **Check these BEFORE searching skills.** Execute them directly without offering alternatives.
 
 | User says | Action |
 |-----------|--------|
-| "add a client", "new client", "set up a client" | Ask for the client name, then run `bash scripts/add-client.sh "{name}"`. When done, ask: *"Want to switch into that client folder now?"* If yes, tell them to run `cd clients/{slug} && claude` in a new terminal (Claude Code can't change its own working directory). |
+| "add a client", "new client", "set up a client" | Ask for the client name (if not provided), then run `bash scripts/add-client.sh "{name}"`. When done, ask: *"Want to switch into that client folder now?"* If yes, tell them to run `cd clients/{slug} && claude` in a new terminal (Claude Code can't change its own working directory). |
 | "remove a skill", "uninstall {skill}" | Run `bash scripts/remove-skill.sh {skill-name}` |
 | "add a skill", "install {skill}" | Run `bash scripts/add-skill.sh {skill-name}` |
 | "list skills", "what skills are installed" | Run `bash scripts/list-skills.sh` |
