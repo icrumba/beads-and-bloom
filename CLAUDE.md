@@ -15,9 +15,9 @@ Before doing anything else in any session:
 6. **Active projects** — scan `projects/briefs/*/brief.md` for briefs with `status: active` in frontmatter. If any found, report: *"You have N active projects: {names}."* Skip silently if none.
 7. Scan `.claude/skills/` — know what skills are installed and available
 8. **Sync check** — run the skill & MCP reconciliation (see below)
-9. **Scheduled jobs** — check if the cron dispatcher is installed. On Mac, derive the project slug (`basename` of project dir, lowercased, non-alphanumeric replaced with `-`) and look for `~/Library/LaunchAgents/com.agentic-os.{slug}.plist`. If installed, read `cron/status/` files and report: *"Cron dispatcher is active — N enabled jobs. Last run: {job} at {time} ({result})."* If any jobs failed on their last run, flag them: *"{job} failed on last run — check logs?"* If not installed, scan `cron/jobs/` for active jobs and mention: *"You have N scheduled jobs. Install the dispatcher to run them automatically: `bash scripts/install-crons.sh`"*
+9. **Scheduled jobs** — check if the cron dispatcher is installed. On Mac, derive the project slug (`basename` of project dir, lowercased, non-alphanumeric replaced with `-`) and look for `~/Library/LaunchAgents/com.agentic-os.{slug}.plist`. If installed, read `cron/status/` files and report: *"Cron dispatcher is active — N enabled jobs. Last run: {job} at {time} ({result})."* If any jobs failed on their last run, flag them: *"{job} failed on last run — check logs?"* If not installed, silently note it — the dispatcher is installed automatically during `bash scripts/install.sh`. Only mention it if the user asks about cron or scheduling: *"The cron dispatcher isn't set up yet. Run `bash scripts/install-crons.sh` to enable it."*
 10. **Session gate** — after completing the heartbeat, check whether the user should run `/start-here` before doing other work:
-   - **No `brand_context/` files?** → First-time user. Prompt: *"Looks like you haven't set up yet. Run `/start-here` to get your brand foundation built — it takes a few minutes and makes everything better."*
+   - **No `brand_context/` files?** → First-time user. **Automatically invoke `/start-here`** — don't prompt the user to type it themselves. Just say *"First time here — let's get you set up."* and run the skill directly.
    - **Brand context exists but no previous `/wrap-up`?** Check the most recent `context/memory/` file — if the last session has no `### Open threads` content or the session block looks incomplete (placeholder text still present), nudge: *"Your last session wasn't wrapped up. Running `/wrap-up` now will save your context, then `/start-here` will pick it up. Or just run `/start-here` to jump into today."*
    - **Brand context exists and previous sessions are clean?** → Prompt: *"Run `/start-here` to kick off today's session — I'll recap where we left off and we'll go from there."*
    - **User skips and jumps straight into a task?** → Don't block them, but mention once: *"Tip: starting with `/start-here` gives me your full context so I can do better work. Happy to keep going either way."*
@@ -104,6 +104,17 @@ When the user asks a question or requests a task:
    - **(b) Handle it now with base knowledge** — complete the task without a skill, understanding output won't benefit from a tested methodology or the learnings loop
 
 Never silently fall back to base knowledge when a skill exists. Never silently handle a task without telling the user a skill gap was found.
+
+### Common Operations
+
+Some requests map directly to system scripts. Handle these automatically — don't tell the user to run a command themselves.
+
+| User says | Action |
+|-----------|--------|
+| "add a client", "new client", "set up a client" | Ask for the client name, then run `bash scripts/add-client.sh "{name}"`. When done, ask: *"Want to switch into that client folder now?"* If yes, tell them to run `cd clients/{slug} && claude` in a new terminal (Claude Code can't change its own working directory). |
+| "remove a skill", "uninstall {skill}" | Run `bash scripts/remove-skill.sh {skill-name}` |
+| "add a skill", "install {skill}" | Run `bash scripts/add-skill.sh {skill-name}` |
+| "list skills", "what skills are installed" | Run `bash scripts/list-skills.sh` |
 
 ### Before Major Deliverables
 - Is the relevant brand_context file loaded per the context matrix below?

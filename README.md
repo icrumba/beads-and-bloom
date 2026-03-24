@@ -239,7 +239,9 @@ Removing the dispatcher only stops the scheduler. Your job files in `cron/jobs/`
 
 ## Multiple Clients
 
-If you work with more than one client or brand, add a client workspace:
+If you work with more than one client or brand, just tell Claude: **"add a client called [name]"**. It creates the workspace, and offers to switch you into it.
+
+You can also do it manually:
 
 ```bash
 bash scripts/add-client.sh "Client Name"
