@@ -154,28 +154,34 @@ Here's what I can do for [business name]:
 - [skill]: [what it does for their specific business]
 ```
 
-### Step 9: How It Works Primer
+### Step 9: How It Works Primer (MANDATORY — do NOT skip)
 
-Before recommending a first task, give the user a quick orientation on how they'll actually use the system day-to-day. Keep it conversational — not a feature dump.
+**This step is required.** After showing skills, ALWAYS give the user a quick orientation before recommending a task. This is their only onboarding — they won't read docs unless you tell them what exists.
 
-Cover three things:
+Present this as a natural continuation, not a separate section. Three things to cover:
 
-**1. Projects come in three sizes:**
-> "When you want to get something done, there are three ways to work:
-> - **Single task** — just ask me and I'll do it. Blog post, email, research — done.
-> - **Planned project** — for bigger work with multiple deliverables. I'll scope it out first, write a brief, and we work from that.
-> - **GSD project** — for complex builds with phases and milestones. Full structured planning and verification.
+**1. How work is structured:**
+> "Quick heads up on how we work together. There are three modes:
+> - **Single task** — just ask me. Blog post, email, research — I get it done.
+> - **Planned project** — for bigger work with multiple deliverables. I scope it first, write a brief, and we work from that across sessions.
+> - **GSD project** — for complex builds with phases and milestones. Full structured planning and execution.
 >
-> You don't need to pick upfront — just tell me what you're working on and I'll suggest the right level. Full details in [docs/projects-guide.md](docs/projects-guide.md)."
+> You don't need to pick upfront — tell me what you're working on and I'll suggest the right level. Full details in [docs/projects-guide.md](docs/projects-guide.md)."
 
-**2. Multi-client support (mention only if they might need it):**
-If the user's business involves working with multiple brands, clients, or distinct audiences, mention:
-> "If you work with multiple clients or brands, I can run separate workspaces for each — just say 'add a client' and I'll set it up. Each gets its own brand context, memory, and outputs while sharing the same skills. See [docs/multi-client-guide.md](docs/multi-client-guide.md) for the full setup."
+**2. Multi-client support — ALWAYS mention if ANY of these signals are present:**
+- User said "agency", "clients", "brands", "accounts", "freelance", "consulting"
+- Business involves serving multiple companies or audiences
+- User described work that implies client-based revenue (e.g., "we build automations for businesses")
 
-If they're clearly a solo founder/single brand, skip this.
+If any signal is present:
+> "Since you work with [clients/multiple brands], you can set up separate workspaces for each — just say 'add a client' and I'll create one. Each gets its own brand context, memory, and outputs while sharing the same skills and methodology. So you only build skills once and every client benefits.
+>
+> See [docs/multi-client-guide.md](docs/multi-client-guide.md) for the full setup."
+
+Only skip this if the user is clearly a solo founder with a single product/brand and no mention of clients.
 
 **3. Sessions and continuity:**
-> "When you're done, just say so — 'that's it', 'done for today', 'thanks' — and I'll automatically save everything: what we did, decisions made, open threads. Next time you come back, I pick up where we left off.
+> "When you're done for the day, just say so — 'that's it', 'done for today', 'thanks' — and I'll automatically save everything: what we did, decisions made, open threads. Next time you come back, I pick up where we left off.
 >
 > For a quick reference of commands and paths, see [docs/cheat-sheet.md](docs/cheat-sheet.md)."
 

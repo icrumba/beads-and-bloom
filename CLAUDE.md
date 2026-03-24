@@ -7,16 +7,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Heartbeat
 
 Before doing anything else in any session:
-1. Read `context/SOUL.md` — who you are, how you behave. If not found (multi-client mode), read `../../context/SOUL.md` from the root.
-2. Read `context/USER.md` — who you're helping and their preferences. If not found, read `../../context/USER.md` from the root.
-3. Read `context/memory/{today}.md` + `context/memory/{yesterday}.md` — recent session context. Pay special attention to `### Open threads` from the last session — these are your starting point.
-4. **Create or open today's memory file** — if `context/memory/{YYYY-MM-DD}.md` doesn't exist, create it with a session start timestamp. If it already exists (second session today), append a new session header. See **Daily Memory** below.
-5. Scan `brand_context/` — what exists? Flag anything older than 30 days: "Your [file] is from [date]. Want to refresh, or keep going?"
-6. **Active projects** — scan `projects/briefs/*/brief.md` for briefs with `status: active` in frontmatter. If any found, report: *"You have N active projects: {names}."* Skip silently if none.
-7. Scan `.claude/skills/` — know what skills are installed and available
-8. **Sync check** — run the skill & MCP reconciliation (see below)
-9. **Scheduled jobs** — check if the cron dispatcher is installed. On Mac, derive the project slug (`basename` of project dir, lowercased, non-alphanumeric replaced with `-`) and look for `~/Library/LaunchAgents/com.agentic-os.{slug}.plist`. If installed, read `cron/status/` files and report: *"Cron dispatcher is active — N enabled jobs. Last run: {job} at {time} ({result})."* If any jobs failed on their last run, flag them: *"{job} failed on last run — check logs?"* If not installed, silently note it — the dispatcher is installed automatically during `bash scripts/install.sh`. Only mention it if the user asks about cron or scheduling: *"The cron dispatcher isn't set up yet. Run `bash scripts/install-crons.sh` to enable it."*
-10. **Auto start-here** — after completing the heartbeat checks above, automatically run the `/start-here` flow. Do NOT prompt the user to type it — just do it. The `/start-here` command detects state (first-run vs returning) and handles everything: first-time onboarding, session recaps, goal-setting, and work scoping. The user should never need to type `/start-here` manually — the heartbeat runs it for them. (The command still exists for manual re-invocation if needed.)
+1. **Brand context gate** — scan `brand_context/` for populated `.md` files. If none exist, this is a first-time user. Skip steps 2-9 and go straight to step 10 (which runs `/start-here` in first-run mode to build brand context). No point loading memory, scanning projects, or checking crons if the foundation isn't set up yet.
+2. Read `context/SOUL.md` — who you are, how you behave. If not found (multi-client mode), read `../../context/SOUL.md` from the root.
+3. Read `context/USER.md` — who you're helping and their preferences. If not found, read `../../context/USER.md` from the root.
+4. Read `context/memory/{today}.md` + `context/memory/{yesterday}.md` — recent session context. Pay special attention to `### Open threads` from the last session — these are your starting point.
+5. **Create or open today's memory file** — if `context/memory/{YYYY-MM-DD}.md` doesn't exist, create it with a session start timestamp. If it already exists (second session today), append a new session header. See **Daily Memory** below.
+6. Flag stale brand context — anything in `brand_context/` older than 30 days: "Your [file] is from [date]. Want to refresh, or keep going?"
+7. **Active projects** — scan `projects/briefs/*/brief.md` for briefs with `status: active` in frontmatter. If any found, report: *"You have N active projects: {names}."* Skip silently if none.
+8. Scan `.claude/skills/` — know what skills are installed and available
+9. **Sync check** — run the skill & MCP reconciliation (see below)
+10. **Scheduled jobs** — check if the cron dispatcher is installed. On Mac, derive the project slug (`basename` of project dir, lowercased, non-alphanumeric replaced with `-`) and look for `~/Library/LaunchAgents/com.agentic-os.{slug}.plist`. If installed, read `cron/status/` files and report: *"Cron dispatcher is active — N enabled jobs. Last run: {job} at {time} ({result})."* If any jobs failed on their last run, flag them: *"{job} failed on last run — check logs?"* If not installed, silently note it — the dispatcher is installed automatically during `bash scripts/install.sh`. Only mention it if the user asks about cron or scheduling: *"The cron dispatcher isn't set up yet. Run `bash scripts/install-crons.sh` to enable it."*
+11. **Auto start-here** — after completing the heartbeat checks above, automatically run the `/start-here` flow. Do NOT prompt the user to type it — just do it. The `/start-here` command detects state (first-run vs returning) and handles everything: first-time onboarding, session recaps, goal-setting, and work scoping. The user should never need to type `/start-here` manually — the heartbeat runs it for them. (The command still exists for manual re-invocation if needed.)
 
 ### Daily Memory
 
