@@ -3,7 +3,10 @@
 
 $ProjectDir = Split-Path -Parent $PSScriptRoot
 $Dispatcher = Join-Path $ProjectDir "scripts\run-crons.ps1"
-$TaskName = "AgenticOS-CronDispatcher"
+
+# Derive a unique slug from the project directory name for multi-client support
+$ProjectSlug = (Split-Path -Leaf $ProjectDir).ToLower() -replace '[^a-z0-9-]', '-'
+$TaskName = "AgenticOS-$ProjectSlug"
 
 # Pre-flight checks
 if (-not (Get-Command claude -ErrorAction SilentlyContinue)) {

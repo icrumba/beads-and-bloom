@@ -7,15 +7,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Heartbeat
 
 Before doing anything else in any session:
-1. Read `context/SOUL.md` — who you are, how you behave
-2. Read `context/USER.md` — who you're helping and their preferences
+1. Read `context/SOUL.md` — who you are, how you behave. If not found (multi-client mode), read `../../context/SOUL.md` from the root.
+2. Read `context/USER.md` — who you're helping and their preferences. If not found, read `../../context/USER.md` from the root.
 3. Read `context/memory/{today}.md` + `context/memory/{yesterday}.md` — recent session context. Pay special attention to `### Open threads` from the last session — these are your starting point.
 4. **Create or open today's memory file** — if `context/memory/{YYYY-MM-DD}.md` doesn't exist, create it with a session start timestamp. If it already exists (second session today), append a new session header. See **Daily Memory** below.
 5. Scan `brand_context/` — what exists? Flag anything older than 30 days: "Your [file] is from [date]. Want to refresh, or keep going?"
-6. Scan `.claude/skills/` — know what skills are installed and available
-7. **Sync check** — run the skill & MCP reconciliation (see below)
-8. **Scheduled jobs** — check if the cron dispatcher is installed (look for `~/Library/LaunchAgents/com.agentic-os.cron-dispatcher.plist` on Mac). If installed, read `cron/status/` files and report: *"Cron dispatcher is active — N enabled jobs. Last run: {job} at {time} ({result})."* If any jobs failed on their last run, flag them: *"{job} failed on last run — check logs?"* If not installed, scan `cron/jobs/` for active jobs and mention: *"You have N scheduled jobs. Install the dispatcher to run them automatically: `bash scripts/install-crons.sh`"*
-9. **Session gate** — after completing the heartbeat, check whether the user should run `/start-here` before doing other work:
+6. **Active projects** — scan `projects/briefs/*/brief.md` for briefs with `status: active` in frontmatter. If any found, report: *"You have N active projects: {names}."* Skip silently if none.
+7. Scan `.claude/skills/` — know what skills are installed and available
+8. **Sync check** — run the skill & MCP reconciliation (see below)
+9. **Scheduled jobs** — check if the cron dispatcher is installed. On Mac, derive the project slug (`basename` of project dir, lowercased, non-alphanumeric replaced with `-`) and look for `~/Library/LaunchAgents/com.agentic-os.{slug}.plist`. If installed, read `cron/status/` files and report: *"Cron dispatcher is active — N enabled jobs. Last run: {job} at {time} ({result})."* If any jobs failed on their last run, flag them: *"{job} failed on last run — check logs?"* If not installed, scan `cron/jobs/` for active jobs and mention: *"You have N scheduled jobs. Install the dispatcher to run them automatically: `bash scripts/install-crons.sh`"*
+10. **Session gate** — after completing the heartbeat, check whether the user should run `/start-here` before doing other work:
    - **No `brand_context/` files?** → First-time user. Prompt: *"Looks like you haven't set up yet. Run `/start-here` to get your brand foundation built — it takes a few minutes and makes everything better."*
    - **Brand context exists but no previous `/wrap-up`?** Check the most recent `context/memory/` file — if the last session has no `### Open threads` content or the session block looks incomplete (placeholder text still present), nudge: *"Your last session wasn't wrapped up. Running `/wrap-up` now will save your context, then `/start-here` will pick it up. Or just run `/start-here` to jump into today."*
    - **Brand context exists and previous sessions are clean?** → Prompt: *"Run `/start-here` to kick off today's session — I'll recap where we left off and we'll go from there."*
@@ -31,6 +32,9 @@ Every session writes to `context/memory/{YYYY-MM-DD}.md`. This is how continuity
 ```
 ## Session N
 
+### Project
+[Project folder name if working on a Level 2 or 3 project — e.g., q2-product-launch. Omit for single tasks.]
+
 ### Goal
 [One line — filled once the user states their goal]
 
@@ -43,6 +47,8 @@ Every session writes to `context/memory/{YYYY-MM-DD}.md`. This is how continuity
 ### Open threads
 - [Anything unfinished for the next session]
 ```
+
+When Claude reads yesterday's memory and sees a `### Project` reference, it loads `projects/briefs/{project-name}/brief.md` for full context. For Level 1 sessions (single tasks), omit the `### Project` field.
 
 **During the session:** Update the current session block incrementally as events happen. Don't wait for wrap-up — if a deliverable is produced or a decision is made, log it immediately.
 
@@ -209,15 +215,66 @@ Which `brand_context/` files each skill reads. Load only what's listed — no sk
 
 ## Output Standards
 
-- Save all generated content to `projects/{category}-{output-type}/`
-- The category prefix in the output folder matches the skill's category (e.g., `mkt-brand-voice` skill → `projects/mkt-*/` outputs)
-- Folder naming: `{category}-{output-type}` in kebab-case (e.g., `mkt-linkedin-carousel`, `str-keyword-plan`)
+- **Single tasks (Level 1):** Save to `projects/{category}-{output-type}/`. The category prefix matches the skill's category (e.g., `mkt-brand-voice` skill → `projects/mkt-*/` outputs). Folder naming: `{category}-{output-type}` in kebab-case (e.g., `mkt-linkedin-carousel`, `str-keyword-plan`).
+- **Planned/GSD projects (Level 2/3):** Save ALL outputs inside the project folder — `projects/briefs/{project-name}/`. Never scatter project outputs across category folders.
 - Filename format: `{descriptive-name}_{YYYY-MM-DD}.md` (folder provides context, no skill-name prefix needed)
 - Folders are created on first use by the skill. No empty pre-scaffolding.
 - Default format: markdown unless user specifies otherwise
 - After major deliverables: ask for feedback, log to `context/learnings.md`
 - **Auto-download binary outputs.** After saving any non-markdown file (PNG, PDF, SVG, video, JSON diagrams, etc.), copy it to `~/Downloads/` using `cp <filepath> ~/Downloads/`. This applies to all skills — the user should never have to manually navigate to a generated file.
 - **Show clickable file path.** After saving any output, show the user the full absolute file path so they can click it directly to open the file. Example: "Saved to `/Users/simoncoton/Desktop/agentic-os/projects/mkt-copywriting/landing-page_2026-03-14.md`". This applies to all skills — the user should never have to navigate to find what was just created.
+
+### Projects
+
+Work scopes into three levels. The level determines where output goes and how much planning happens upfront.
+
+| Level | Name | When | Where |
+|-------|------|------|-------|
+| **1** | Single task | One or a few small deliverables, no project scoping needed | `projects/{category}/` |
+| **2** | Planned project | Multi-deliverable work that benefits from a brief — campaigns, launches, client deliverables | `projects/briefs/{project-name}/` |
+| **3** | GSD project | Complex multi-phase work with dependencies and milestones | `projects/briefs/{project-name}/` + `.planning/` |
+
+**Level 1 (single tasks):** Just ask Claude. Output goes to category folders — `projects/{category}-{type}/{name}_{date}.md`. Use Shift+Tab twice for plan mode if upfront thinking helps, but output still goes to category folders.
+
+**Level 2 (planned projects):** The project gets its own folder under `projects/briefs/` with a `brief.md`. Run an interactive scoping conversation to define the project: goal, deliverables, acceptance criteria, timeline, constraints. Save as `brief.md` inside the project folder. ALL outputs for that project go inside the project folder, not in category folders. Projects are listed most-recent-first (by `created` date in frontmatter) when reporting to the user.
+
+```
+projects/briefs/kanban-dashboard/
+├── brief.md                         ← project scope, deliverables, acceptance criteria
+├── landing-page_2026-03-24.md
+├── email-sequence_2026-03-25.md
+└── competitor-scan_2026-03-22.md
+```
+
+When creating a Level 2 brief, cover: project goal (one sentence), deliverables (checklist), acceptance criteria (how you'll know it's done), timeline/constraints, and any dependencies. Keep it to one page — this is a working document, not a formal PRD.
+
+**Level 3 (GSD projects):** Same as Level 2 (project folder under `projects/briefs/` with `brief.md` + outputs), but GSD's `.planning/` directory lives at the project root (hardcoded across 50+ references). The brief links to `.planning/`.
+
+```
+projects/briefs/website-rebuild/
+├── brief.md                         ← links to .planning/
+├── homepage-copy_2026-03-24.md
+└── sitemap_2026-03-25.excalidraw
+
+.planning/                           ← GSD artifacts (at project root, not inside projects/)
+├── PROJECT.md
+├── ROADMAP.md
+└── phases/
+```
+
+**One GSD project at a time per workspace.** `.planning/` is shared — finish or archive one before starting another. When complete, run `/archive-gsd` to move `.planning/` into the project folder and mark the brief as complete. If a user tries to start a new GSD project while `.planning/` exists, offer to run `/archive-gsd` first.
+
+**How to tell folders apart:** Category folders live directly under `projects/` using `{category}-{type}` naming (e.g., `projects/mkt-copywriting/`) — no `brief.md` inside. Project folders live under `projects/briefs/` using descriptive names (e.g., `projects/briefs/kanban-dashboard/`) — always have a `brief.md`. When listing projects for the user, sort by `created` date in frontmatter, most recent first.
+
+**Brief frontmatter format:**
+```yaml
+---
+project: q2-product-launch
+status: active
+level: 2
+created: 2026-03-24
+---
+```
 
 ### Humanizer Gate
 
@@ -229,16 +286,6 @@ Which `brand_context/` files each skill reads. Load only what's listed — no sk
 - Skills that produce non-publishable output (research briefs, ICP profiles, positioning docs) skip this step
 
 When building new skills, include a humanizer step in the methodology if the skill writes content meant for an audience. Reference `tool-humanizer` in pipeline mode.
-
-### Schemas
-
-Schemas live inside the skill that owns them, under `references/`. This keeps them version-controlled with the skill and out of user data directories.
-
-| Schema | Location | Used by |
-|--------|----------|---------|
-| `voice-profile.schema.json` | `.claude/skills/mkt-brand-voice/references/` | `mkt-brand-voice` |
-
-When a skill produces structured output, it should read the relevant schema before generating data to ensure all required fields are present.
 
 ---
 
@@ -298,7 +345,6 @@ Skills can depend on other skills. Declare dependencies in a `## Dependencies` s
 - [ ] SKILL.md < 200 lines
 - [ ] References are self-contained
 - [ ] If the skill depends on other skills: add a `## Dependencies` section to SKILL.md
-- [ ] If the skill produces structured/repeatable output: add a schema to the skill's `references/` folder and reference it from SKILL.md
 - [ ] Declare which `projects/` subfolder(s) the skill writes to (must use same category prefix)
 - [ ] **External services**: If the skill uses any external API, ensure the key is in the Service Registry (CLAUDE.md), `.env.example`, and README.md External Services table. The reconciliation does this automatically, but verify it ran.
 - [ ] **Humanizer gate**: If the skill produces publishable text (blog posts, social content, copy, emails), include a step that runs output through `tool-humanizer` in pipeline mode before saving
@@ -306,16 +352,6 @@ Skills can depend on other skills. Declare dependencies in a `## Dependencies` s
 ### Folder naming
 - Format: `{category}-{skill-name}` in kebab-case (e.g., `mkt-brand-voice`, `ops-client-onboarding`)
 - Cannot contain "claude" or "anthropic"
-
----
-
-## Build Order (from PRD)
-
-1. **Phase 1 — Agent Identity:** context/SOUL.md → context/USER.md ✓
-2. **Phase 2 — Command + Foundation Skills:** `start-here.md` ✓ → `mkt-brand-voice/` ✓ → `mkt-positioning/` ✓ → `mkt-icp/` ✓
-3. **Phase 3 — Validate:** End-to-end test with a real business
-4. **Phase 4 — Execution Skills:** Build incrementally, each with reference skills
-5. **Phase 5 — Expand:** First non-marketing skill proves architecture is domain-agnostic
 
 ---
 

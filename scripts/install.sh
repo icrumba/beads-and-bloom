@@ -411,3 +411,9 @@ print()
 print("  \033[2mRe-run this installer anytime to change your skill selection.\033[0m")
 print()
 PYEOF
+
+# ---------- Install cron dispatcher ----------
+echo ""
+echo "  Installing cron dispatcher..."
+bash "$SCRIPT_DIR/install-crons.sh"
+

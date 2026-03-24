@@ -237,6 +237,24 @@ Removing the dispatcher only stops the scheduler. Your job files in `cron/jobs/`
 
 ---
 
+## Multiple Clients
+
+If you work with more than one client or brand, add a client workspace:
+
+```bash
+bash scripts/add-client.sh "Client Name"
+cd clients/client-name
+claude
+```
+
+Each client has its own brand context, memory, and output. Methodology (CLAUDE.md, SOUL.md, USER.md) is shared automatically from the root — edit once, all clients see it. Skills and scripts sync automatically when you run `update.sh`.
+
+For the full setup guide, see [docs/multi-client-guide.md](docs/multi-client-guide.md).
+For how projects work (single tasks, planned projects, GSD), see [docs/projects-guide.md](docs/projects-guide.md).
+For a quick reference, see [docs/cheat-sheet.md](docs/cheat-sheet.md).
+
+---
+
 ## File Structure
 
 ```
@@ -244,11 +262,15 @@ Removing the dispatcher only stops the scheduler. Your job files in `cron/jobs/`
 │   ├── SOUL.md            <- Agent personality and behaviour rules
 │   ├── USER.md            <- Your preferences and working style
 │   ├── learnings.md       <- Accumulated skill feedback (gets smarter over time)
-│   └── memory/            <- Daily session logs (one file per day)
+│   └── memory/            <- Daily session logs (auto-links to active projects)
 ├── brand_context/         <- Your brand data (voice, positioning, ICP)
 ├── .claude/skills/        <- Installed skill packs
 ├── cron/jobs/             <- Scheduled job definitions
 ├── projects/              <- All generated output
+│   ├── mkt-copywriting/   <- Single task category folders (Level 1)
+│   └── briefs/            <- Multi-deliverable projects (Level 2/3)
+│       └── q2-launch/     <- Project folders with brief.md
+├── .planning/             <- GSD project artifacts (Level 3, one at a time)
 ├── scripts/               <- Install, update, manage skills, watchdog
 └── CLAUDE.md              <- Agent orchestration (don't edit manually)
 ```

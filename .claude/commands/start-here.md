@@ -196,13 +196,38 @@ Only show categories where at least one skill is installed. Use plain language, 
 **3. Goal question**
 End with: "What are you working on today?" or a contextual variant based on the recap (e.g. "Want to keep going on the launch sequence, or something different?").
 
-### Step 3: Route or Recommend
+### Step 3: Scope the Work
 
-If user states a clear task → execute it using the relevant skill.
+Once the user states their goal, **always** offer the three levels so they can pick the right approach. Present it naturally after acknowledging their goal:
 
-If user says they're unsure → recommend the highest-leverage next action based on what's missing, what learnings suggest, or what naturally follows from the last session.
+> "Great — before we dive in, how structured do you want this?"
+>
+> 1. **Single task** — I'll just get it done. Best for one-off deliverables or quick asks.
+> 2. **Planned project** — I'll scope it out first (goal, deliverables, what 'done' looks like), write a brief, and we work from that. Best when there are multiple deliverables or it'll span a few sessions.
+> 3. **GSD project** — Full structured planning with phases, milestones, and verification. Best for complex builds with dependencies.
+>
+> "If you're not sure, just say go and I'll treat it as a single task."
 
-Mention stale files or gaps only if directly relevant to their stated goal (once, with opportunity framing).
+**If the user picks 1 (or just says "go" / doesn't specify)** → proceed directly. This is Level 1 — output goes to `projects/{category}/`.
+
+**If the user picks 2 (planned project)**, run a brief scoping conversation:
+- What's the goal? (one sentence)
+- What are the deliverables? (checklist)
+- How will you know it's done? (acceptance criteria)
+- Any timeline or constraints?
+
+Save as `projects/briefs/{project-name}/brief.md` with frontmatter (`project`, `status: active`, `level: 2`, `created`). Then start working on the first deliverable.
+
+**If the user picks 3 (GSD project):**
+- First check if `.planning/` already exists in the current workspace
+- **If it does** → tell the user: "You've got an existing GSD project in `.planning/`. You'll need to archive it before starting a new one. Want me to run `/archive-gsd` now?" If yes, run the archive command, then proceed to `/gsd:new-project`.
+- **If it doesn't** → proceed directly to `/gsd:new-project`.
+
+**If the user is unsure about their goal entirely** → recommend the highest-leverage next action based on what's missing, what learnings suggest, or what naturally follows from the last session. Then offer the levels once they've picked a direction.
+
+### Step 4: Execute
+
+Route to the relevant skill and begin work. Mention stale files or gaps only if directly relevant to their stated goal (once, with opportunity framing).
 
 Do NOT:
 - Summarise their brand back to them unprompted

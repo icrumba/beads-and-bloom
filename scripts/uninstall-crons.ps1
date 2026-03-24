@@ -1,6 +1,9 @@
 # Remove the cron dispatcher scheduled task. Job files are left untouched.
 
-$TaskName = "AgenticOS-CronDispatcher"
+# Derive the same slug used during install
+$ProjectDir = Split-Path -Parent $PSScriptRoot
+$ProjectSlug = (Split-Path -Leaf $ProjectDir).ToLower() -replace '[^a-z0-9-]', '-'
+$TaskName = "AgenticOS-$ProjectSlug"
 
 $existing = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 if (-not $existing) {

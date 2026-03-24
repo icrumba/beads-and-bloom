@@ -8,6 +8,7 @@ context/memory/*
 projects/*
 !projects/.gitkeep
 brand_context/*.md
+!brand_context/.gitkeep
 
 # Installer state
 .claude/skills/_catalog/installed.json
@@ -24,3 +25,6 @@ brand_context/*.md
 # Cron logs and status
 cron/logs/
 cron/status/
+
+# Client workspaces (all client data is local)
+clients/

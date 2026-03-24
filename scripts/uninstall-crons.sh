@@ -5,7 +5,10 @@ set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 DISPATCHER="${PROJECT_DIR}/scripts/run-crons.sh"
-PLIST_NAME="com.agentic-os.cron-dispatcher"
+
+# Derive the same slug used during install
+PROJECT_SLUG=$(basename "$PROJECT_DIR" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd 'a-z0-9-')
+PLIST_NAME="com.agentic-os.${PROJECT_SLUG}"
 PLIST_PATH="${HOME}/Library/LaunchAgents/${PLIST_NAME}.plist"
 
 # macOS — unload launchd plist

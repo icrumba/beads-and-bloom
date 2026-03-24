@@ -6,7 +6,10 @@ set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 DISPATCHER="${PROJECT_DIR}/scripts/run-crons.sh"
-PLIST_NAME="com.agentic-os.cron-dispatcher"
+
+# Derive a unique slug from the project directory name for multi-client support
+PROJECT_SLUG=$(basename "$PROJECT_DIR" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd 'a-z0-9-')
+PLIST_NAME="com.agentic-os.${PROJECT_SLUG}"
 PLIST_PATH="${HOME}/Library/LaunchAgents/${PLIST_NAME}.plist"
 
 # Pre-flight checks
