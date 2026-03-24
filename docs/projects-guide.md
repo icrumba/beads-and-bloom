@@ -2,7 +2,7 @@
 
 Not everything is a single task. When you have a larger piece of work — a product launch, a content series, a website overhaul — you need a way to scope it, track it, and keep context across sessions.
 
-There are three levels. When you run `/start-here` and tell Claude your goal, it helps you pick the right one.
+There are three levels. When you tell Claude your goal, it helps you pick the right one.
 
 ---
 

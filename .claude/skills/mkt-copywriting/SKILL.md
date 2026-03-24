@@ -41,7 +41,7 @@ Check `brand_context/` and load per the table above. Show a brief status:
 - Voice loaded: "[tone summary]. All copy will match."
 - Positioning loaded: "Building around '[angle]' frame."
 - ICP loaded: "Writing for [audience]. Awareness level: [level]."
-- Nothing found: "No brand context yet. I'll write solid copy — run /start-here later to make it on-brand."
+- Nothing found: "No brand context yet. I'll write solid copy — we can build your brand profile anytime to make it on-brand."
 
 Read `context/learnings.md` → `## mkt-copywriting` section. Apply any previous corrections.
 

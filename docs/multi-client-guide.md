@@ -44,7 +44,7 @@ When you `cd clients/client-one && claude`:
 | `.claude/skills/` | Root + each client | Copied on client creation, auto-synced on update |
 | `scripts/` | Root + each client | Copied on client creation, auto-synced on update |
 | `CLAUDE.md` (client-specific) | Each client | Created by `add-client.sh` — your space for client notes |
-| `brand_context/` | Each client | Built via "start here" — unique per brand |
+| `brand_context/` | Each client | Built automatically on first session — unique per brand |
 | `context/learnings.md` | Root + each client | Root has system-wide learnings. Client starts with a copy, then diverges |
 | `context/memory/` | Root + each client | Root has system-wide memory. Client has its own session history |
 | `projects/` | Each client | Per-client deliverables |
@@ -59,7 +59,7 @@ When you `cd clients/client-one && claude`:
 
 ### What you manage manually
 
-- **Brand context** — unique per client, built via `/start-here`
+- **Brand context** — unique per client, built automatically on first session
 - **Learnings** — accumulate independently per client
 - **API keys** — copy your `.env` to new clients if needed (done automatically on creation)
 
@@ -172,7 +172,7 @@ cd clients/client-one
 claude
 ```
 
-Say **"start here"** to build that client's brand foundation. The heartbeat runs automatically — it picks up SOUL.md and USER.md from the root, loads the client's brand context and memory, and you're ready to go.
+Claude automatically detects it's a new client and walks you through building the brand foundation. The heartbeat picks up SOUL.md and USER.md from the root, loads the client's brand context and memory, and you're ready to go.
 
 ### What Claude Sees When You Open a Client Folder
 
@@ -293,15 +293,14 @@ You always `cd` into the folder you're working in, then run `claude`. Everything
 
 | Command | What it does | When to use |
 |---------|-------------|-------------|
-| **"start here"** | Builds brand foundation (voice, positioning, ICP) | Once per new client — not every session |
-| **/wrap-up** | Finalizes session block in memory, captures learnings | Before closing or switching clients |
-| **/clear** | Resets Claude's context without saving | When you want a fresh start (run /wrap-up first) |
+| **Onboarding** | Builds brand foundation (voice, positioning, ICP) | Runs automatically on first session per client |
+| **Wrap-up** | Finalizes session block in memory, captures learnings | Runs automatically when you signal you're done |
+| **/clear** | Resets Claude's context without saving | When you want a fresh start (end session first) |
 
 ### Switching Between Clients
 
 ```bash
-# In your current Claude window: wrap up first
-/wrap-up
+# In your current Claude window: say "done" or "that's it" — wrap-up runs automatically
 
 # Open a new terminal window
 cd ~/Projects/agentic-os/clients/client-two

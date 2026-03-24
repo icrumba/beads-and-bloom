@@ -6,10 +6,10 @@
 |--------|-----|
 | Start working (solo) | `cd ~/Projects/agentic-os && claude` |
 | Start working (client) | `cd ~/Projects/agentic-os/clients/client-name && claude` |
-| End session | `/wrap-up` |
-| Switch clients | `/wrap-up` → new terminal → `cd` into different client folder |
-| Quick clear (no save) | `/clear` (run `/wrap-up` first to save context) |
-| First time with new client | Say **"start here"** |
+| End session | Just say "done" or "that's it" — wrap-up runs automatically |
+| Switch clients | End session → new terminal → `cd` into different client folder |
+| Quick clear (no save) | `/clear` (end session first to save context) |
+| First time with new client | Just open Claude — onboarding runs automatically |
 
 ## Client Management
 
@@ -44,7 +44,7 @@ The cron dispatcher is installed automatically during setup. Just create jobs an
 | **2** | Planned project | Claude scopes it → project folder with `brief.md` | `projects/briefs/{project-name}/` |
 | **3** | GSD project | `/gsd:new-project` → full phased planning | `projects/briefs/{project-name}/` + `.planning/` |
 
-Level 1 output goes to category folders. Level 2/3 output goes inside `projects/briefs/` alongside `brief.md`. Run `/start-here` and Claude will help you pick the right level. Run `/archive-gsd` when a GSD project is done to free up the workspace.
+Level 1 output goes to category folders. Level 2/3 output goes inside the project folder alongside `brief.md`. Claude automatically helps you pick the right level when you state your goal. Run `/archive-gsd` when a GSD project is done to free up the workspace.
 
 ## Key Paths (within your working folder)
 
@@ -78,8 +78,8 @@ Add/remove skills from the **root**. They sync to clients automatically on `upda
 
 - Solo user? Work from the root folder. Nothing extra needed.
 - Multiple clients? One client folder each, inside `clients/`.
-- `/wrap-up` before switching clients
-- "Start here" once per new client, not every session
+- End session before switching clients — wrap-up runs automatically
+- Onboarding runs automatically on first session per client
 - Edit root CLAUDE.md → all clients see it automatically
 - Edit root SOUL.md / USER.md → all clients see it automatically
 - `update.sh` auto-syncs skills + scripts to all clients

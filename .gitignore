@@ -22,9 +22,12 @@ brand_context/*.md
 .DS_Store
 .backup/
 
-# Cron (jobs are user-created, logs/status are runtime)
+# Cron (system jobs are tracked, user-created jobs are not)
 cron/jobs/*
 !cron/jobs/.gitkeep
+!cron/jobs/monthly-learnings-health.md
+!cron/jobs/skill-update-check.md
+!cron/jobs/weekly-activity-digest.md
 cron/logs/
 cron/status/
 

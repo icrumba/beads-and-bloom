@@ -175,7 +175,7 @@ If the user's business involves working with multiple brands, clients, or distin
 If they're clearly a solo founder/single brand, skip this.
 
 **3. Sessions and continuity:**
-> "At the end of each session, run `/wrap-up` and I'll save everything — what we did, decisions made, open threads. Next time you come back, I pick up where we left off.
+> "When you're done, just say so — 'that's it', 'done for today', 'thanks' — and I'll automatically save everything: what we did, decisions made, open threads. Next time you come back, I pick up where we left off.
 >
 > For a quick reference of commands and paths, see [docs/cheat-sheet.md](docs/cheat-sheet.md)."
 

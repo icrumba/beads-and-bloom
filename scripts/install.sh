@@ -406,7 +406,7 @@ if all_services:
 
 print("  \033[1mNext steps:\033[0m")
 print("    1. Add API keys to .env (if any skills need them)")
-print("    2. Run \033[1mclaude\033[0m and say \033[1m'start here'\033[0m")
+print("    2. Run \033[1mclaude\033[0m — it'll walk you through setup automatically")
 print()
 print("  \033[2mRe-run this installer anytime to change your skill selection.\033[0m")
 print()

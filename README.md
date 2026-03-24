@@ -18,7 +18,7 @@ Replace `<YOUR-TOKEN>` with the access token from the [Agentic Academy classroom
 
 The installer checks your system, sets up dependencies, and lets you pick which skills to install.
 
-When it finishes, open Claude Code and say **"start here"**. That walks you through building your brand foundation -- voice, positioning, and ideal customer profile.
+When it finishes, open Claude Code. It automatically detects you're new and walks you through building your brand foundation -- voice, positioning, and ideal customer profile.
 
 ---
 

@@ -33,7 +33,7 @@ Check `brand_context/` and load per the table above. Show a brief status:
 - Positioning loaded: "Building around '[angle]' — will frame citations to reinforce this."
 - ICP loaded: "Optimizing for [audience]. Targeting their query patterns."
 - Voice loaded: "Will match [tone summary] in any content recommendations."
-- Nothing found: "No brand context yet. I'll produce solid recommendations — run /start-here later to make them brand-specific."
+- Nothing found: "No brand context yet. I'll produce solid recommendations — we can build your brand profile anytime to make them brand-specific."
 
 Read `context/learnings.md` → `## str-ai-seo` section. Apply any previous corrections.
 
