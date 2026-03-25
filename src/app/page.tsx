@@ -1,7 +1,32 @@
+"use client";
+
+import { useEffect } from "react";
+import { AppShell } from "@/components/layout/app-shell";
+import { useTaskStore } from "@/store/task-store";
+import { useSSE } from "@/hooks/use-sse";
+
 export default function Home() {
+  const fetchTasks = useTaskStore((s) => s.fetchTasks);
+  useSSE();
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <h1 className="text-2xl font-semibold text-gray-900">Command Centre</h1>
-    </div>
+    <AppShell>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+          color: "#9CA3AF",
+          fontSize: 14,
+        }}
+      >
+        Loading board...
+      </div>
+    </AppShell>
   );
 }
