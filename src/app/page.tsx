@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { AppShell } from "@/components/layout/app-shell";
+import { KanbanBoard } from "@/components/board/kanban-board";
 import { useTaskStore } from "@/store/task-store";
 import { useSSE } from "@/hooks/use-sse";
 
@@ -15,18 +16,7 @@ export default function Home() {
 
   return (
     <AppShell>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100%",
-          color: "#9CA3AF",
-          fontSize: 14,
-        }}
-      >
-        Loading board...
-      </div>
+      <KanbanBoard />
     </AppShell>
   );
 }
