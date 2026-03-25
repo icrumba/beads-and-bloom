@@ -8,6 +8,8 @@ Check whether `brand_context/` exists and contains populated files.
 - No brand_context/ files → First-run mode
 - Files exist → Returning mode
 
+**Skill selection check (both modes):** Read `.claude/skills/_catalog/installed.json`. If `selection_pending` is `true` (or the field is missing), the user hasn't chosen their skills yet. After completing the current mode's flow, run Step 8 (Skill Selection) before finishing — even in Returning mode.
+
 ## Always (both modes)
 
 Create today's memory file per CLAUDE.md's **Daily Memory** section:
@@ -147,11 +149,13 @@ Here's what I built:
 Everything's saved in brand_context/. I'll use this in every skill going forward.
 ```
 
-### Step 8: Skill Selection
+**IMPORTANT: After showing results, you MUST proceed to Step 8 (Skill Selection) in the SAME response. Do NOT wait for user input between Step 7 and Step 8. Show the results, then immediately present the skill selection checklist below.**
 
-Now that brand context is built, give the user a brief intro framing the skills for their business, then launch the interactive selector.
+### Step 8: Skill Selection (MANDATORY — do NOT skip)
 
-**Before launching the selector**, briefly explain what each category does for THIS business (using the brand context just built). Keep it to 3-4 lines max — the selector itself shows descriptions:
+**This step is required during first-run mode.** Always run it after showing brand context results, even if skills are already installed. The user needs to choose which optional skills to keep for their business.
+
+Now that brand context is built, briefly explain what each category does for THIS business, then present the checklist. Keep the intro to 3-4 lines max:
 
 ```
 Now let's pick which skills to keep. Everything's pre-selected — just untick what you don't need.
@@ -197,11 +201,18 @@ Wait for the user's response. Then run the script in CLI mode with their selecti
 python3 scripts/select-skills.py --remove "viz-excalidraw-diagram,viz-nano-banana,viz-ugc-heygen"
 ```
 
+If the user says "keep all" or similar, run:
+```bash
+python3 scripts/select-skills.py --remove none
+```
+
 The script handles dependency resolution, folder removal, `installed.json` update, and prints a summary.
 
 **Note:** If the user runs `python3 scripts/select-skills.py` directly in their own terminal (not through Claude), the script auto-detects the TTY and shows a full interactive checkbox UI with arrow keys + space to toggle.
 
 **After the script completes**, read `.claude/skills/_catalog/selection-result.json` and acknowledge briefly: "All set — [N] skills ready to go."
+
+**Do NOT proceed to Step 9 until the user has made their skill selection and the script has run.**
 
 ### Step 9: How It Works Primer (MANDATORY — do NOT skip)
 
