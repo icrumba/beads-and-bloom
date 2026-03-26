@@ -65,6 +65,9 @@ mark_reviewed() {
 }
 
 # ---------- Protected paths (never overwritten) ----------
+# These are user-specific files. The update script will NEVER touch them.
+# Upstream ships .template versions of USER.md and learnings.md — those
+# are safe to update. The working copies below belong to the user.
 PROTECTED_PATHS=(
     ".env"
     ".mcp.json"
@@ -72,9 +75,10 @@ PROTECTED_PATHS=(
     "context/SOUL.md"
     "context/learnings.md"
     "context/memory/"
-    "brand_context/*.md"
+    "brand_context/"
     "projects/"
     ".claude/skills/_catalog/installed.json"
+    ".claude/skills/viz-ugc-heygen/references/avatar-config.md"
 )
 
 # =========================================================
