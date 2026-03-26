@@ -162,15 +162,19 @@ success "brand_context/ directory ready"
 
 if [[ ! -f "$REPO_ROOT/context/USER.md" ]]; then
     cp "$REPO_ROOT/context/USER.md.template" "$REPO_ROOT/context/USER.md"
+    rm -f "$REPO_ROOT/context/USER.md.template"
     success "Created context/USER.md from template"
 else
+    rm -f "$REPO_ROOT/context/USER.md.template"
     success "context/USER.md already exists"
 fi
 
 if [[ ! -f "$REPO_ROOT/context/learnings.md" ]]; then
     cp "$REPO_ROOT/context/learnings.md.template" "$REPO_ROOT/context/learnings.md"
+    rm -f "$REPO_ROOT/context/learnings.md.template"
     success "Created context/learnings.md from template"
 else
+    rm -f "$REPO_ROOT/context/learnings.md.template"
     success "context/learnings.md already exists"
 fi
 
@@ -178,7 +182,10 @@ fi
 AVATAR_CFG="$REPO_ROOT/.claude/skills/viz-ugc-heygen/references/avatar-config.md"
 if [[ ! -f "$AVATAR_CFG" ]] && [[ -f "${AVATAR_CFG}.template" ]]; then
     cp "${AVATAR_CFG}.template" "$AVATAR_CFG"
+    rm -f "${AVATAR_CFG}.template"
     success "Created avatar-config.md from template"
+else
+    rm -f "${AVATAR_CFG}.template" 2>/dev/null
 fi
 echo ""
 
