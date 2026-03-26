@@ -62,6 +62,8 @@ Agentic OS is built on three layers:
 | `viz-ugc-heygen` | AI avatar videos via HeyGen | `HEYGEN_API_KEY` |
 | `str-ai-seo` | Optimize content for AI search engines and LLM citations | -- |
 | `ops-cron` | Schedule recurring Claude Code tasks | -- |
+| `tool-stitch` | Fetch UI designs from Google Stitch projects | gcloud auth |
+| `viz-stitch-design` | Design and iterate on UI screens with Google Stitch | gcloud auth |
 
 ---
 

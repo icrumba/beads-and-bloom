@@ -2,13 +2,17 @@
 .env
 .mcp.json
 
-# User data (created per-install)
+# User data (created per-install from templates)
+context/USER.md
+context/learnings.md
 context/memory/*
 !context/memory/.gitkeep
 projects/*
 !projects/.gitkeep
-brand_context/*.md
-!brand_context/.gitkeep
+brand_context/
+
+# GSD planning data (personal project state)
+.planning/
 
 # Installer state
 .claude/skills/_catalog/installed.json
