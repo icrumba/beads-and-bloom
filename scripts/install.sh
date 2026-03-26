@@ -155,6 +155,24 @@ else
         warn "No .env.example found — skipping .env creation"
     fi
 fi
+
+# Create user data directories and files from templates
+mkdir -p "$REPO_ROOT/brand_context"
+success "brand_context/ directory ready"
+
+if [[ ! -f "$REPO_ROOT/context/USER.md" ]]; then
+    cp "$REPO_ROOT/context/USER.md.template" "$REPO_ROOT/context/USER.md"
+    success "Created context/USER.md from template"
+else
+    success "context/USER.md already exists"
+fi
+
+if [[ ! -f "$REPO_ROOT/context/learnings.md" ]]; then
+    cp "$REPO_ROOT/context/learnings.md.template" "$REPO_ROOT/context/learnings.md"
+    success "Created context/learnings.md from template"
+else
+    success "context/learnings.md already exists"
+fi
 echo ""
 
 # =============================================================================
