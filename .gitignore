@@ -1,5 +1,7 @@
 # Secrets
 .env
+.env.local
+.env*.local
 .mcp.json
 
 # Local settings (per-machine Claude permissions)
@@ -9,6 +11,10 @@
 
 # Installer state
 .claude/skills/_catalog/installed.json
+
+# User data (never overwrite — templates are tracked instead)
+context/USER.md
+context/learnings.md
 
 # System
 .DS_Store

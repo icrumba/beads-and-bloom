@@ -249,12 +249,95 @@ if [[ ${#OTHER_MODIFIED_FILES[@]} -gt 0 ]]; then
 fi
 
 # =========================================================
+# Step 5c: Pre-pull conflict prevention
+# =========================================================
+# Handle files that will cause merge conflicts due to committed
+# divergences between local and upstream (not just working-tree changes).
+#
+# 1. Files deleted upstream but committed locally → remove from index
+#    (keeps the working copy so user data is preserved)
+# 2. Template files with committed differences → reset to upstream
+#    version before merge (templates are not user data)
+
+FETCH_OUTPUT=$(git fetch origin main 2>&1) || {
+    if echo "$FETCH_OUTPUT" | grep -qi "authentication\|403\|could not read\|repository not found\|invalid credentials"; then
+        # Restore everything before exiting
+        if $STASHED; then
+            git stash pop --quiet 2>/dev/null || true
+        fi
+        for skill_name in "${MODIFIED_SKILLS[@]:-}"; do
+            [[ -z "$skill_name" ]] && continue
+            cp -r "$SKILL_BACKUP_DIR/$skill_name"/* "$REPO_ROOT/.claude/skills/$skill_name/" 2>/dev/null || true
+        done
+        for file in "${OTHER_MODIFIED_FILES[@]:-}"; do
+            [[ -z "$file" ]] && continue
+            cp "$OTHER_BACKUP_DIR/$file" "$REPO_ROOT/$file" 2>/dev/null || true
+        done
+
+        echo ""
+        printf "${YELLOW}${BOLD}═══════════════════════════════════════════════${NC}\n"
+        printf "${YELLOW}${BOLD}  Authentication Failed${NC}\n"
+        printf "${YELLOW}${BOLD}═══════════════════════════════════════════════${NC}\n"
+        echo ""
+        warn "Your access token may have been rotated."
+        echo ""
+        info "To fix this:"
+        echo ""
+        echo "  1. Get the latest token from:"
+        printf "     ${CYAN}https://www.skool.com/scrapes/classroom/d1cfafed?md=552b0ba753df4c738843913fb3eb8312${NC}\n"
+        echo ""
+        echo "  2. Update your remote URL:"
+        printf "     ${BOLD}git remote set-url origin https://<NEW-TOKEN>@github.com/simonc602/agentic-os.git${NC}\n"
+        echo ""
+        echo "  3. Run this script again:"
+        printf "     ${BOLD}bash scripts/update.sh${NC}\n"
+        echo ""
+        info "Nothing was changed — your local files are untouched."
+        exit 1
+    fi
+    # Non-auth fetch failure — continue anyway, merge will use whatever origin/main we have
+}
+
+# --- Handle files deleted upstream but present locally ---
+# Common case: context/USER.md was removed from tracking upstream
+# but older clones still have it committed.
+DELETED_UPSTREAM=(
+    "context/USER.md"
+)
+
+for del_file in "${DELETED_UPSTREAM[@]}"; do
+    # Only act if the file is tracked locally but doesn't exist upstream
+    if git ls-files --error-unmatch "$del_file" &>/dev/null 2>&1 && \
+       ! git cat-file -e "origin/main:${del_file}" 2>/dev/null; then
+        # Remove from git index but keep the working copy
+        git rm --cached "$del_file" 2>/dev/null || true
+    fi
+done
+
+# --- Handle template files that may have diverged ---
+# Template files (.template) are shipped by upstream — local committed
+# changes should yield to upstream. The user's actual data lives in the
+# non-template version (e.g., learnings.md, not learnings.md.template).
+TEMPLATE_FILES=(
+    "context/learnings.md.template"
+    "context/USER.md.template"
+)
+
+for tmpl in "${TEMPLATE_FILES[@]}"; do
+    if git cat-file -e "origin/main:${tmpl}" 2>/dev/null; then
+        # Reset local tracked version to match upstream so merge is clean
+        git checkout origin/main -- "$tmpl" 2>/dev/null || true
+    fi
+done
+
+# =========================================================
 # Step 6: Pull upstream changes
 # =========================================================
 info "Checking for updates..."
 echo ""
 
-PULL_OUTPUT=$(git pull origin main 2>&1) || {
+# We already fetched in Step 5c — just merge to avoid a redundant fetch
+PULL_OUTPUT=$(git merge origin/main 2>&1) || {
     # Restore protected files
     if $STASHED; then
         git stash pop --quiet 2>/dev/null || true
@@ -313,6 +396,58 @@ NEW_HEAD=$(git rev-parse HEAD)
 COMMIT_COUNT=0
 if $HAS_UPSTREAM_CHANGES; then
     COMMIT_COUNT=$(git log --oneline "${OLD_HEAD}..${NEW_HEAD}" 2>/dev/null | wc -l | tr -d ' ')
+fi
+
+# =========================================================
+# Health check: verify critical files exist on disk
+# =========================================================
+# Even if git says "already up to date", files can be missing if:
+# - The user's PAT expired (fetch returned stale data)
+# - They downloaded a zip and set up git manually
+# - Their branch diverged before these files existed
+# If files are missing from origin/main, restore them silently.
+EXPECTED_FILES=(
+    "scripts/add-client.sh"
+    "scripts/add-skill.sh"
+    "scripts/remove-skill.sh"
+    "scripts/list-skills.sh"
+    "scripts/install.sh"
+    "scripts/update.sh"
+    "scripts/update-clients.sh"
+    "CLAUDE.md"
+    "PRD.md"
+)
+
+MISSING_FILES=()
+for expected in "${EXPECTED_FILES[@]}"; do
+    if [[ ! -f "$REPO_ROOT/$expected" ]]; then
+        # Check if the file exists on origin/main
+        if git cat-file -e "origin/main:${expected}" 2>/dev/null; then
+            MISSING_FILES+=("$expected")
+        fi
+    fi
+done
+
+if [[ ${#MISSING_FILES[@]} -gt 0 ]]; then
+    echo ""
+    warn "Found ${#MISSING_FILES[@]} missing file(s) that should exist — restoring from origin/main:"
+    for mf in "${MISSING_FILES[@]}"; do
+        git checkout origin/main -- "$mf" 2>/dev/null && {
+            bullet "$mf ${GREEN}✓ restored${NC}"
+        } || {
+            bullet "$mf ${RED}✗ failed to restore${NC}"
+        }
+    done
+    echo ""
+
+    # If git said "already up to date" but files were missing, the remote
+    # may be stale. Warn the user so they can check their access token.
+    if ! $HAS_UPSTREAM_CHANGES; then
+        warn "Git reported 'Already up to date' but files were missing."
+        info "If this keeps happening, your access token may need refreshing."
+        info "Check: ${BOLD}git remote -v${NC} and verify the URL is correct."
+        echo ""
+    fi
 fi
 
 # =========================================================
