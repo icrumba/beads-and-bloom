@@ -1,4 +1,5 @@
-import "dotenv/config";
+import { config } from "dotenv";
+config({ path: ".env.local" });
 import { neon } from "@neondatabase/serverless";
 
 async function verify() {
