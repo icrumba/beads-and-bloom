@@ -82,13 +82,36 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (populated by roadmapper) | | |
+| STORE-01 | Phase 2: Storefront & Brand | Pending |
+| STORE-02 | Phase 2: Storefront & Brand | Pending |
+| STORE-03 | Phase 3: Cart & Checkout | Pending |
+| STORE-04 | Phase 3: Cart & Checkout | Pending |
+| STORE-05 | Phase 3: Cart & Checkout | Pending |
+| STORE-06 | Phase 2: Storefront & Brand | Pending |
+| STORE-07 | Phase 2: Storefront & Brand | Pending |
+| STORE-08 | Phase 2: Storefront & Brand | Pending |
+| STORE-09 | Phase 3: Cart & Checkout | Pending |
+| STORE-10 | Phase 2: Storefront & Brand | Pending |
+| STORE-11 | Phase 3: Cart & Checkout | Pending |
+| STORE-12 | Phase 3: Cart & Checkout | Pending |
+| CUST-01 | Phase 4: Admin & Order Management | Pending |
+| CUST-02 | Phase 4: Admin & Order Management | Pending |
+| BRAND-01 | Phase 2: Storefront & Brand | Pending |
+| BRAND-02 | Phase 2: Storefront & Brand | Pending |
+| BRAND-03 | Phase 2: Storefront & Brand | Pending |
+| BRAND-04 | Phase 2: Storefront & Brand | Pending |
+| ADMIN-01 | Phase 4: Admin & Order Management | Pending |
+| ADMIN-02 | Phase 4: Admin & Order Management | Pending |
+| ADMIN-03 | Phase 4: Admin & Order Management | Pending |
+| ADMIN-04 | Phase 4: Admin & Order Management | Pending |
+| ADMIN-05 | Phase 4: Admin & Order Management | Pending |
+| ADMIN-06 | Phase 4: Admin & Order Management | Pending |
 
 **Coverage:**
-- v1 requirements: 22 total
-- Mapped to phases: 0
-- Unmapped: 22 ⚠️
+- v1 requirements: 24 total
+- Mapped to phases: 24
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-27*
-*Last updated: 2026-03-27 after initial definition*
+*Last updated: 2026-03-27 after roadmap creation*
