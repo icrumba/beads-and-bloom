@@ -12,7 +12,7 @@ This roadmap delivers a mobile-first e-commerce website for Beads & Bloom in fiv
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Database schema, project scaffold, and development environment
+- [x] **Phase 1: Foundation** - Database schema, project scaffold, and development environment
 - [ ] **Phase 2: Storefront & Brand** - Product catalog, brand pages, and content that customers browse
 - [ ] **Phase 3: Cart & Checkout** - Purchase flow from cart through Stripe payment to confirmation
 - [ ] **Phase 4: Admin & Order Management** - Founder dashboard for orders, products, customers, and tracking
@@ -35,7 +35,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01-PLAN.md -- Scaffold Next.js 15 project with Tailwind, shadcn/ui, Drizzle config, and all Phase 1 dependencies
 - [x] 01-02-PLAN.md -- Define complete database schema (5 tables, 2 enums, relations) and push to Neon Postgres
-- [ ] 01-03-PLAN.md -- Create and run seed script with real Beads & Bloom product data and charity counter
+- [x] 01-03-PLAN.md -- Create and run seed script with real Beads & Bloom product data and charity counter
 
 ### Phase 2: Storefront & Brand
 **Goal**: Customers arriving from Instagram can browse all products and learn about the brand on their phones
@@ -113,7 +113,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/3 | Not started | - |
+| 1. Foundation | 3/3 | Complete | 2026-03-27 |
 | 2. Storefront & Brand | 0/3 | Not started | - |
 | 3. Cart & Checkout | 0/3 | Not started | - |
 | 4. Admin & Order Management | 0/3 | Not started | - |
