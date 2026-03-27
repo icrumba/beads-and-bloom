@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md -- Scaffold Next.js 15 project with Tailwind, shadcn/ui, Drizzle config, and all Phase 1 dependencies
-- [ ] 01-02-PLAN.md -- Define complete database schema (5 tables, 2 enums, relations) and push to Neon Postgres
+- [x] 01-02-PLAN.md -- Define complete database schema (5 tables, 2 enums, relations) and push to Neon Postgres
 - [ ] 01-03-PLAN.md -- Create and run seed script with real Beads & Bloom product data and charity counter
 
 ### Phase 2: Storefront & Brand
