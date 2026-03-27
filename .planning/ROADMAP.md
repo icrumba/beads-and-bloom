@@ -30,12 +30,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Seed script populates database with real Beads & Bloom products including photos via Cloudinary
   4. Custom order data model supports distinct status flow (with "Confirmed" step) from day one
   5. Project lives entirely inside projects/briefs/beads-and-bloom-website/ with no files at the agentic-os root
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
-- [ ] 01-03: TBD
+- [ ] 01-01-PLAN.md -- Scaffold Next.js 15 project with Tailwind, shadcn/ui, Drizzle config, and all Phase 1 dependencies
+- [ ] 01-02-PLAN.md -- Define complete database schema (5 tables, 2 enums, relations) and push to Neon Postgres
+- [ ] 01-03-PLAN.md -- Create and run seed script with real Beads & Bloom product data and charity counter
 
 ### Phase 2: Storefront & Brand
 **Goal**: Customers arriving from Instagram can browse all products and learn about the brand on their phones
