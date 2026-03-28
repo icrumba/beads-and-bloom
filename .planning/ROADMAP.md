@@ -65,13 +65,13 @@ Plans:
   3. User completes purchase via Stripe Embedded Checkout with flat-rate shipping (no account required)
   4. User receives order confirmation email after successful payment, and confirmation page mentions handwritten thank-you note
   5. User can add a gift message at checkout for the recipient
-**Plans**: TBD
+**Plans**: 3 plans
 **UI hint**: yes
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
-- [ ] 03-03: TBD
+- [ ] 03-01-PLAN.md -- Zustand cart store, cart drawer, interactive color swatches, gift message, and header cart icon
+- [ ] 03-02-PLAN.md -- Stripe Embedded Checkout with customer form, Server Action for session creation, and confirmation page
+- [ ] 03-03-PLAN.md -- Stripe webhook handler, order creation queries, and order confirmation email via Resend
 
 ### Phase 4: Admin & Order Management
 **Goal**: Founders can manage their entire business from their phones -- orders, products, customers, and order tracking
