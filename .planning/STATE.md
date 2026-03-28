@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-02-PLAN.md
-last_updated: "2026-03-28T03:43:57.623Z"
+stopped_at: Completed 03-03-PLAN.md
+last_updated: "2026-03-28T03:51:18Z"
 last_activity: 2026-03-28
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 9
-  completed_plans: 8
-  percent: 40
+  completed_plans: 9
+  percent: 60
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-27)
 
 **Core value:** Customers can browse, order, and pay for handmade jewelry on mobile -- and the founders get notified and can track every order from placement to delivery.
-**Current focus:** Phase 02 -- storefront & brand
+**Current focus:** Phase 03 -- cart & checkout
 
 ## Current Position
 
 Phase: 3
 Plan: 3 of 3
-Status: Ready to execute
+Status: Plan 03-03 complete -- webhook, order creation, confirmation email
 Last activity: 2026-03-28
 
-Progress: [######........] 40%
+Progress: [#########.....] 60%
 
 ## Performance Metrics
 
@@ -58,7 +58,7 @@ Progress: [######........] 40%
 | Phase 02 P01 | 7min | 2 tasks | 13 files |
 | Phase 02 P02 | 7min | 2 tasks | 9 files |
 | Phase 02 P03 | 7min | 2 tasks | 8 files |
-| Phase 03 P02 | 8min | 2 tasks | 10 files |
+| Phase 03 P03 | 6min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -84,8 +84,9 @@ Recent decisions affecting current work:
 - [Phase 02]: URL search params for category filtering -- shareable filtered URLs, SSR compatible
 - [Phase 02]: Lazy DB proxy pattern to prevent build failures without DATABASE_URL
 - [Phase 02]: force-dynamic on homepage since it fetches charity total from DB at runtime
-- [Phase 03]: Stripe SDK v21 uses ui_mode embedded_page instead of embedded
-- [Phase 03]: Server-side price lookup from DB in Server Action prevents price manipulation
+- [Phase 03]: Email failure does not fail webhook -- prevents Stripe retry storms
+- [Phase 03]: Webhook idempotency via stripeSessionId DB lookup before processing
+- [Phase 03]: Customer upsert on email with onConflictDoUpdate for repeat buyers
 
 ### Pending Todos
 
@@ -98,6 +99,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T03:43:57.617Z
-Stopped at: Completed 03-02-PLAN.md
+Last session: 2026-03-28T03:51:18Z
+Stopped at: Completed 03-03-PLAN.md
 Resume file: None
