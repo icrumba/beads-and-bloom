@@ -38,7 +38,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **ADMIN-01**: Founders can view all orders with filtering and search
 - [ ] **ADMIN-02**: Founders can update order fulfillment status (New → Making → Shipped → Delivered)
-- [ ] **ADMIN-03**: Founders can add, edit, and remove products with photos
+- [x] **ADMIN-03**: Founders can add, edit, and remove products with photos
 - [ ] **ADMIN-04**: Founders receive email notification when a new order is placed
 - [ ] **ADMIN-05**: Dashboard displays customer info (contact, shipping, order history, custom requests)
 - [ ] **ADMIN-06**: Admin interface is mobile-friendly and simple enough for teen founders
@@ -102,7 +102,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BRAND-04 | Phase 2: Storefront & Brand | Complete |
 | ADMIN-01 | Phase 4: Admin & Order Management | Pending |
 | ADMIN-02 | Phase 4: Admin & Order Management | Pending |
-| ADMIN-03 | Phase 4: Admin & Order Management | Pending |
+| ADMIN-03 | Phase 4: Admin & Order Management | Complete |
 | ADMIN-04 | Phase 4: Admin & Order Management | Pending |
 | ADMIN-05 | Phase 4: Admin & Order Management | Pending |
 | ADMIN-06 | Phase 4: Admin & Order Management | Pending |

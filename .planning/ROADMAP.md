@@ -87,9 +87,9 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
-- [ ] 04-03: TBD
+- [x] 04-01-PLAN.md -- Admin auth (middleware + login), admin layout shell, admin notification email, order tracking page, and all Phase 4 dependencies
+- [ ] 04-02-PLAN.md -- Order list with data table, filtering/search, one-tap status advance, order detail page, and customers page
+- [x] 04-03-PLAN.md -- Product management: list, add/edit forms with Cloudinary image upload, and delete with confirmation
 
 ### Phase 5: Polish & Launch
 **Goal**: The site is fast, resilient, and ready for real customers to find via Instagram links
@@ -116,5 +116,5 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5
 | 1. Foundation | 3/3 | Complete | 2026-03-27 |
 | 2. Storefront & Brand | 1/3 | In progress | - |
 | 3. Cart & Checkout | 0/3 | Not started | - |
-| 4. Admin & Order Management | 0/3 | Not started | - |
+| 4. Admin & Order Management | 2/3 | In progress | - |
 | 5. Polish & Launch | 0/2 | Not started | - |
