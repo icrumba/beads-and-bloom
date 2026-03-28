@@ -51,7 +51,7 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 02-01-PLAN.md -- Design system (font, colors, shadcn components), shared layout (header, footer, mobile nav), and Drizzle query layer
+- [x] 02-01-PLAN.md -- Design system (font, colors, shadcn components), shared layout (header, footer, mobile nav), and Drizzle query layer
 - [ ] 02-02-PLAN.md -- Homepage with hero, category tabs, product grid, and product detail page with photo carousel and SEO
 - [ ] 02-03-PLAN.md -- Brand pages (about, contact, shipping, returns) and homepage charity counter + Instagram gallery
 
@@ -114,7 +114,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-03-27 |
-| 2. Storefront & Brand | 0/3 | Not started | - |
+| 2. Storefront & Brand | 1/3 | In progress | - |
 | 3. Cart & Checkout | 0/3 | Not started | - |
 | 4. Admin & Order Management | 0/3 | Not started | - |
 | 5. Polish & Launch | 0/2 | Not started | - |
