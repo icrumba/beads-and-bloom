@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-28T04:02:43.676Z"
+status: executing
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-03-28T04:27:14Z"
 last_activity: 2026-03-28
 progress:
   total_phases: 5
   completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
-  percent: 60
+  total_plans: 12
+  completed_plans: 10
+  percent: 67
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-27)
 
 **Core value:** Customers can browse, order, and pay for handmade jewelry on mobile -- and the founders get notified and can track every order from placement to delivery.
-**Current focus:** Phase 03 -- cart & checkout
+**Current focus:** Phase 04 -- admin & order management
 
 ## Current Position
 
 Phase: 4
-Plan: Not started
-Status: Plan 03-03 complete -- webhook, order creation, confirmation email
+Plan: 1 of 3
+Status: Plan 04-01 complete -- admin auth, layout, notification email, order tracking
 Last activity: 2026-03-28
 
-Progress: [#########.....] 60%
+Progress: [##########....] 67%
 
 ## Performance Metrics
 
@@ -59,6 +59,7 @@ Progress: [#########.....] 60%
 | Phase 02 P02 | 7min | 2 tasks | 9 files |
 | Phase 02 P03 | 7min | 2 tasks | 8 files |
 | Phase 03 P03 | 6min | 2 tasks | 5 files |
+| Phase 04 P01 | 10min | 3 tasks | 38 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,10 @@ Recent decisions affecting current work:
 - [Phase 03]: Email failure does not fail webhook -- prevents Stripe retry storms
 - [Phase 03]: Webhook idempotency via stripeSessionId DB lookup before processing
 - [Phase 03]: Customer upsert on email with onConflictDoUpdate for repeat buyers
+- [Phase 04]: Route groups: (store) for public pages, /admin for admin shell -- no shared Header/Footer
+- [Phase 04]: Lazy Stripe proxy pattern (same as DB proxy from Phase 02) to prevent build failures
+- [Phase 04]: Cloudinary fallback cloud name in next.config.ts for static generation
+- [Phase 04]: Track page in (store) route group for consistent public navigation
 
 ### Pending Todos
 
@@ -99,6 +104,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T04:02:43.672Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-admin-order-management/04-CONTEXT.md
+Last session: 2026-03-28T04:27:14Z
+Stopped at: Completed 04-01-PLAN.md
+Resume file: None

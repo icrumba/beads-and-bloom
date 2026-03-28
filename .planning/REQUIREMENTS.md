@@ -24,8 +24,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Customer Experience
 
-- [ ] **CUST-01**: User can check order status using order number or email (no login required)
-- [ ] **CUST-02**: Order tracking page shows current fulfillment status (New → Making → Shipped → Delivered)
+- [x] **CUST-01**: User can check order status using order number or email (no login required)
+- [x] **CUST-02**: Order tracking page shows current fulfillment status (New → Making → Shipped → Delivered)
 
 ### Brand & Mission
 
@@ -39,9 +39,9 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **ADMIN-01**: Founders can view all orders with filtering and search
 - [ ] **ADMIN-02**: Founders can update order fulfillment status (New → Making → Shipped → Delivered)
 - [ ] **ADMIN-03**: Founders can add, edit, and remove products with photos
-- [ ] **ADMIN-04**: Founders receive email notification when a new order is placed
+- [x] **ADMIN-04**: Founders receive email notification when a new order is placed
 - [ ] **ADMIN-05**: Dashboard displays customer info (contact, shipping, order history, custom requests)
-- [ ] **ADMIN-06**: Admin interface is mobile-friendly and simple enough for teen founders
+- [x] **ADMIN-06**: Admin interface is mobile-friendly and simple enough for teen founders
 
 ## v2 Requirements
 
@@ -94,8 +94,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STORE-10 | Phase 2: Storefront & Brand | Complete |
 | STORE-11 | Phase 3: Cart & Checkout | Pending |
 | STORE-12 | Phase 3: Cart & Checkout | Pending |
-| CUST-01 | Phase 4: Admin & Order Management | Pending |
-| CUST-02 | Phase 4: Admin & Order Management | Pending |
+| CUST-01 | Phase 4: Admin & Order Management | Complete |
+| CUST-02 | Phase 4: Admin & Order Management | Complete |
 | BRAND-01 | Phase 2: Storefront & Brand | Complete |
 | BRAND-02 | Phase 2: Storefront & Brand | Complete |
 | BRAND-03 | Phase 2: Storefront & Brand | Complete |
@@ -103,9 +103,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ADMIN-01 | Phase 4: Admin & Order Management | Pending |
 | ADMIN-02 | Phase 4: Admin & Order Management | Pending |
 | ADMIN-03 | Phase 4: Admin & Order Management | Pending |
-| ADMIN-04 | Phase 4: Admin & Order Management | Pending |
+| ADMIN-04 | Phase 4: Admin & Order Management | Complete |
 | ADMIN-05 | Phase 4: Admin & Order Management | Pending |
-| ADMIN-06 | Phase 4: Admin & Order Management | Pending |
+| ADMIN-06 | Phase 4: Admin & Order Management | Complete |
 
 **Coverage:**
 - v1 requirements: 24 total
