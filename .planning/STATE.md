@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-03-28T01:32:06.671Z"
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-28T04:56:33.294Z"
 last_activity: 2026-03-28
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 8
+  completed_plans: 7
   percent: 40
 ---
 
@@ -58,6 +58,7 @@ Progress: [######........] 40%
 | Phase 02 P01 | 7min | 2 tasks | 13 files |
 | Phase 02 P02 | 7min | 2 tasks | 9 files |
 | Phase 02 P03 | 7min | 2 tasks | 8 files |
+| Phase 05 P01 | 3min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,8 @@ Recent decisions affecting current work:
 - [Phase 02]: URL search params for category filtering -- shareable filtered URLs, SSR compatible
 - [Phase 02]: Lazy DB proxy pattern to prevent build failures without DATABASE_URL
 - [Phase 02]: force-dynamic on homepage since it fetches charity total from DB at runtime
+- [Phase 05]: Used buttonVariants() with Link instead of asChild -- base-ui Button does not support asChild
+- [Phase 05]: Adapted route paths from (store) group to flat structure matching actual project layout
 
 ### Pending Todos
 
@@ -95,6 +98,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T01:25:59.379Z
-Stopped at: Completed 02-03-PLAN.md
+Last session: 2026-03-28T04:56:33.290Z
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
