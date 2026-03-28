@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { products, charityTotals, orders, orderItems, customers } from "@/db/schema";
-import { eq, and, asc, sql } from "drizzle-orm";
+import { eq, and, asc, desc, sql } from "drizzle-orm";
 import type { Address } from "@/types";
 
 export async function getProducts(category?: string) {
@@ -121,4 +121,86 @@ export async function getOrderByStripeSession(sessionId: string) {
     .where(eq(orders.stripeSessionId, sessionId))
     .limit(1);
   return result[0] ?? null;
+}
+
+// --- Public order tracking ---
+
+export async function getOrderByIdAndEmail(orderId: number, email: string) {
+  const result = await db
+    .select({
+      id: orders.id,
+      status: orders.status,
+      createdAt: orders.createdAt,
+      totalAmount: orders.totalAmount,
+    })
+    .from(orders)
+    .innerJoin(customers, eq(orders.customerId, customers.id))
+    .where(and(eq(orders.id, orderId), eq(customers.email, email)))
+    .limit(1);
+  return result[0] ?? null;
+}
+
+// --- Admin queries ---
+
+// Orders with customer info for admin list
+export async function getAdminOrders(status?: string) {
+  const baseQuery = db
+    .select({
+      id: orders.id,
+      status: orders.status,
+      totalAmount: orders.totalAmount,
+      giftMessage: orders.giftMessage,
+      createdAt: orders.createdAt,
+      customerName: customers.name,
+      customerEmail: customers.email,
+    })
+    .from(orders)
+    .leftJoin(customers, eq(orders.customerId, customers.id))
+    .orderBy(desc(orders.createdAt));
+
+  if (status && status !== "all") {
+    return baseQuery.where(eq(orders.status, status as "new" | "confirmed" | "making" | "shipped" | "delivered"));
+  }
+  return baseQuery;
+}
+
+// Full order detail with items
+export async function getOrderDetail(orderId: number) {
+  const [order] = await db.select().from(orders).where(eq(orders.id, orderId));
+  if (!order) return null;
+
+  const items = await db
+    .select({
+      id: orderItems.id,
+      quantity: orderItems.quantity,
+      unitPrice: orderItems.unitPrice,
+      customColors: orderItems.customColors,
+      productName: products.name,
+      productImages: products.images,
+    })
+    .from(orderItems)
+    .leftJoin(products, eq(orderItems.productId, products.id))
+    .where(eq(orderItems.orderId, orderId));
+
+  const customer = order.customerId
+    ? (await db.select().from(customers).where(eq(customers.id, order.customerId)))[0]
+    : null;
+
+  return { ...order, items, customer };
+}
+
+// All products for admin (including out of stock)
+export async function getAllProducts() {
+  return db.select().from(products).orderBy(asc(products.sortOrder));
+}
+
+// Single product by ID
+export async function getProductById(id: number) {
+  const [product] = await db.select().from(products).where(eq(products.id, id));
+  return product ?? null;
+}
+
+// All customers with order counts
+export async function getAdminCustomers() {
+  return db.select().from(customers).orderBy(desc(customers.createdAt));
 }
