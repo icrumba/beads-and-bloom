@@ -12,20 +12,20 @@ Customers can browse, order, and pay for handmade jewelry on mobile — and the 
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Mobile-friendly product catalog — Validated in Phase 2: Storefront & Brand
+- [x] Running charity donation counter on homepage — Validated in Phase 2
+- [x] Clean, minimal design aesthetic — products front and center — Validated in Phase 2
+- [x] Founder story / about page with mission and charity info — Validated in Phase 2
+- [x] Flat-rate shipping info page — Validated in Phase 2
 
 ### Active
 
-- [ ] Mobile-friendly product catalog with simple admin management
 - [ ] Stripe payment processing for secure checkout
 - [ ] Order notifications via email, SMS, and admin dashboard
 - [ ] Customer database with contact info, order history, and custom request tracking
 - [ ] Fulfillment status tracking (New → Making → Shipped → Delivered) for both ready-to-ship and made-to-order pieces
-- [ ] Flat-rate shipping
 - [ ] Custom color request option on products
-- [ ] Running charity donation counter on homepage
-- [ ] Clean, minimal design aesthetic — products front and center
-- [ ] Founder story / about page with mission and charity info
+- [ ] Simple admin management for products and orders
 
 ### Out of Scope
 
@@ -84,4 +84,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-27 after initialization*
+*Last updated: 2026-03-28 after Phase 2 completion*
