@@ -69,8 +69,8 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [x] 03-01: TBD
+- [x] 03-02: TBD
 - [ ] 03-03: TBD
 
 ### Phase 4: Admin & Order Management
@@ -115,6 +115,6 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-03-27 |
 | 2. Storefront & Brand | 1/3 | In progress | - |
-| 3. Cart & Checkout | 0/3 | Not started | - |
+| 3. Cart & Checkout | 2/3 | In Progress|  |
 | 4. Admin & Order Management | 0/3 | Not started | - |
 | 5. Polish & Launch | 0/2 | Not started | - |

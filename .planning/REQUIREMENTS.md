@@ -12,7 +12,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **STORE-01**: User can browse products in a mobile-responsive grid catalog
 - [x] **STORE-02**: User can view product detail page with photos, description, price, materials, and care info
 - [ ] **STORE-03**: User can add products to cart, update quantities, and remove items
-- [ ] **STORE-04**: User can complete purchase via Stripe guest checkout (no account required)
+- [x] **STORE-04**: User can complete purchase via Stripe guest checkout (no account required)
 - [ ] **STORE-05**: User receives order confirmation email after successful payment
 - [x] **STORE-06**: User can view flat-rate shipping info page
 - [x] **STORE-07**: User can view return/refund policy page
@@ -20,7 +20,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **STORE-09**: User can select custom color options on eligible products
 - [x] **STORE-10**: Products display "Ready to ship" vs "Made to order (5-7 days)" flags
 - [ ] **STORE-11**: User can add a gift message at checkout for the recipient
-- [ ] **STORE-12**: Checkout confirmation page mentions a handwritten thank-you note is included with every order
+- [x] **STORE-12**: Checkout confirmation page mentions a handwritten thank-you note is included with every order
 
 ### Customer Experience
 
@@ -85,7 +85,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STORE-01 | Phase 2: Storefront & Brand | Complete |
 | STORE-02 | Phase 2: Storefront & Brand | Complete |
 | STORE-03 | Phase 3: Cart & Checkout | Pending |
-| STORE-04 | Phase 3: Cart & Checkout | Pending |
+| STORE-04 | Phase 3: Cart & Checkout | Complete |
 | STORE-05 | Phase 3: Cart & Checkout | Pending |
 | STORE-06 | Phase 2: Storefront & Brand | Complete |
 | STORE-07 | Phase 2: Storefront & Brand | Complete |
@@ -93,7 +93,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STORE-09 | Phase 3: Cart & Checkout | Pending |
 | STORE-10 | Phase 2: Storefront & Brand | Complete |
 | STORE-11 | Phase 3: Cart & Checkout | Pending |
-| STORE-12 | Phase 3: Cart & Checkout | Pending |
+| STORE-12 | Phase 3: Cart & Checkout | Complete |
 | CUST-01 | Phase 4: Admin & Order Management | Pending |
 | CUST-02 | Phase 4: Admin & Order Management | Pending |
 | BRAND-01 | Phase 2: Storefront & Brand | Complete |
