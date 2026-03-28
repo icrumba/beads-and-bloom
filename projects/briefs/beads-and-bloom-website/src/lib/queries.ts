@@ -189,6 +189,7 @@ export async function getOrderDetail(orderId: number) {
   return { ...order, items, customer };
 }
 
+// --- Admin product queries ---
 // All products for admin (including out of stock)
 export async function getAllProducts() {
   return db.select().from(products).orderBy(asc(products.sortOrder));
