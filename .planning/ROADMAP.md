@@ -47,13 +47,13 @@ Plans:
   3. About page tells the founder story with charity mission, and homepage shows a running charity donation counter
   4. Shipping info page, return policy page, and contact page (email + Instagram DM) are all accessible
   5. Product pages have proper SEO metadata (title tags, descriptions, OG images) for sharing
-**Plans**: TBD
+**Plans**: 3 plans
 **UI hint**: yes
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md -- Design system (font, colors, shadcn components), shared layout (header, footer, mobile nav), and Drizzle query layer
+- [ ] 02-02-PLAN.md -- Homepage with hero, category tabs, product grid, and product detail page with photo carousel and SEO
+- [ ] 02-03-PLAN.md -- Brand pages (about, contact, shipping, returns) and homepage charity counter + Instagram gallery
 
 ### Phase 3: Cart & Checkout
 **Goal**: Customers can add products to cart and complete a purchase with Stripe -- the path to revenue
