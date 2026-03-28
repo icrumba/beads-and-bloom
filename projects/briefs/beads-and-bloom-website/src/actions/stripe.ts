@@ -5,7 +5,7 @@ import { stripe } from "@/lib/stripe";
 import { db } from "@/db";
 import { products } from "@/db/schema";
 import { inArray } from "drizzle-orm";
-import type { Address } from "@/types";
+
 
 const checkoutItemSchema = z.object({
   productId: z.number(),
@@ -85,7 +85,7 @@ export async function createCheckoutSession(input: CheckoutInput) {
   }));
 
   const session = await stripe.checkout.sessions.create({
-    ui_mode: "embedded_page",
+    ui_mode: "embedded",
     mode: "payment",
     line_items: lineItems,
     customer_email: parsed.customerEmail,
