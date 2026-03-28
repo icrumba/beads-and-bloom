@@ -4,6 +4,7 @@ import { stripe } from "@/lib/stripe";
 import { createOrder, getOrderByStripeSession } from "@/lib/queries";
 import { Resend } from "resend";
 import { OrderConfirmationEmail } from "@/emails/order-confirmation";
+import { AdminNotificationEmail } from "@/emails/admin-notification";
 
 export const runtime = "nodejs";
 
@@ -116,6 +117,25 @@ export async function POST(req: NextRequest) {
           giftMessage,
         }),
       });
+
+      // Send admin notification email (guarded by ADMIN_EMAIL env var)
+      if (process.env.ADMIN_EMAIL) {
+        await resend.emails.send({
+          from:
+            process.env.RESEND_FROM_EMAIL ||
+            "Beads & Bloom <orders@beadsandbloom.com>",
+          to: process.env.ADMIN_EMAIL,
+          subject: `New Order #${order.id}`,
+          react: AdminNotificationEmail({
+            orderNumber: order.id,
+            customerName,
+            customerEmail,
+            items: emailItems,
+            total: totalAmount,
+            shippingAddress,
+          }),
+        });
+      }
     } catch (emailErr) {
       // Log but don't fail the webhook -- order is already created
       // Email failure should NOT trigger Stripe retries
