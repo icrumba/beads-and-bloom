@@ -5,9 +5,8 @@ import { ChevronLeft } from "lucide-react";
 import { getProductBySlug } from "@/lib/queries";
 import { PhotoCarousel } from "@/components/shop/photo-carousel";
 import { AvailabilityBadge } from "@/components/shop/availability-badge";
-import { ColorSwatches } from "@/components/shop/color-swatches";
+import { AddToCartButton } from "@/components/shop/add-to-cart-button";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -68,12 +67,6 @@ export default async function ProductPage({ params }: Props) {
             <AvailabilityBadge availability={product.availability} />
           </div>
 
-          {product.colors.length > 0 && (
-            <div className="mt-3">
-              <ColorSwatches colors={product.colors} />
-            </div>
-          )}
-
           <Separator className="my-4" />
 
           <p className="text-base">{product.description}</p>
@@ -101,9 +94,15 @@ export default async function ProductPage({ params }: Props) {
           )}
 
           <div className="mt-6">
-            <Button size="lg" className="w-full md:w-auto">
-              Add to Cart
-            </Button>
+            <AddToCartButton
+              productId={product.id}
+              name={product.name}
+              price={product.price}
+              image={product.images[0] || ""}
+              slug={product.slug}
+              colors={product.colors}
+              customizable={product.customizable}
+            />
           </div>
         </div>
       </div>

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { CldImage } from "next-cloudinary";
 import { usePathname } from "next/navigation";
 import { MobileNav } from "@/components/shared/mobile-nav";
+import { CartIcon } from "@/components/cart/cart-icon";
+import { CartDrawer } from "@/components/cart/cart-drawer";
 
 const navItems = [
   { label: "Shop", href: "/" },
@@ -51,8 +53,14 @@ export function Header() {
           ))}
         </nav>
 
-        {/* Mobile nav */}
-        <MobileNav />
+        {/* Cart & Mobile nav */}
+        <div className="flex items-center gap-1">
+          <CartIcon />
+          <MobileNav />
+        </div>
+
+        {/* Cart drawer */}
+        <CartDrawer />
       </div>
     </header>
   );
