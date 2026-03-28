@@ -1,0 +1,33 @@
+# Secrets
+.env
+.env.local
+.env*.local
+.mcp.json
+
+# Local settings (per-machine Claude permissions)
+.claude/settings.local.json
+.claude/hooks_info/ccnotify.db
+.claude/hooks_info/ccnotify.log*
+
+# Installer state
+.claude/skills/_catalog/installed.json
+
+# User data (never overwrite — templates are tracked instead)
+context/USER.md
+context/learnings.md
+
+# System
+.DS_Store
+.backup/
+
+# Next.js / Node (inside project folders)
+**/node_modules/
+**/.next/
+**/next-env.d.ts
+
+# Command Centre data (inside project folders)
+**/.command-centre/
+
+# Cron runtime (logs and status are generated at runtime)
+cron/logs/
+cron/status/
