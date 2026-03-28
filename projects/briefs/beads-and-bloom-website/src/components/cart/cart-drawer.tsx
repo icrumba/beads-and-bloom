@@ -16,7 +16,6 @@ import { CartItem } from "@/components/cart/cart-item";
 import { GiftMessage } from "@/components/cart/gift-message";
 
 const FLAT_SHIPPING = 5.0;
-const FREE_SHIPPING_THRESHOLD = 25;
 
 export function CartDrawer() {
   const items = useCartStore((s) => s.items);
@@ -26,8 +25,7 @@ export function CartDrawer() {
   const totalItems = useCartStore((s) => s.totalItems);
 
   const subtotal = totalPrice();
-  const isFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
-  const shipping = items.length === 0 ? 0 : isFreeShipping ? 0 : FLAT_SHIPPING;
+  const shipping = items.length === 0 ? 0 : FLAT_SHIPPING;
   const total = subtotal + shipping;
   const itemCount = totalItems();
 
@@ -82,20 +80,8 @@ export function CartDrawer() {
 
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span>
-                    {isFreeShipping ? (
-                      <span className="text-green-600">Free</span>
-                    ) : (
-                      `$${shipping.toFixed(2)}`
-                    )}
-                  </span>
+                  <span>${shipping.toFixed(2)}</span>
                 </div>
-
-                {!isFreeShipping && subtotal > 0 && (
-                  <p className="text-xs text-muted-foreground">
-                    Free shipping on orders over ${FREE_SHIPPING_THRESHOLD}
-                  </p>
-                )}
 
                 <Separator />
 
