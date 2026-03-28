@@ -52,7 +52,7 @@ Plans:
 
 Plans:
 - [x] 02-01-PLAN.md -- Design system (font, colors, shadcn components), shared layout (header, footer, mobile nav), and Drizzle query layer
-- [ ] 02-02-PLAN.md -- Homepage with hero, category tabs, product grid, and product detail page with photo carousel and SEO
+- [x] 02-02-PLAN.md -- Homepage with hero, category tabs, product grid, and product detail page with photo carousel and SEO
 - [ ] 02-03-PLAN.md -- Brand pages (about, contact, shipping, returns) and homepage charity counter + Instagram gallery
 
 ### Phase 3: Cart & Checkout
