@@ -17,6 +17,21 @@ export const metadata: Metadata = {
     title: "Beads & Bloom -- Handmade Ocean-Inspired Jewelry",
     description:
       "Handmade jewelry by teen twin sisters. Every purchase donates $1 to charity.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Beads & Bloom -- Handmade Ocean-Inspired Jewelry",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Beads & Bloom -- Handmade Ocean-Inspired Jewelry",
+    description:
+      "Handmade jewelry by teen twin sisters. Every purchase donates $1 to charity.",
+    images: ["/og-image.png"],
   },
 };
 
