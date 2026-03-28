@@ -83,13 +83,13 @@ Plans:
   3. Founders receive email notification when a new order is placed
   4. Dashboard displays customer info including contact details, shipping address, order history, and custom requests
   5. Customer can check order status using order number or email and see current fulfillment stage (no login required)
-**Plans**: TBD
+**Plans**: 3 plans
 **UI hint**: yes
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
-- [ ] 04-03: TBD
+- [ ] 04-01-PLAN.md -- Admin auth (middleware + login), admin layout shell, admin notification email, order tracking page, and all Phase 4 dependencies
+- [ ] 04-02-PLAN.md -- Order list with data table, filtering/search, one-tap status advance, order detail page, and customers page
+- [ ] 04-03-PLAN.md -- Product management: list, add/edit forms with Cloudinary image upload, and delete with confirmation
 
 ### Phase 5: Polish & Launch
 **Goal**: The site is fast, resilient, and ready for real customers to find via Instagram links
