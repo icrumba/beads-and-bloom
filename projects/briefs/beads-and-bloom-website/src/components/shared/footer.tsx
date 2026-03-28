@@ -34,9 +34,18 @@ export function Footer() {
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           {/* Brand */}
           <div className="max-w-xs">
-            <p className="text-lg font-semibold tracking-tight">
-              Beads &amp; Bloom
-            </p>
+            <div className="flex items-center gap-2.5">
+              <img
+                src="https://res.cloudinary.com/dmz3werfw/image/upload/w_72,h_72,c_fill,f_auto/Logo_psn5do"
+                alt="Beads & Bloom"
+                width={36}
+                height={36}
+                className="rounded-full"
+              />
+              <p className="text-lg font-semibold tracking-tight">
+                Beads &amp; Bloom
+              </p>
+            </div>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
               Handmade ocean-inspired jewelry by 13-year-old twin sisters.
               Every purchase donates $1 to The Storehouse to help feed families
