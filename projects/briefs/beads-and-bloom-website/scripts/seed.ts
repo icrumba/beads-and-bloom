@@ -17,8 +17,7 @@ const PRODUCTS = [
     price: "24.99",
     category: "bracelets",
     images: [
-      "beads-and-bloom/ocean-breeze-bracelet-1",
-      "beads-and-bloom/ocean-breeze-bracelet-2",
+      "colored-bracelets-2_beo6po",
     ],
     colors: ["Ocean Blue", "Sea Foam", "Pearl White", "Sky Blue"],
     customizable: true,
@@ -38,8 +37,7 @@ const PRODUCTS = [
     price: "24.99",
     category: "bracelets",
     images: [
-      "beads-and-bloom/sunset-glow-bracelet-1",
-      "beads-and-bloom/sunset-glow-bracelet-2",
+      "colored-bracelets-5_kbjkkj",
     ],
     colors: ["Coral", "Peach", "Gold", "Warm Sand"],
     customizable: true,
@@ -59,8 +57,7 @@ const PRODUCTS = [
     price: "32.99",
     category: "bracelets",
     images: [
-      "beads-and-bloom/pearl-tide-bracelet-1",
-      "beads-and-bloom/pearl-tide-bracelet-2",
+      "colored-bracelets-3_ghlzs5",
     ],
     colors: ["Pearl White", "Champagne"],
     customizable: false,
@@ -80,8 +77,7 @@ const PRODUCTS = [
     price: "44.99",
     category: "bracelets",
     images: [
-      "beads-and-bloom/coral-reef-stack-1",
-      "beads-and-bloom/coral-reef-stack-2",
+      "colored-bracelets_nzyvgb",
     ],
     colors: ["Ocean Mix", "Sunset Mix", "Tropical Mix", "Custom -- Pick Your Own"],
     customizable: true,
@@ -103,8 +99,7 @@ const PRODUCTS = [
     price: "38.99",
     category: "necklaces",
     images: [
-      "beads-and-bloom/sea-turtle-charm-necklace-1",
-      "beads-and-bloom/sea-turtle-charm-necklace-2",
+      "golf-necklace_zbhbzb",
     ],
     colors: ["Gold"],
     customizable: false,
@@ -124,8 +119,7 @@ const PRODUCTS = [
     price: "42.99",
     category: "necklaces",
     images: [
-      "beads-and-bloom/starfish-pearl-necklace-1",
-      "beads-and-bloom/starfish-pearl-necklace-2",
+      "golf-necklace_zbhbzb",
     ],
     colors: ["Gold"],
     customizable: false,
@@ -145,8 +139,7 @@ const PRODUCTS = [
     price: "36.99",
     category: "necklaces",
     images: [
-      "beads-and-bloom/plumeria-drop-necklace-1",
-      "beads-and-bloom/plumeria-drop-necklace-2",
+      "colored-bracelets-4_drbipz",
     ],
     colors: ["Gold"],
     customizable: false,
@@ -168,8 +161,7 @@ const PRODUCTS = [
     price: "28.99",
     category: "accessories",
     images: [
-      "beads-and-bloom/ocean-charm-anklet-1",
-      "beads-and-bloom/ocean-charm-anklet-2",
+      "golf-necklace_zbhbzb",
     ],
     colors: ["Gold"],
     customizable: false,

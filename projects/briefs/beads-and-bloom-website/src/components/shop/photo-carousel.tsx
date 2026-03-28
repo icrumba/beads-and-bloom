@@ -3,6 +3,42 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { CldImage } from "next-cloudinary";
 
+function CarouselPlaceholder({ alt }: { alt: string }) {
+  return (
+    <div className="flex aspect-square flex-col items-center justify-center bg-gradient-to-br from-cyan-50 to-blue-100">
+      <span className="text-5xl">🐚</span>
+      <span className="mt-2 text-sm text-muted-foreground">{alt}</span>
+    </div>
+  );
+}
+
+function CarouselImage({
+  src,
+  alt,
+}: {
+  src: string;
+  alt: string;
+}) {
+  const [error, setError] = useState(false);
+
+  if (error) return <CarouselPlaceholder alt={alt} />;
+
+  return (
+    <CldImage
+      src={src}
+      alt={alt}
+      width={800}
+      height={800}
+      crop="fill"
+      format="auto"
+      quality="auto"
+      sizes="100vw"
+      className="w-full"
+      onError={() => setError(true)}
+    />
+  );
+}
+
 export function PhotoCarousel({
   images,
   alt,
@@ -49,27 +85,11 @@ export function PhotoCarousel({
   }, [images.length]);
 
   if (images.length === 0) {
-    return (
-      <div className="flex aspect-square items-center justify-center bg-muted text-muted-foreground">
-        No photo available
-      </div>
-    );
+    return <CarouselPlaceholder alt={alt} />;
   }
 
   if (images.length === 1) {
-    return (
-      <CldImage
-        src={images[0]}
-        alt={alt}
-        width={800}
-        height={800}
-        crop="fill"
-        format="auto"
-        quality="auto"
-        sizes="100vw"
-        className="w-full"
-      />
-    );
+    return <CarouselImage src={images[0]} alt={alt} />;
   }
 
   return (
@@ -84,17 +104,7 @@ export function PhotoCarousel({
             ref={setSlideRef(i)}
             className="w-full flex-none snap-center"
           >
-            <CldImage
-              src={src}
-              alt={`${alt} - photo ${i + 1}`}
-              width={800}
-              height={800}
-              crop="fill"
-              format="auto"
-              quality="auto"
-              sizes="100vw"
-              className="w-full"
-            />
+            <CarouselImage src={src} alt={`${alt} - photo ${i + 1}`} />
           </div>
         ))}
       </div>

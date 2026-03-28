@@ -15,30 +15,35 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="flex h-14 items-center justify-between px-4">
-      <Link href="/" className="text-xl font-semibold">
-        Beads &amp; Bloom
-      </Link>
+    <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-4">
+        <Link href="/" className="text-xl font-semibold tracking-tight">
+          Beads &amp; Bloom
+        </Link>
 
-      {/* Desktop nav */}
-      <nav className="hidden md:flex items-center gap-6">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`text-sm font-semibold transition-colors hover:text-primary ${
-              pathname === item.href
-                ? "text-primary"
-                : "text-muted-foreground"
-            }`}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-8">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`relative text-sm font-medium transition-colors duration-200 hover:text-foreground ${
+                pathname === item.href
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {item.label}
+              {pathname === item.href && (
+                <span className="absolute -bottom-[21px] left-0 right-0 h-[2px] bg-foreground" />
+              )}
+            </Link>
+          ))}
+        </nav>
 
-      {/* Mobile nav */}
-      <MobileNav />
+        {/* Mobile nav */}
+        <MobileNav />
+      </div>
     </header>
   );
 }

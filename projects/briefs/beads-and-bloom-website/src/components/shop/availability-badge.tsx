@@ -1,9 +1,8 @@
-import { Badge } from "@/components/ui/badge";
 import type { Availability } from "@/types";
 
-const labels: Record<Availability, string> = {
-  ready_to_ship: "Ready to ship",
-  made_to_order: "Made to order (5-7 days)",
+const config: Record<Availability, { label: string; dot: string }> = {
+  ready_to_ship: { label: "Ready to ship", dot: "bg-emerald-400" },
+  made_to_order: { label: "Made to order", dot: "bg-amber-400" },
 };
 
 export function AvailabilityBadge({
@@ -11,12 +10,11 @@ export function AvailabilityBadge({
 }: {
   availability: Availability;
 }) {
+  const { label, dot } = config[availability];
   return (
-    <Badge
-      variant="secondary"
-      className="text-[14px] font-semibold text-muted-foreground"
-    >
-      {labels[availability]}
-    </Badge>
+    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+      <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+      {label}
+    </span>
   );
 }

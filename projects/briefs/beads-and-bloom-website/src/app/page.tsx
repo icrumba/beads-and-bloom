@@ -4,7 +4,6 @@ import { HeroSection } from "@/components/shared/hero-section";
 import { CategoryTabs } from "@/components/shop/category-tabs";
 import { ProductGrid } from "@/components/shop/product-grid";
 import { CharityCounter } from "@/components/shared/charity-counter";
-import { InstagramGallery } from "@/components/shared/instagram-gallery";
 
 export const dynamic = "force-dynamic";
 
@@ -35,27 +34,24 @@ export default async function HomePage({
     <>
       <HeroSection />
 
-      <div className="mx-auto max-w-[1200px] px-4">
-        <div className="mt-12">
+      <div id="shop" className="mx-auto max-w-[1200px] px-4">
+        <div className="mt-16 md:mt-20">
           <Suspense fallback={null}>
             <CategoryTabs active={activeCategory} />
           </Suspense>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-8">
           <ProductGrid products={products} featured={featured} />
         </div>
 
-        {/* Charity Counter Section */}
-        <div className="mt-12">
+        <div className="mt-20 md:mt-28">
           <CharityCounter total={charityTotal} />
         </div>
-
-        {/* Instagram Gallery Section */}
-        <div className="mt-12">
-          <InstagramGallery />
-        </div>
       </div>
+
+      {/* Bottom spacer */}
+      <div className="h-20" />
     </>
   );
 }

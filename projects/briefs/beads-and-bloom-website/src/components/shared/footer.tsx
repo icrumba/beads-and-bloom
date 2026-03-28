@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 function InstagramIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -28,40 +29,44 @@ const quickLinks = [
 
 export function Footer() {
   return (
-    <footer className="bg-secondary py-12 px-4">
-      <div className="mx-auto max-w-5xl">
-        {/* Tagline */}
-        <p className="text-base font-semibold">Beads &amp; Bloom</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Handmade with love by twin sisters.
-        </p>
+    <footer className="border-t border-border/50 px-4 py-14">
+      <div className="mx-auto max-w-[1200px]">
+        <div className="flex flex-col gap-8 md:flex-row md:justify-between">
+          <div>
+            <p className="text-lg font-semibold tracking-tight">
+              Beads &amp; Bloom
+            </p>
+            <p className="mt-1 max-w-xs text-sm leading-relaxed text-muted-foreground">
+              Handmade ocean-inspired jewelry by twin sisters. $1 from every
+              order goes to charity.
+            </p>
+          </div>
 
-        {/* Quick links */}
-        <nav className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
-          {quickLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+          <nav className="flex flex-wrap gap-x-8 gap-y-2">
+            {quickLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
 
-        {/* Instagram + Copyright */}
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-3 border-t border-border/50 pt-6 sm:flex-row sm:items-center sm:justify-between">
           <a
             href="https://instagram.com/beadsandbloom"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
           >
             <InstagramIcon className="h-4 w-4" />
             @beadsandbloom
           </a>
-          <p className="text-sm text-muted-foreground">
-            &copy; 2026 Beads &amp; Bloom
+          <p className="text-xs text-muted-foreground">
+            &copy; 2026 Beads &amp; Bloom. All rights reserved.
           </p>
         </div>
       </div>

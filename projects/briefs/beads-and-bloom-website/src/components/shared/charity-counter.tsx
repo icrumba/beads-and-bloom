@@ -27,7 +27,6 @@ export function CharityCounter({ total }: CharityCounterProps) {
           function animate(currentTime: number) {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            // Ease-out cubic: 1 - (1 - progress)^3
             const eased = 1 - Math.pow(1 - progress, 3);
             const current = Math.round(eased * total);
 
@@ -52,13 +51,21 @@ export function CharityCounter({ total }: CharityCounterProps) {
   return (
     <div
       ref={ref}
-      className="rounded-lg bg-secondary px-4 py-12 text-center"
+      className="gradient-section relative overflow-hidden rounded-3xl px-6 py-16 text-center"
     >
-      <p className="text-[32px] font-semibold text-primary">
-        ${displayValue}
+      <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-cyan-200/20 blur-3xl" />
+      <div className="pointer-events-none absolute -left-12 bottom-0 h-32 w-32 rounded-full bg-emerald-200/20 blur-3xl" />
+
+      <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
+        Together we&apos;ve donated
       </p>
-      <p className="mt-1 text-base text-muted-foreground">
-        donated and counting!
+      <p className="mt-3 text-5xl font-semibold tracking-tight md:text-6xl">
+        <span className="bg-gradient-to-r from-cyan-600 to-emerald-500 bg-clip-text text-transparent">
+          ${displayValue}
+        </span>
+      </p>
+      <p className="mt-2 text-base text-muted-foreground">
+        $1 from every order goes to ocean conservation
       </p>
     </div>
   );

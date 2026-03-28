@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const categories = ["all", "bracelets", "necklaces", "accessories"] as const;
 
@@ -21,19 +20,21 @@ function CategoryTabsInner({ active }: { active: string }) {
   }
 
   return (
-    <Tabs value={active} onValueChange={handleChange}>
-      <TabsList variant="line" className="overflow-x-auto">
-        {categories.map((cat) => (
-          <TabsTrigger
-            key={cat}
-            value={cat}
-            className="text-sm font-semibold capitalize"
-          >
-            {cat}
-          </TabsTrigger>
-        ))}
-      </TabsList>
-    </Tabs>
+    <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      {categories.map((cat) => (
+        <button
+          key={cat}
+          onClick={() => handleChange(cat)}
+          className={`rounded-full px-5 py-2 text-sm font-medium capitalize transition-all duration-200 ${
+            active === cat
+              ? "bg-foreground text-background shadow-sm"
+              : "bg-secondary text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
+          }`}
+        >
+          {cat}
+        </button>
+      ))}
+    </div>
   );
 }
 
