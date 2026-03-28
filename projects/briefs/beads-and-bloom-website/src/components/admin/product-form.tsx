@@ -133,7 +133,7 @@ export function ProductForm({ product, action }: ProductFormProps) {
 
         <div className="space-y-2">
           <Label>Availability</Label>
-          <Select value={availability} onValueChange={setAvailability}>
+          <Select value={availability} onValueChange={(v) => { if (v) setAvailability(v); }}>
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
@@ -202,7 +202,8 @@ export function ProductForm({ product, action }: ProductFormProps) {
               typeof result?.info === "object" &&
               "public_id" in result.info
             ) {
-              setImages((prev) => [...prev, result.info.public_id as string]);
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              setImages((prev) => [...prev, (result.info as any).public_id as string]);
             }
           }}
           options={{

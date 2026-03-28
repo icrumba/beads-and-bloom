@@ -21,12 +21,10 @@ export default async function AdminProductsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Products</h1>
-        <Button asChild>
-          <Link href="/admin/products/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Product
-          </Link>
-        </Button>
+        <Link href="/admin/products/new" className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 transition-colors">
+          <Plus className="mr-2 h-4 w-4" />
+          Add Product
+        </Link>
       </div>
 
       {productList.length === 0 ? (
@@ -37,12 +35,10 @@ export default async function AdminProductsPage() {
             <p className="text-muted-foreground mt-1">
               Add your first product to get started!
             </p>
-            <Button asChild className="mt-4">
-              <Link href="/admin/products/new">
-                <Plus className="mr-2 h-4 w-4" />
-                Add Product
-              </Link>
-            </Button>
+            <Link href="/admin/products/new" className="mt-4 inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 transition-colors">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Product
+            </Link>
           </CardContent>
         </Card>
       ) : (
@@ -108,11 +104,9 @@ export default async function AdminProductsPage() {
 
                   {/* Actions */}
                   <div className="flex flex-col gap-1 shrink-0">
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/admin/products/${product.id}/edit`}>
-                        <Pencil className="h-4 w-4" />
-                      </Link>
-                    </Button>
+                    <Link href={`/admin/products/${product.id}/edit`} className="inline-flex items-center justify-center rounded-md p-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors">
+                      <Pencil className="h-4 w-4" />
+                    </Link>
                     <ProductDeleteDialog
                       productId={product.id}
                       productName={product.name}

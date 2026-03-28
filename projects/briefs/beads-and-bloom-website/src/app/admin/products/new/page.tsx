@@ -15,11 +15,9 @@ export default function NewProductPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href="/admin/products">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
+        <Link href="/admin/products" className="inline-flex items-center justify-center rounded-md p-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors">
+          <ArrowLeft className="h-4 w-4" />
+        </Link>
         <h1 className="text-2xl font-bold">Add New Product</h1>
       </div>
 

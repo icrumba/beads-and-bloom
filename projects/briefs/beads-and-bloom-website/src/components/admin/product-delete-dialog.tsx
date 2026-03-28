@@ -36,7 +36,6 @@ export function ProductDeleteDialog({
         setOpen(false);
         router.refresh();
       } catch {
-        // Error handling -- toast would be ideal but keeping it simple
         setOpen(false);
       }
     });
@@ -44,10 +43,10 @@ export function ProductDeleteDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+      <DialogTrigger>
+        <button className="inline-flex items-center justify-center rounded-md p-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors">
           <Trash2 className="h-4 w-4" />
-        </Button>
+        </button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -58,7 +57,7 @@ export function ProductDeleteDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="gap-2 sm:gap-0">
-          <DialogClose asChild>
+          <DialogClose>
             <Button variant="outline" disabled={isPending}>
               Cancel
             </Button>
