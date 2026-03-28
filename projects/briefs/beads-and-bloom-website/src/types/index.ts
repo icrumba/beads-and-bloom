@@ -33,3 +33,14 @@ export type Address = {
   zip: string;
   country: string;
 };
+
+// Cart types
+export type CartItem = {
+  productId: number;
+  name: string;
+  price: string; // numeric(10,2) stored as string per Phase 1 convention
+  quantity: number;
+  image: string; // Cloudinary public ID
+  slug: string;
+  customColors?: string[]; // Only for customizable products
+};
