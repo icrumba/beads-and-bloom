@@ -18,9 +18,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const desc = `${product.description.slice(0, 155)}. Handmade with love. $1 donated to charity with every purchase.`;
 
   return {
-    title: `${product.name} -- Beads & Bloom`,
+    title: product.name,
     description: desc,
     openGraph: {
+      title: `${product.name} -- Beads & Bloom`,
+      description: desc,
+      images: product.images[0]
+        ? [
+            `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/w_1200,h_630,c_fill/${product.images[0]}`,
+          ]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
       title: `${product.name} -- Beads & Bloom`,
       description: desc,
       images: product.images[0]

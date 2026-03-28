@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getProducts, getFeaturedProducts, getCharityTotal } from "@/lib/queries";
 import { HeroSection } from "@/components/shared/hero-section";
@@ -7,6 +8,17 @@ import { CharityCounter } from "@/components/shared/charity-counter";
 import { GivingBack } from "@/components/shared/giving-back";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Beads & Bloom -- Handmade Ocean-Inspired Jewelry",
+  description:
+    "Handmade jewelry by teen twin sisters. Every purchase donates $1 to charity. Sea turtle, starfish, and shell charm bracelets and necklaces.",
+  openGraph: {
+    title: "Beads & Bloom -- Handmade Ocean-Inspired Jewelry",
+    description:
+      "Handmade jewelry by teen twin sisters. Every purchase donates $1 to charity.",
+  },
+};
 
 export default async function HomePage({
   searchParams,

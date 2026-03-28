@@ -10,9 +10,23 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Beads & Bloom -- Handmade Ocean-Inspired Jewelry",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL || "https://beadsandbloom.com"
+  ),
+  title: {
+    default: "Beads & Bloom -- Handmade Ocean-Inspired Jewelry",
+    template: "%s | Beads & Bloom",
+  },
   description:
     "Handmade jewelry by teen twin sisters. Every purchase donates $1 to charity. Sea turtle, starfish, and shell charm bracelets and necklaces.",
+  openGraph: {
+    type: "website",
+    siteName: "Beads & Bloom",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({
