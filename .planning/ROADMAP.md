@@ -69,7 +69,7 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 03-01-PLAN.md -- Zustand cart store, cart drawer, interactive color swatches, gift message, and header cart icon
+- [x] 03-01-PLAN.md -- Zustand cart store, cart drawer, interactive color swatches, gift message, and header cart icon
 - [ ] 03-02-PLAN.md -- Stripe Embedded Checkout with customer form, Server Action for session creation, and confirmation page
 - [ ] 03-03-PLAN.md -- Stripe webhook handler, order creation queries, and order confirmation email via Resend
 
@@ -114,7 +114,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-03-27 |
-| 2. Storefront & Brand | 1/3 | In progress | - |
-| 3. Cart & Checkout | 0/3 | Not started | - |
+| 2. Storefront & Brand | 3/3 | Complete | 2026-03-28 |
+| 3. Cart & Checkout | 1/3 | In progress | - |
 | 4. Admin & Order Management | 0/3 | Not started | - |
 | 5. Polish & Launch | 0/2 | Not started | - |
