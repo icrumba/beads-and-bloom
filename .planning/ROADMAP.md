@@ -65,13 +65,13 @@ Plans:
   3. User completes purchase via Stripe Embedded Checkout with flat-rate shipping (no account required)
   4. User receives order confirmation email after successful payment, and confirmation page mentions handwritten thank-you note
   5. User can add a gift message at checkout for the recipient
-**Plans**: 3 plans
+**Plans**: TBD
 **UI hint**: yes
 
 Plans:
-- [x] 03-01-PLAN.md -- Zustand cart store, cart drawer, interactive color swatches, gift message, and header cart icon
-- [ ] 03-02-PLAN.md -- Stripe Embedded Checkout with customer form, Server Action for session creation, and confirmation page
-- [ ] 03-03-PLAN.md -- Stripe webhook handler, order creation queries, and order confirmation email via Resend
+- [x] 03-01: TBD
+- [x] 03-02: TBD
+- [ ] 03-03: TBD
 
 ### Phase 4: Admin & Order Management
 **Goal**: Founders can manage their entire business from their phones -- orders, products, customers, and order tracking
@@ -114,7 +114,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-03-27 |
-| 2. Storefront & Brand | 3/3 | Complete | 2026-03-28 |
-| 3. Cart & Checkout | 1/3 | In progress | - |
+| 2. Storefront & Brand | 1/3 | In progress | - |
+| 3. Cart & Checkout | 2/3 | In Progress|  |
 | 4. Admin & Order Management | 0/3 | Not started | - |
 | 5. Polish & Launch | 0/2 | Not started | - |
