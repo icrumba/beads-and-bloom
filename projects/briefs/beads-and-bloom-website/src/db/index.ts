@@ -3,6 +3,17 @@ import { neon } from "@neondatabase/serverless";
 import * as schema from "./schema";
 import * as relations from "./relations";
 
+function cleanDatabaseUrl(url: string): string {
+  // Remove channel_binding param which can cause issues on some platforms
+  try {
+    const u = new URL(url);
+    u.searchParams.delete("channel_binding");
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
 function getDb() {
   const url = process.env.DATABASE_URL;
   if (!url) {
@@ -10,7 +21,7 @@ function getDb() {
       "DATABASE_URL is not set. Add it to .env.local to connect to Neon Postgres."
     );
   }
-  const sql = neon(url);
+  const sql = neon(cleanDatabaseUrl(url));
   return drizzle({ client: sql, schema: { ...schema, ...relations } });
 }
 

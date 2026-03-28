@@ -43,14 +43,21 @@ export default async function HomePage({
   const { category } = await searchParams;
   const activeCategory = category || "all";
 
-  const [products, featuredProducts] = await Promise.all([
-    getProducts(activeCategory),
-    getFeaturedProducts(),
-  ]);
+  let products: Awaited<ReturnType<typeof getProducts>> = [];
+  let featuredProducts: Awaited<ReturnType<typeof getFeaturedProducts>> = [];
+  let charityTotal = 0;
+
+  try {
+    [products, featuredProducts] = await Promise.all([
+      getProducts(activeCategory),
+      getFeaturedProducts(),
+    ]);
+  } catch {
+    // DB not available -- show empty store
+  }
 
   const featured = featuredProducts[0] ?? products[0] ?? undefined;
 
-  let charityTotal = 0;
   try {
     const charityData = await getCharityTotal();
     charityTotal = parseFloat(charityData.totalDonated) || 0;
