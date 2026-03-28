@@ -91,16 +91,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-3 border-t border-border/50 pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <a
-            href="https://instagram.com/beadsandbloom"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
-          >
-            <InstagramIcon className="h-4 w-4" />
-            @beadsandbloom
-          </a>
+        <div className="mt-10 border-t border-border/50 pt-6">
           <p className="text-xs text-muted-foreground">
             &copy; 2026 Beads &amp; Bloom. Made with love by two sisters who
             believe small acts change the world.

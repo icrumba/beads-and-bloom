@@ -14,7 +14,7 @@ const PRODUCTS = [
     slug: "ocean-breeze-bracelet",
     description:
       "Our signature heishi clay bead bracelet in dreamy ocean blues. Each bead is hand-selected for the perfect gradient from deep sea to sky. Finished with a tiny gold-filled wave charm.",
-    price: "24.99",
+    price: "6.00",
     category: "bracelets",
     images: [
       "colored-bracelets-2_beo6po",
@@ -34,7 +34,7 @@ const PRODUCTS = [
     slug: "sunset-glow-bracelet",
     description:
       "Warm sunset tones that capture golden hour at the beach. Hand-strung heishi clay beads in coral, peach, and gold with a tiny sun charm. Perfect for stacking.",
-    price: "24.99",
+    price: "6.00",
     category: "bracelets",
     images: [
       "colored-bracelets-5_kbjkkj",
@@ -54,7 +54,7 @@ const PRODUCTS = [
     slug: "pearl-tide-bracelet",
     description:
       "Delicate freshwater pearls paired with a gold sea turtle charm. A timeless piece that goes from beach to brunch. Each pearl is unique -- no two bracelets are exactly alike.",
-    price: "32.99",
+    price: "6.00",
     category: "bracelets",
     images: [
       "colored-bracelets-3_ghlzs5",
@@ -74,7 +74,7 @@ const PRODUCTS = [
     slug: "coral-reef-stack",
     description:
       "A set of 3 stackable clay bead bracelets in coordinated ocean tones. Mix and match or wear them all together for the ultimate beach stack. Pick your own color palette!",
-    price: "44.99",
+    price: "6.00",
     category: "bracelets",
     images: [
       "colored-bracelets_nzyvgb",
@@ -96,7 +96,7 @@ const PRODUCTS = [
     slug: "sea-turtle-charm-necklace",
     description:
       "A dainty gold chain featuring our bestselling sea turtle charm. The turtle represents our love for the ocean and the charity mission behind every piece we make.",
-    price: "38.99",
+    price: "6.00",
     category: "necklaces",
     images: [
       "golf-necklace_zbhbzb",
@@ -116,7 +116,7 @@ const PRODUCTS = [
     slug: "starfish-pearl-necklace",
     description:
       "A gold chain adorned with a starfish charm and a single freshwater pearl drop. Effortlessly elegant -- the kind of necklace you never want to take off.",
-    price: "42.99",
+    price: "6.00",
     category: "necklaces",
     images: [
       "golf-necklace_zbhbzb",
@@ -136,7 +136,7 @@ const PRODUCTS = [
     slug: "plumeria-drop-necklace",
     description:
       "Our plumeria flower charm hangs from a delicate gold chain -- a little piece of the islands wherever you go. Lightweight and perfect for everyday wear.",
-    price: "36.99",
+    price: "6.00",
     category: "necklaces",
     images: [
       "colored-bracelets-4_drbipz",
@@ -158,7 +158,7 @@ const PRODUCTS = [
     slug: "ocean-charm-anklet",
     description:
       "A dainty gold chain anklet with tiny shell and starfish charms that jingle as you walk. Adjustable length fits most ankles. Summer essential!",
-    price: "28.99",
+    price: "6.00",
     category: "accessories",
     images: [
       "golf-necklace_zbhbzb",

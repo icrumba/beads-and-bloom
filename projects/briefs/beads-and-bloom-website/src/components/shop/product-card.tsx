@@ -101,11 +101,6 @@ export function ProductCard({
             </p>
             <AvailabilityBadge availability={product.availability} />
           </div>
-          {product.colors.length > 0 && (
-            <div className="mt-0.5">
-              <ColorSwatches colors={product.colors} />
-            </div>
-          )}
         </div>
       </div>
     </Link>
