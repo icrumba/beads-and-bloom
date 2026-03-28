@@ -4,6 +4,7 @@ import { HeroSection } from "@/components/shared/hero-section";
 import { CategoryTabs } from "@/components/shop/category-tabs";
 import { ProductGrid } from "@/components/shop/product-grid";
 import { CharityCounter } from "@/components/shared/charity-counter";
+import { GivingBack } from "@/components/shared/giving-back";
 
 export const dynamic = "force-dynamic";
 
@@ -50,8 +51,9 @@ export default async function HomePage({
         </div>
       </div>
 
-      {/* Bottom spacer */}
-      <div className="h-20" />
+      <GivingBack />
+
+      <div className="h-8" />
     </>
   );
 }

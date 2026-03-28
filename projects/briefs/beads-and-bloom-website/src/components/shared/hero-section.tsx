@@ -20,8 +20,13 @@ export function HeroSection() {
           </span>
         </h1>
         <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-muted-foreground">
-          Ocean-inspired jewelry by twin sisters &mdash; $1 from every order
-          goes to ocean conservation.
+          $1 from every order feeds families through{" "}
+          <strong className="text-foreground">The Storehouse</strong> &mdash;
+          North Dallas&apos;s largest food pantry partner.
+        </p>
+        <p className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600">
+          <span>&#127793;</span>
+          1,200+ families served weekly
         </p>
         <div className="mt-8 flex items-center justify-center gap-3">
           <Link

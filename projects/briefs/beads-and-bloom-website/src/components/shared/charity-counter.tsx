@@ -65,7 +65,16 @@ export function CharityCounter({ total }: CharityCounterProps) {
         </span>
       </p>
       <p className="mt-2 text-base text-muted-foreground">
-        $1 from every order goes to ocean conservation
+        to{" "}
+        <a
+          href="https://www.thestorehousecc.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium text-foreground underline decoration-emerald-300 underline-offset-2 transition-colors hover:text-emerald-600"
+        >
+          The Storehouse
+        </a>
+        {" "}&mdash; feeding families in North Dallas
       </p>
     </div>
   );
