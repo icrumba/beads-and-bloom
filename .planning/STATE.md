@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-03-28T01:32:06.671Z"
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-03-28T05:08:57.894Z"
 last_activity: 2026-03-28
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 6
-  completed_plans: 6
+  completed_plans: 7
   percent: 40
 ---
 
@@ -58,6 +58,7 @@ Progress: [######........] 40%
 | Phase 02 P01 | 7min | 2 tasks | 13 files |
 | Phase 02 P02 | 7min | 2 tasks | 9 files |
 | Phase 02 P03 | 7min | 2 tasks | 8 files |
+| Phase 05 P02 | 7min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,9 @@ Recent decisions affecting current work:
 - [Phase 02]: URL search params for category filtering -- shareable filtered URLs, SSR compatible
 - [Phase 02]: Lazy DB proxy pattern to prevent build failures without DATABASE_URL
 - [Phase 02]: force-dynamic on homepage since it fetches charity total from DB at runtime
+- [Phase 05]: Whitelisted .env.example in .gitignore (.env* pattern was blocking)
+- [Phase 05]: Used title.template pattern for consistent page titles across site
+- [Phase 05]: Twilio SMS vars documented as commented-out optional in .env.example
 
 ### Pending Todos
 
@@ -95,6 +99,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T01:25:59.379Z
-Stopped at: Completed 02-03-PLAN.md
+Last session: 2026-03-28T05:08:57.890Z
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None
