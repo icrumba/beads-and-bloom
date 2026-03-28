@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
@@ -11,14 +10,11 @@ export default function NotFound() {
         away with the tide.
       </p>
       <div className="mt-6 flex flex-col items-center gap-3">
-        <Link href="/products" className={buttonVariants()}>
-          Browse our jewelry
-        </Link>
         <Link
           href="/"
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex h-11 items-center rounded-full bg-foreground px-7 text-sm font-semibold text-background transition-all duration-200 hover:scale-[1.03] hover:shadow-lg"
         >
-          or go home
+          Browse our jewelry
         </Link>
       </div>
     </div>
