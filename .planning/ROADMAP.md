@@ -103,7 +103,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 05-01: TBD
+- [x] 05-01: TBD
 - [ ] 05-02: TBD
 
 ## Progress
@@ -116,5 +116,5 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5
 | 1. Foundation | 3/3 | Complete | 2026-03-27 |
 | 2. Storefront & Brand | 1/3 | In progress | - |
 | 3. Cart & Checkout | 0/3 | Not started | - |
-| 4. Admin & Order Management | 2/3 | In progress | - |
-| 5. Polish & Launch | 0/2 | Not started | - |
+| 4. Admin & Order Management | 3/3 | Complete | 2026-03-27 |
+| 5. Polish & Launch | 1/2 | In Progress | - |
