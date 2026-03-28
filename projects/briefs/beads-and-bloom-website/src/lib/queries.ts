@@ -35,3 +35,16 @@ export async function getCharityTotal() {
   const result = await db.select().from(charityTotals).limit(1);
   return result[0] ?? { totalDonated: "0", orderCount: 0 };
 }
+
+// --- Admin queries ---
+
+// All products for admin (including out of stock)
+export async function getAllProducts() {
+  return db.select().from(products).orderBy(asc(products.sortOrder));
+}
+
+// Single product by ID
+export async function getProductById(id: number) {
+  const [product] = await db.select().from(products).where(eq(products.id, id));
+  return product ?? null;
+}
