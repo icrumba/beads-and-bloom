@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { MobileNav } from "@/components/shared/mobile-nav";
 import { CartIcon } from "@/components/cart/cart-icon";
 import { CartDrawer } from "@/components/cart/cart-drawer";
+import { AuthModal } from "@/components/shared/auth-modal";
 
 const navItems = [
   { label: "Shop", href: "/" },
@@ -55,6 +56,7 @@ export function Header() {
 
         {/* Cart & Mobile nav */}
         <div className="flex items-center gap-1">
+          <AuthModal />
           <CartIcon />
           <MobileNav />
         </div>
