@@ -132,16 +132,16 @@ const PRODUCTS = [
     sortOrder: 6,
   },
   {
-    name: "Plumeria Drop Necklace",
-    slug: "plumeria-drop-necklace",
+    name: "Plumeria Drop Bracelet",
+    slug: "plumeria-drop-bracelet",
     description:
-      "Our plumeria flower charm hangs from a delicate gold chain -- a little piece of the islands wherever you go. Lightweight and perfect for everyday wear.",
+      "Our plumeria flower charm bracelet -- a little piece of the islands wherever you go. Lightweight and perfect for everyday wear.",
     price: "6.00",
-    category: "necklaces",
+    category: "bracelets",
     images: [
       "colored-bracelets-4_drbipz",
     ],
-    colors: ["Gold"],
+    colors: ["White", "Pink"],
     customizable: false,
     availability: "ready_to_ship" as const,
     inStock: true,
