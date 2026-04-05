@@ -4,8 +4,6 @@ import { OrderStatusBadge } from "@/components/admin/order-status-badge";
 import { OrderStatusButton } from "@/components/admin/order-status-button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { CldImage } from "next-cloudinary";
-export const runtime = "nodejs";
 import { format } from "date-fns";
 import { ArrowLeft, Mail, Phone, MapPin, Gift } from "lucide-react";
 import Link from "next/link";
@@ -77,13 +75,12 @@ export default async function OrderDetailPage({ params }: PageProps) {
           {order.items.map((item) => (
             <div key={item.id} className="flex gap-3">
               {item.productImages && (item.productImages as string[]).length > 0 ? (
-                <CldImage
-                  src={(item.productImages as string[])[0]}
+                <img
+                  src={`https://res.cloudinary.com/dmz3werfw/image/upload/w_128,h_128,c_fill,f_auto/${(item.productImages as string[])[0]}`}
                   alt={item.productName ?? "Product"}
                   width={64}
                   height={64}
                   className="rounded-lg object-cover"
-                  crop="fill"
                 />
               ) : (
                 <div className="flex size-16 items-center justify-center rounded-lg bg-stone-100 text-xs text-stone-400">
