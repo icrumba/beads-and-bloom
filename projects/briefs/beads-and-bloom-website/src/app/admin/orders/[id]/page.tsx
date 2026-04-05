@@ -5,6 +5,7 @@ import { OrderStatusButton } from "@/components/admin/order-status-button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { CldImage } from "next-cloudinary";
+export const runtime = "nodejs";
 import { format } from "date-fns";
 import { ArrowLeft, Mail, Phone, MapPin, Gift } from "lucide-react";
 import Link from "next/link";
@@ -63,7 +64,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
       </div>
 
       <p className="text-sm text-stone-500">
-        Placed on {format(new Date(order.createdAt), "MMMM d, yyyy 'at' h:mm a")}
+        Placed on {order.createdAt ? format(new Date(order.createdAt), "MMMM d, yyyy 'at' h:mm a") : "Unknown date"}
       </p>
 
       {/* Items */}
@@ -198,7 +199,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
           <div className="flex justify-between">
             <dt className="text-stone-500">Order Date</dt>
             <dd className="text-stone-900">
-              {format(new Date(order.createdAt), "MMMM d, yyyy")}
+              {order.createdAt ? format(new Date(order.createdAt), "MMMM d, yyyy") : "Unknown"}
             </dd>
           </div>
           {order.stripeSessionId && (
