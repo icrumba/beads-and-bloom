@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { getProducts, getFeaturedProducts, getCharityTotal } from "@/lib/queries";
+import { getProducts, getCharityTotal } from "@/lib/queries";
 import { HeroSection } from "@/components/shared/hero-section";
 import { CategoryTabs } from "@/components/shop/category-tabs";
-import { ProductGrid } from "@/components/shop/product-grid";
+import { ProductGrid, FullProductGrid } from "@/components/shop/product-grid";
 import { CharityCounter } from "@/components/shared/charity-counter";
 import { GivingBack } from "@/components/shared/giving-back";
 
@@ -44,19 +44,13 @@ export default async function HomePage({
   const activeCategory = category || "all";
 
   let products: Awaited<ReturnType<typeof getProducts>> = [];
-  let featuredProducts: Awaited<ReturnType<typeof getFeaturedProducts>> = [];
   let charityTotal = 0;
 
   try {
-    [products, featuredProducts] = await Promise.all([
-      getProducts(activeCategory),
-      getFeaturedProducts(),
-    ]);
+    products = await getProducts(activeCategory);
   } catch {
     // DB not available -- show empty store
   }
-
-  const featured = featuredProducts[0] ?? products[0] ?? undefined;
 
   try {
     const charityData = await getCharityTotal();
@@ -69,23 +63,37 @@ export default async function HomePage({
     <>
       <HeroSection />
 
+      {/* New Arrivals Section */}
       <div id="shop" className="mx-auto max-w-[1200px] px-4">
         <div className="mt-16 md:mt-20">
-          <Suspense fallback={null}>
-            <CategoryTabs active={activeCategory} />
-          </Suspense>
+          <ProductGrid products={products} />
         </div>
 
-        <div className="mt-8">
-          <ProductGrid products={products} featured={featured} />
-        </div>
-
-        <div className="mt-20 md:mt-28">
+        {/* Charity Counter */}
+        <div className="mt-16 md:mt-20">
           <CharityCounter total={charityTotal} />
         </div>
       </div>
 
       <GivingBack />
+
+      {/* Full Shop Section */}
+      <div id="all-products" className="mx-auto max-w-[1200px] px-4 py-16 md:py-24">
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-semibold tracking-tight">All Products</h2>
+          <p className="mt-2 text-muted-foreground">
+            Browse our full collection of handmade ocean-inspired jewelry
+          </p>
+        </div>
+
+        <div className="mb-8">
+          <Suspense fallback={null}>
+            <CategoryTabs active={activeCategory} />
+          </Suspense>
+        </div>
+
+        <FullProductGrid products={products} />
+      </div>
 
       <div className="h-8" />
     </>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ProductCard } from "@/components/shop/product-card";
 import type { Product } from "@/types";
 
@@ -21,22 +22,41 @@ export function ProductGrid({
     );
   }
 
-  const gridProducts = featured
-    ? products.filter((p) => p.id !== featured.id)
-    : products;
+  // Show first 4 products as "New Arrivals" on homepage
+  const newArrivals = products.slice(0, 4);
 
   return (
     <div>
-      {featured && (
-        <div className="mb-3 md:mb-5 animate-fade-up">
-          <ProductCard product={featured} featured />
+      {/* New Arrivals */}
+      <div className="mb-12">
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-2xl font-semibold tracking-tight">New Arrivals</h2>
+          <Link
+            href="#all-products"
+            className="inline-flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary"
+            style={{ color: "#7BA7CC" }}
+          >
+            Shop All &rarr;
+          </Link>
         </div>
-      )}
-      <div className="stagger-children grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
-        {gridProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+        <div className="stagger-children grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+          {newArrivals.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
       </div>
+    </div>
+  );
+}
+
+export function FullProductGrid({ products }: { products: Product[] }) {
+  if (products.length === 0) return null;
+
+  return (
+    <div className="stagger-children grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
     </div>
   );
 }
