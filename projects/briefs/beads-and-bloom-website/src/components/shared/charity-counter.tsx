@@ -60,7 +60,7 @@ export function CharityCounter({ total }: CharityCounterProps) {
         Together we&apos;ve donated
       </p>
       <p className="mt-3 text-5xl font-semibold tracking-tight md:text-6xl">
-        <span className="bg-gradient-to-r from-cyan-600 to-emerald-500 bg-clip-text text-transparent">
+        <span style={{ color: "#7BA7CC" }}>
           ${displayValue}
         </span>
       </p>
