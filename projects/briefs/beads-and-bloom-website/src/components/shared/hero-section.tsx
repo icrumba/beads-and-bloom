@@ -1,45 +1,40 @@
 import Link from "next/link";
+import { CldImage } from "next-cloudinary";
 
 export function HeroSection() {
   return (
-    <section className="gradient-hero relative overflow-hidden px-4 py-20 md:py-28">
-      {/* Decorative blurred circles */}
-      <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-cyan-200/30 blur-3xl" />
-      <div className="pointer-events-none absolute -right-16 top-12 h-56 w-56 rounded-full bg-pink-200/20 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 left-1/2 h-48 w-96 -translate-x-1/2 rounded-full bg-amber-100/20 blur-3xl" />
+    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+      {/* Background image */}
+      <CldImage
+        src="colored-bracelets_nzyvgb"
+        alt="Beads & Bloom handmade bracelets"
+        fill
+        className="object-cover"
+        priority
+        sizes="100vw"
+        quality="auto"
+        format="auto"
+      />
 
-      <div className="relative mx-auto max-w-[640px] text-center animate-fade-up">
-        <p className="text-sm font-medium uppercase tracking-widest text-primary/80">
-          Handmade ocean-inspired jewelry
-        </p>
-        <h1 className="mt-4 text-4xl font-semibold leading-[1.15] tracking-tight md:text-5xl">
-          Made with love.
-          <br />
-          <span className="bg-gradient-to-r from-cyan-600 via-teal-500 to-emerald-400 bg-clip-text text-transparent">
-            Every purchase gives back.
-          </span>
+      {/* Dark overlay for text readability */}
+      <div className="absolute inset-0 bg-black/30" />
+
+      {/* Content */}
+      <div className="relative z-10 mx-auto max-w-[700px] px-4 text-center animate-fade-up">
+        <h1 className="text-5xl font-semibold leading-[1.1] tracking-tight text-white md:text-7xl drop-shadow-lg">
+          Beads &amp; Bloom
         </h1>
-        <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-muted-foreground">
-          $1 from every order feeds families through{" "}
-          <strong className="text-foreground">The Storehouse</strong> &mdash;
-          North Dallas&apos;s largest food pantry partner.
+        <p className="mx-auto mt-4 max-w-md text-lg leading-relaxed text-white/80">
+          Handmade ocean-inspired jewelry by twin sisters.
+          $1 from every order goes to charity.
         </p>
-        <p className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600">
-          <span>&#127793;</span>
-          1,200+ families served weekly
-        </p>
-        <div className="mt-8 flex items-center justify-center gap-3">
+        <div className="mt-8">
           <Link
             href="/#shop"
-            className="inline-flex h-11 items-center rounded-full bg-foreground px-7 text-sm font-semibold text-background transition-all duration-200 hover:scale-[1.03] hover:shadow-lg"
+            className="inline-flex h-12 items-center rounded-full px-9 text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.05] hover:shadow-xl"
+            style={{ backgroundColor: "#7BA7CC" }}
           >
             Shop Now
-          </Link>
-          <Link
-            href="/about"
-            className="inline-flex h-11 items-center rounded-full border border-border px-7 text-sm font-semibold transition-all duration-200 hover:bg-secondary"
-          >
-            Our Story
           </Link>
         </div>
       </div>
