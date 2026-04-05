@@ -43,11 +43,15 @@ export default async function HomePage({
   const { category } = await searchParams;
   const activeCategory = category || "all";
 
-  let products: Awaited<ReturnType<typeof getProducts>> = [];
+  let allProducts: Awaited<ReturnType<typeof getProducts>> = [];
+  let filteredProducts: Awaited<ReturnType<typeof getProducts>> = [];
   let charityTotal = 0;
 
   try {
-    products = await getProducts(activeCategory);
+    // Always get all products for New Arrivals
+    allProducts = await getProducts("all");
+    // Get filtered products for All Products section
+    filteredProducts = activeCategory === "all" ? allProducts : await getProducts(activeCategory);
   } catch {
     // DB not available -- show empty store
   }
@@ -63,10 +67,10 @@ export default async function HomePage({
     <>
       <HeroSection />
 
-      {/* New Arrivals Section */}
+      {/* New Arrivals Section — always shows same products */}
       <div id="shop" className="mx-auto max-w-[1200px] px-4">
         <div className="mt-16 md:mt-20">
-          <ProductGrid products={products} />
+          <ProductGrid products={allProducts} />
         </div>
 
         {/* Charity Counter */}
@@ -77,7 +81,7 @@ export default async function HomePage({
 
       <GivingBack />
 
-      {/* Full Shop Section */}
+      {/* Full Shop Section — filtered by category */}
       <div id="all-products" className="mx-auto max-w-[1200px] px-4 py-16 md:py-24">
         <div className="mb-8 text-center">
           <h2 className="text-3xl font-semibold tracking-tight">All Products</h2>
@@ -92,7 +96,7 @@ export default async function HomePage({
           </Suspense>
         </div>
 
-        <FullProductGrid products={products} />
+        <FullProductGrid products={filteredProducts} />
       </div>
 
       <div className="h-8" />

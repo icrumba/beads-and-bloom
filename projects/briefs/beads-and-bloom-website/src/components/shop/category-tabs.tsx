@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-const categories = ["all", "bracelets", "necklaces", "accessories"] as const;
+const categories = ["all", "bracelets", "necklaces"] as const;
 
 function CategoryTabsInner({ active }: { active: string }) {
   const router = useRouter();
@@ -16,7 +16,7 @@ function CategoryTabsInner({ active }: { active: string }) {
       params.set("category", value);
     }
     const qs = params.toString();
-    router.push(qs ? `/?${qs}` : "/");
+    router.push(qs ? `/?${qs}#all-products` : "/#all-products", { scroll: false });
   }
 
   return (

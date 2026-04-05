@@ -151,28 +151,6 @@ const PRODUCTS = [
       "Remove before showering or swimming. Store in a dry place. Polish with a soft jewelry cloth.",
     sortOrder: 7,
   },
-
-  // --- Accessories ---
-  {
-    name: "Ocean Charm Anklet",
-    slug: "ocean-charm-anklet",
-    description:
-      "Gold chain anklet with little shell and starfish charms. Adjustable length so it fits most ankles. So cute for summer!",
-    price: "6.00",
-    category: "accessories",
-    images: [
-      "golf-necklace_zbhbzb",
-    ],
-    colors: ["Gold"],
-    customizable: false,
-    availability: "ready_to_ship" as const,
-    inStock: true,
-    featured: false,
-    materials: "Gold-tone chain, shell charm, starfish charm, adjustable clasp",
-    careInfo:
-      "Remove before showering or swimming. Rinse with fresh water if exposed to saltwater. Store in a dry place.",
-    sortOrder: 8,
-  },
 ];
 
 async function seed() {
