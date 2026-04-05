@@ -3,14 +3,11 @@
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/lib/cart-store";
-import { useHydratedStore } from "@/lib/use-hydrated-store";
 
 export function CartIcon() {
   const openCart = useCartStore((s) => s.openCart);
-  const count = useHydratedStore(
-    () => useCartStore.getState().totalItems(),
-    0
-  );
+  const items = useCartStore((s) => s.items);
+  const count = items.reduce((sum, i) => sum + i.quantity, 0);
 
   return (
     <Button

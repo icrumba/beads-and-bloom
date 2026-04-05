@@ -21,13 +21,11 @@ export function CartDrawer() {
   const items = useCartStore((s) => s.items);
   const isOpen = useCartStore((s) => s.isOpen);
   const closeCart = useCartStore((s) => s.closeCart);
-  const totalPrice = useCartStore((s) => s.totalPrice);
-  const totalItems = useCartStore((s) => s.totalItems);
 
-  const subtotal = totalPrice();
+  const subtotal = items.reduce((sum, i) => sum + parseFloat(i.price) * i.quantity, 0);
   const shipping = items.length === 0 ? 0 : FLAT_SHIPPING;
   const total = subtotal + shipping;
-  const itemCount = totalItems();
+  const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && closeCart()}>
