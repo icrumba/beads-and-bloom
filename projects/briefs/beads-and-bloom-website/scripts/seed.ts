@@ -19,8 +19,8 @@ const PRODUCTS = [
     images: [
       "colored-bracelets-2_beo6po",
     ],
-    colors: ["Ocean Blue", "Sea Foam", "Pearl White", "Sky Blue"],
-    customizable: true,
+    colors: [],
+    customizable: false,
     availability: "made_to_order" as const,
     inStock: true,
     featured: true,
@@ -39,8 +39,8 @@ const PRODUCTS = [
     images: [
       "colored-bracelets-5_kbjkkj",
     ],
-    colors: ["Coral", "Peach", "Gold", "Warm Sand"],
-    customizable: true,
+    colors: [],
+    customizable: false,
     availability: "made_to_order" as const,
     inStock: true,
     featured: false,
@@ -59,7 +59,7 @@ const PRODUCTS = [
     images: [
       "colored-bracelets-3_ghlzs5",
     ],
-    colors: ["Pearl White", "Champagne"],
+    colors: [],
     customizable: false,
     availability: "ready_to_ship" as const,
     inStock: true,
@@ -141,7 +141,7 @@ const PRODUCTS = [
     images: [
       "colored-bracelets-4_drbipz",
     ],
-    colors: ["White", "Pink"],
+    colors: [],
     customizable: false,
     availability: "ready_to_ship" as const,
     inStock: true,
