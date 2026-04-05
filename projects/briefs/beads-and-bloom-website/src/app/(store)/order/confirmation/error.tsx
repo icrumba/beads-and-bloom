@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 
 export default function ConfirmationError({
   error,
@@ -26,13 +25,10 @@ export default function ConfirmationError({
         confirmation email.
       </p>
       <div className="mt-6 flex gap-3">
-        <Link href="/" className={buttonVariants()}>
+        <Link href="/" className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
           Back to Shop
         </Link>
-        <Link
-          href="/contact"
-          className={buttonVariants({ variant: "outline" })}
-        >
+        <Link href="/contact" className="inline-flex items-center justify-center rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted transition-colors">
           Contact us
         </Link>
       </div>

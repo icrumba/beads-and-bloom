@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export default function GlobalError({
   error,
@@ -25,7 +25,7 @@ export default function GlobalError({
       </p>
       <div className="mt-6 flex gap-3">
         <Button onClick={() => reset()}>Try again</Button>
-        <Link href="/" className={buttonVariants({ variant: "outline" })}>
+        <Link href="/" className="inline-flex items-center justify-center rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted transition-colors">
           Back to Shop
         </Link>
       </div>

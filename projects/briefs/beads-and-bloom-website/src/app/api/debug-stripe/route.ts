@@ -24,10 +24,16 @@ export async function GET() {
       return_url: "https://www.beadsandbloom.org/order/confirmation?session_id={CHECKOUT_SESSION_ID}",
     });
 
+    const pubKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
     return NextResponse.json({
       ok: true,
       sessionId: session.id,
       hasClientSecret: !!session.client_secret,
+      pubKeyLength: pubKey.length,
+      pubKeyStartsWithSpace: pubKey.startsWith(" "),
+      pubKeyEndsWithSpace: pubKey.endsWith(" "),
+      pubKeyFirst20: pubKey.slice(0, 20),
+      pubKeyLast5: pubKey.slice(-5),
     });
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e);

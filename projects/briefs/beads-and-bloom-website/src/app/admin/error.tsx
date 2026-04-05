@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export default function AdminError({
   error,
@@ -27,7 +27,7 @@ export default function AdminError({
         <Button onClick={() => reset()}>Try again</Button>
         <Link
           href="/admin"
-          className={buttonVariants({ variant: "outline" })}
+          className="inline-flex items-center justify-center rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
         >
           Back to Dashboard
         </Link>
