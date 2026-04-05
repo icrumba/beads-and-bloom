@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export function HeroSection() {
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
@@ -23,13 +21,13 @@ export function HeroSection() {
           $1 from every order goes to charity.
         </p>
         <div className="mt-8">
-          <Link
+          <a
             href="#all-products"
             className="inline-flex h-12 items-center rounded-full px-9 text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.05] hover:shadow-xl"
             style={{ backgroundColor: "#7BA7CC" }}
           >
             Shop Now
-          </Link>
+          </a>
         </div>
       </div>
     </section>
