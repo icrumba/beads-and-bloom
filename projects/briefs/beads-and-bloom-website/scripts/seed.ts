@@ -13,7 +13,7 @@ const PRODUCTS = [
     name: "Ocean Breeze Bracelet",
     slug: "ocean-breeze-bracelet",
     description:
-      "Our signature heishi clay bead bracelet in dreamy ocean blues. Each bead is hand-selected for the perfect gradient from deep sea to sky. Finished with a tiny gold-filled wave charm.",
+      "Cute clay bead bracelet in ocean blue tones on stretchy cord. Comes with a little wave charm. Handmade by us!",
     price: "6.00",
     category: "bracelets",
     images: [
@@ -24,7 +24,7 @@ const PRODUCTS = [
     availability: "made_to_order" as const,
     inStock: true,
     featured: true,
-    materials: "Heishi clay beads, gold-filled wave charm, stretch cord",
+    materials: "Clay beads, charm, stretch cord",
     careInfo:
       "Avoid water and perfume. Store flat in a cool, dry place. Remove before swimming or showering.",
     sortOrder: 1,
@@ -33,7 +33,7 @@ const PRODUCTS = [
     name: "Sunset Glow Bracelet",
     slug: "sunset-glow-bracelet",
     description:
-      "Warm sunset tones that capture golden hour at the beach. Hand-strung heishi clay beads in coral, peach, and gold with a tiny sun charm. Perfect for stacking.",
+      "Warm sunset-colored clay bead bracelet with coral, peach, and gold beads on stretchy cord. Great for stacking!",
     price: "6.00",
     category: "bracelets",
     images: [
@@ -44,7 +44,7 @@ const PRODUCTS = [
     availability: "made_to_order" as const,
     inStock: true,
     featured: false,
-    materials: "Heishi clay beads, gold-filled sun charm, stretch cord",
+    materials: "Clay beads, charm, stretch cord",
     careInfo:
       "Avoid water and perfume. Store flat in a cool, dry place. Remove before swimming or showering.",
     sortOrder: 2,
@@ -53,7 +53,7 @@ const PRODUCTS = [
     name: "Pearl Tide Bracelet",
     slug: "pearl-tide-bracelet",
     description:
-      "Delicate freshwater pearls paired with a gold sea turtle charm. A timeless piece that goes from beach to brunch. Each pearl is unique -- no two bracelets are exactly alike.",
+      "Pearl bead bracelet with a cute sea turtle charm and starfish bead. Super pretty and goes with everything!",
     price: "6.00",
     category: "bracelets",
     images: [
@@ -64,7 +64,7 @@ const PRODUCTS = [
     availability: "ready_to_ship" as const,
     inStock: true,
     featured: true,
-    materials: "Freshwater pearls, 14K gold-filled sea turtle charm, stretch cord",
+    materials: "Pearl beads, turtle charm, starfish bead, stretch cord",
     careInfo:
       "Pearls are delicate -- avoid water, perfume, and harsh chemicals. Store in a soft pouch. Wipe gently with a dry cloth.",
     sortOrder: 3,
@@ -73,7 +73,7 @@ const PRODUCTS = [
     name: "Coral Reef Stack",
     slug: "coral-reef-stack",
     description:
-      "A set of 3 stackable clay bead bracelets in coordinated ocean tones. Mix and match or wear them all together for the ultimate beach stack. Pick your own color palette!",
+      "A set of 3 matching clay bead bracelets you can stack together. Pick your own colors or choose one of our combos!",
     price: "6.00",
     category: "bracelets",
     images: [
@@ -84,7 +84,7 @@ const PRODUCTS = [
     availability: "made_to_order" as const,
     inStock: true,
     featured: false,
-    materials: "Heishi clay beads, gold-filled accent beads, stretch cord (set of 3)",
+    materials: "Clay beads, accent beads, stretch cord (set of 3)",
     careInfo:
       "Avoid water and perfume. Store flat in a cool, dry place. Remove before swimming or showering.",
     sortOrder: 4,
@@ -95,7 +95,7 @@ const PRODUCTS = [
     name: "Sea Turtle Charm Necklace",
     slug: "sea-turtle-charm-necklace",
     description:
-      "A dainty gold chain featuring our bestselling sea turtle charm. The turtle represents our love for the ocean and the charity mission behind every piece we make.",
+      "Gold chain necklace with ocean-themed charms -- starfish, shell, flower, and more. Lightweight and cute for everyday wear.",
     price: "6.00",
     category: "necklaces",
     images: [
@@ -106,7 +106,7 @@ const PRODUCTS = [
     availability: "ready_to_ship" as const,
     inStock: true,
     featured: true,
-    materials: "14K gold-filled chain, gold sea turtle charm",
+    materials: "Gold-tone chain, ocean charms",
     careInfo:
       "Remove before showering or swimming. Store in a dry place. Polish with a soft jewelry cloth.",
     sortOrder: 5,
@@ -115,7 +115,7 @@ const PRODUCTS = [
     name: "Starfish & Pearl Necklace",
     slug: "starfish-pearl-necklace",
     description:
-      "A gold chain adorned with a starfish charm and a single freshwater pearl drop. Effortlessly elegant -- the kind of necklace you never want to take off.",
+      "Gold chain with a starfish charm and a pearl bead. Simple and pretty -- perfect for layering or wearing on its own.",
     price: "6.00",
     category: "necklaces",
     images: [
@@ -126,7 +126,7 @@ const PRODUCTS = [
     availability: "ready_to_ship" as const,
     inStock: true,
     featured: false,
-    materials: "14K gold-filled chain, starfish charm, freshwater pearl drop",
+    materials: "Gold-tone chain, starfish charm, pearl bead",
     careInfo:
       "Remove before showering or swimming. Store in a dry place. Polish with a soft jewelry cloth. Handle pearl gently.",
     sortOrder: 6,
@@ -135,7 +135,7 @@ const PRODUCTS = [
     name: "Plumeria Drop Bracelet",
     slug: "plumeria-drop-bracelet",
     description:
-      "Our plumeria flower charm bracelet -- a little piece of the islands wherever you go. Lightweight and perfect for everyday wear.",
+      "White bead bracelet with a cute plumeria flower charm. Simple, clean, and easy to wear with anything.",
     price: "6.00",
     category: "bracelets",
     images: [
@@ -146,7 +146,7 @@ const PRODUCTS = [
     availability: "ready_to_ship" as const,
     inStock: true,
     featured: false,
-    materials: "14K gold-filled chain, plumeria flower charm",
+    materials: "White beads, plumeria flower charm, stretch cord",
     careInfo:
       "Remove before showering or swimming. Store in a dry place. Polish with a soft jewelry cloth.",
     sortOrder: 7,
@@ -157,7 +157,7 @@ const PRODUCTS = [
     name: "Ocean Charm Anklet",
     slug: "ocean-charm-anklet",
     description:
-      "A dainty gold chain anklet with tiny shell and starfish charms that jingle as you walk. Adjustable length fits most ankles. Summer essential!",
+      "Gold chain anklet with little shell and starfish charms. Adjustable length so it fits most ankles. So cute for summer!",
     price: "6.00",
     category: "accessories",
     images: [
@@ -168,8 +168,7 @@ const PRODUCTS = [
     availability: "ready_to_ship" as const,
     inStock: true,
     featured: false,
-    materials:
-      "14K gold-filled chain, shell charm, starfish charm, adjustable lobster clasp",
+    materials: "Gold-tone chain, shell charm, starfish charm, adjustable clasp",
     careInfo:
       "Remove before showering or swimming. Rinse with fresh water if exposed to saltwater. Store in a dry place.",
     sortOrder: 8,
