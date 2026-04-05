@@ -186,8 +186,8 @@ async function seed() {
 
   console.log("Initializing charity counter...");
   await db.insert(charityTotals).values({
-    totalDonated: "0",
-    orderCount: 0,
+    totalDonated: "17",
+    orderCount: 17,
   });
 
   console.log("Seed complete!");
