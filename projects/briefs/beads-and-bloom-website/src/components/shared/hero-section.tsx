@@ -1,23 +1,17 @@
 import Link from "next/link";
-import { CldImage } from "next-cloudinary";
 
 export function HeroSection() {
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
       {/* Background image */}
-      <CldImage
-        src="colored-bracelets_nzyvgb"
+      <img
+        src="https://res.cloudinary.com/dmz3werfw/image/upload/f_auto,q_auto,w_1920/colored-bracelets_nzyvgb"
         alt="Beads & Bloom handmade bracelets"
-        fill
-        className="object-cover"
-        priority
-        sizes="100vw"
-        quality="auto"
-        format="auto"
+        className="absolute inset-0 h-full w-full object-cover"
       />
 
       {/* Dark overlay for text readability */}
-      <div className="absolute inset-0 bg-black/30" />
+      <div className="absolute inset-0 bg-black/35" />
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-[700px] px-4 text-center animate-fade-up">
