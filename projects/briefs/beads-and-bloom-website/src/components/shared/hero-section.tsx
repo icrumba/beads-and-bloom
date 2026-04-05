@@ -24,7 +24,7 @@ export function HeroSection() {
         </p>
         <div className="mt-8">
           <Link
-            href="/#shop"
+            href="#all-products"
             className="inline-flex h-12 items-center rounded-full px-9 text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.05] hover:shadow-xl"
             style={{ backgroundColor: "#7BA7CC" }}
           >
