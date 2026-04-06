@@ -44,6 +44,13 @@ export function CartItem({ item }: { item: CartItemType }) {
           <p className="text-sm font-medium">${lineTotal}</p>
         </div>
 
+        {/* Size */}
+        {item.size && (
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Size: {item.size}
+          </p>
+        )}
+
         {/* Custom colors */}
         {item.customColors && item.customColors.length > 0 && (
           <div className="mt-1 flex items-center gap-1">

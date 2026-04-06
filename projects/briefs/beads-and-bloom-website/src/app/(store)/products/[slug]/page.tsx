@@ -113,6 +113,7 @@ export default async function ProductPage({ params }: Props) {
               colors={product.colors}
               customizable={product.customizable}
               inStock={product.inStock}
+              category={product.category}
             />
           </div>
         </div>

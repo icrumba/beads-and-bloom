@@ -43,4 +43,5 @@ export type CartItem = {
   image: string; // Cloudinary public ID
   slug: string;
   customColors?: string[]; // Only for customizable products
+  size?: string; // Bracelet size: 6", 7", 8"
 };
