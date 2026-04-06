@@ -37,7 +37,7 @@ const PRODUCTS = [
     price: "8.00",
     category: "bracelets",
     images: [
-      "colored-bracelets-5_kbjkkj",
+      "Sunset_Glow_Bracelet_hrsfnh",
     ],
     colors: [],
     customizable: false,
