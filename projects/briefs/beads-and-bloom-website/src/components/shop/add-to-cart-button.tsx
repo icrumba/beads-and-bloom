@@ -15,6 +15,7 @@ type AddToCartButtonProps = {
   slug: string;
   colors: string[];
   customizable: boolean;
+  inStock?: boolean;
 };
 
 export function AddToCartButton({
@@ -25,6 +26,7 @@ export function AddToCartButton({
   slug,
   colors,
   customizable,
+  inStock = true,
 }: AddToCartButtonProps) {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const addItem = useCartStore((s) => s.addItem);
@@ -66,10 +68,16 @@ export function AddToCartButton({
         </div>
       )}
 
-      <Button size="lg" className="w-full md:w-auto" onClick={handleAdd}>
-        <ShoppingBag className="mr-2 h-4 w-4" />
-        Add to Cart
-      </Button>
+      {inStock ? (
+        <Button size="lg" className="w-full md:w-auto" onClick={handleAdd}>
+          <ShoppingBag className="mr-2 h-4 w-4" />
+          Add to Cart
+        </Button>
+      ) : (
+        <Button size="lg" className="w-full md:w-auto" disabled>
+          Sold Out
+        </Button>
+      )}
     </div>
   );
 }

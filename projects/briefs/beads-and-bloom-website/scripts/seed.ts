@@ -2,7 +2,7 @@ import { config } from "dotenv";
 config({ path: ".env.local" });
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
-import { products, charityTotals } from "../src/db/schema";
+import { products, charityTotals, orderItems, orders, customers } from "../src/db/schema";
 
 const client = neon(process.env.DATABASE_URL!);
 const db = drizzle({ client });
@@ -69,48 +69,8 @@ const PRODUCTS = [
       "Pearls are delicate -- avoid water, perfume, and harsh chemicals. Store in a soft pouch. Wipe gently with a dry cloth.",
     sortOrder: 3,
   },
-  {
-    name: "Coral Reef Stack",
-    slug: "coral-reef-stack",
-    description:
-      "A set of 3 matching clay bead bracelets you can stack together. Pick your own colors or choose one of our combos!",
-    price: "6.00",
-    category: "bracelets",
-    images: [
-      "colored-bracelets_nzyvgb",
-    ],
-    colors: ["Ocean Mix", "Sunset Mix", "Tropical Mix", "Custom -- Pick Your Own"],
-    customizable: true,
-    availability: "made_to_order" as const,
-    inStock: true,
-    featured: false,
-    materials: "Clay beads, accent beads, stretch cord (set of 3)",
-    careInfo:
-      "Avoid water and perfume. Store flat in a cool, dry place. Remove before swimming or showering.",
-    sortOrder: 4,
-  },
 
   // --- Necklaces ---
-  {
-    name: "Sea Turtle Charm Necklace",
-    slug: "sea-turtle-charm-necklace",
-    description:
-      "Gold chain necklace with ocean-themed charms -- starfish, shell, flower, and more. Lightweight and cute for everyday wear.",
-    price: "6.00",
-    category: "necklaces",
-    images: [
-      "golf-necklace_zbhbzb",
-    ],
-    colors: ["Gold"],
-    customizable: false,
-    availability: "ready_to_ship" as const,
-    inStock: true,
-    featured: true,
-    materials: "Gold-tone chain, ocean charms",
-    careInfo:
-      "Remove before showering or swimming. Store in a dry place. Polish with a soft jewelry cloth.",
-    sortOrder: 5,
-  },
   {
     name: "Starfish & Pearl Necklace",
     slug: "starfish-pearl-necklace",
@@ -144,7 +104,7 @@ const PRODUCTS = [
     colors: [],
     customizable: false,
     availability: "ready_to_ship" as const,
-    inStock: true,
+    inStock: false,
     featured: false,
     materials: "White beads, plumeria flower charm, stretch cord",
     careInfo:
@@ -155,6 +115,9 @@ const PRODUCTS = [
 
 async function seed() {
   console.log("Clearing existing data...");
+  await db.delete(orderItems);
+  await db.delete(orders);
+  await db.delete(customers);
   await db.delete(charityTotals);
   await db.delete(products);
 

@@ -81,6 +81,14 @@ export function ProductCard({
           )}
           {/* Hover overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          {/* Sold out overlay */}
+          {!product.inStock && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+              <span className="rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-foreground">
+                Sold Out
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-1.5 p-3 md:p-4">
@@ -99,7 +107,11 @@ export function ProductCard({
             >
               ${parseFloat(product.price).toFixed(2)}
             </p>
-            <AvailabilityBadge availability={product.availability} />
+            {product.inStock ? (
+              <AvailabilityBadge availability={product.availability} />
+            ) : (
+              <span className="text-xs font-medium text-red-500">Sold Out</span>
+            )}
           </div>
         </div>
       </div>
