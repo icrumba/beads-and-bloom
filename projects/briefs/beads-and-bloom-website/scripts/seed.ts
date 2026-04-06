@@ -34,7 +34,7 @@ const PRODUCTS = [
     slug: "sunset-glow-bracelet",
     description:
       "Warm sunset-colored clay bead bracelet with coral, peach, and gold beads on stretchy cord. Great for stacking!",
-    price: "6.00",
+    price: "8.00",
     category: "bracelets",
     images: [
       "colored-bracelets-5_kbjkkj",
@@ -76,7 +76,7 @@ const PRODUCTS = [
     slug: "starfish-pearl-necklace",
     description:
       "Gold chain with a starfish charm and a pearl bead. Simple and pretty -- perfect for layering or wearing on its own.",
-    price: "6.00",
+    price: "9.00",
     category: "necklaces",
     images: [
       "golf-necklace_zbhbzb",
