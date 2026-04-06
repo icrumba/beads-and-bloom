@@ -4,14 +4,14 @@ import { eq, and, asc, desc, sql } from "drizzle-orm";
 import type { Address } from "@/types";
 
 export async function getProducts(category?: string) {
-  const conditions = [eq(products.inStock, true)];
+  const conditions = [];
   if (category && category !== "all") {
     conditions.push(eq(products.category, category as string));
   }
   return db
     .select()
     .from(products)
-    .where(and(...conditions))
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
     .orderBy(asc(products.sortOrder));
 }
 
