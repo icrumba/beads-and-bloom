@@ -92,6 +92,26 @@ const PRODUCTS = [
     sortOrder: 6,
   },
   {
+    name: "Custom Bracelet",
+    slug: "custom-bracelet",
+    description:
+      "Want your own custom bracelet? Order here and email us at beads.bloomshop@gmail.com with your color and charm preferences. We'll make it just for you!",
+    price: "8.00",
+    category: "bracelets",
+    images: [
+      "Screenshot_2026-04-13_210739_w6t4m3",
+    ],
+    colors: [],
+    customizable: true,
+    availability: "made_to_order" as const,
+    inStock: true,
+    featured: false,
+    materials: "Clay beads, charm of your choice, stretch cord",
+    careInfo:
+      "Avoid water and perfume. Store flat in a cool, dry place. Remove before swimming or showering.",
+    sortOrder: 8,
+  },
+  {
     name: "Plumeria Drop Bracelet",
     slug: "plumeria-drop-bracelet",
     description:
